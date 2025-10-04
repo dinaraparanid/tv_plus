@@ -1,0 +1,117 @@
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+
+typedef DpadEventCallback = KeyEventResult Function(FocusNode, KeyDownEvent);
+
+final class DpadFocus extends StatefulWidget {
+  const DpadFocus({
+    super.key,
+    this.focusNode,
+    this.parentNode,
+    this.autofocus = false,
+    this.canRequestFocus = true,
+    this.onUp,
+    this.onDown,
+    this.onLeft,
+    this.onRight,
+    this.onSelect,
+    this.onFocusDisabledWhenWasFocused,
+    required this.child,
+  });
+
+  final FocusNode? focusNode;
+  final FocusNode? parentNode;
+  final bool autofocus;
+  final bool canRequestFocus;
+  final DpadEventCallback? onUp;
+  final DpadEventCallback? onDown;
+  final DpadEventCallback? onLeft;
+  final DpadEventCallback? onRight;
+  final DpadEventCallback? onSelect;
+  final void Function()? onFocusDisabledWhenWasFocused;
+  final Widget child;
+
+  @override
+  State<StatefulWidget> createState() => _DpadFocusState();
+}
+
+final class _DpadFocusState extends State<DpadFocus> {
+  late final FocusNode _focusNode;
+
+  bool ownsFocusNode = false;
+
+  @override
+  void initState() {
+    _focusNode = widget.focusNode ??
+        FocusNode(canRequestFocus: widget.canRequestFocus);
+
+    ownsFocusNode = widget.focusNode == null;
+
+    if (widget.autofocus) {
+      _focusNode.requestFocus();
+    }
+
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant DpadFocus oldWidget) {
+    if (widget.canRequestFocus != oldWidget.canRequestFocus) {
+      if (_focusNode.hasFocus && widget.canRequestFocus == false) {
+        widget.onFocusDisabledWhenWasFocused?.call();
+      }
+
+      _focusNode.canRequestFocus = widget.canRequestFocus;
+    }
+
+    final nextFocusNode = widget.focusNode;
+
+    if (nextFocusNode != _focusNode && nextFocusNode != null) {
+      if (ownsFocusNode) _focusNode.dispose();
+
+      _focusNode = nextFocusNode
+        ..canRequestFocus = widget.canRequestFocus;
+
+      ownsFocusNode = false;
+    }
+
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Focus(
+      focusNode: _focusNode,
+      parentNode: widget.parentNode,
+      canRequestFocus: widget.canRequestFocus,
+      onKeyEvent: (node, event) {
+        print('BIBA EVENT $event');
+
+        return switch (event) {
+          KeyDownEvent() when event.logicalKey ==
+              LogicalKeyboardKey.arrowUp =>
+          widget.onUp?.call(_focusNode, event) ?? KeyEventResult.ignored,
+
+          KeyDownEvent() when event.logicalKey ==
+              LogicalKeyboardKey.arrowDown =>
+          widget.onDown?.call(_focusNode, event) ?? KeyEventResult.ignored,
+
+          KeyDownEvent() when event.logicalKey ==
+              LogicalKeyboardKey.arrowLeft =>
+          widget.onLeft?.call(_focusNode, event) ?? KeyEventResult.ignored,
+
+          KeyDownEvent() when event.logicalKey ==
+              LogicalKeyboardKey.arrowRight =>
+          widget.onRight?.call(_focusNode, event) ?? KeyEventResult.ignored,
+
+          KeyDownEvent() when event.logicalKey ==
+              LogicalKeyboardKey.select =>
+          widget.onSelect?.call(_focusNode, event) ?? KeyEventResult.ignored,
+
+          _ => KeyEventResult.ignored
+        };
+      },
+      child: widget.child,
+    );
+  }
+}
