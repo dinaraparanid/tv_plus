@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tv_plus_example/dpad_navigation_sample.dart';
+import 'package:tv_plus_example/dpad/dpad_navigation_sample.dart';
 
 final class App extends StatelessWidget {
   const App({super.key});
