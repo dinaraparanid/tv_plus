@@ -63,6 +63,14 @@ final class _DpadNavigationSampleState extends State<DpadNavigationSample> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              // ( only from center )
+              //
+              //    | * | $ | * |
+              //    | $ | * | $ |
+              //    | * | $ | * |
+              //
+              // ( reverse buttons )
+
               SizedBox(
                 width: 400,
                 child: SampleDpadFocus(
@@ -80,10 +88,6 @@ final class _DpadNavigationSampleState extends State<DpadNavigationSample> {
               ),
 
               SizedBox(height: 12),
-
-              // | * | $ | * |
-              // | $ | * | $ |
-              // | * | $ | * |
 
               SizedBox.square(
                 dimension: 400,

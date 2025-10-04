@@ -8,9 +8,9 @@ final class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       builder: (context, _) {
-        return Material(
-          color: Colors.transparent,
-          child: DpadNavigationSample(),
+        return Scaffold(
+          backgroundColor: Colors.black,
+          body: DpadNavigationSample(),
         );
       },
     );

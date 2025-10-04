@@ -15,6 +15,8 @@ final class DpadFocus extends StatefulWidget {
     this.onLeft,
     this.onRight,
     this.onSelect,
+    this.onBack,
+    this.onFocusChanged,
     this.onFocusDisabledWhenWasFocused,
     required this.child,
   });
@@ -28,6 +30,8 @@ final class DpadFocus extends StatefulWidget {
   final DpadEventCallback? onLeft;
   final DpadEventCallback? onRight;
   final DpadEventCallback? onSelect;
+  final DpadEventCallback? onBack;
+  final void Function(FocusNode)? onFocusChanged;
   final void Function()? onFocusDisabledWhenWasFocused;
   final Widget child;
 
@@ -44,6 +48,8 @@ final class _DpadFocusState extends State<DpadFocus> {
   void initState() {
     _focusNode = widget.focusNode ??
         FocusNode(canRequestFocus: widget.canRequestFocus);
+
+    _focusNode.addListener(onFocusChange);
 
     ownsFocusNode = widget.focusNode == null;
 
@@ -67,15 +73,36 @@ final class _DpadFocusState extends State<DpadFocus> {
     final nextFocusNode = widget.focusNode;
 
     if (nextFocusNode != _focusNode && nextFocusNode != null) {
-      if (ownsFocusNode) _focusNode.dispose();
+      _focusNode.removeListener(onFocusChange);
+
+      if (ownsFocusNode) {
+        _focusNode.dispose();
+      }
 
       _focusNode = nextFocusNode
         ..canRequestFocus = widget.canRequestFocus;
+
+      _focusNode.addListener(onFocusChange);
 
       ownsFocusNode = false;
     }
 
     super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(onFocusChange);
+
+    if (ownsFocusNode) {
+      _focusNode.dispose();
+    }
+
+    super.dispose();
+  }
+
+  void onFocusChange() {
+    widget.onFocusChanged?.call(_focusNode);
   }
 
   @override
@@ -85,8 +112,6 @@ final class _DpadFocusState extends State<DpadFocus> {
       parentNode: widget.parentNode,
       canRequestFocus: widget.canRequestFocus,
       onKeyEvent: (node, event) {
-        print('BIBA EVENT $event');
-
         return switch (event) {
           KeyDownEvent() when event.logicalKey ==
               LogicalKeyboardKey.arrowUp =>
@@ -107,6 +132,10 @@ final class _DpadFocusState extends State<DpadFocus> {
           KeyDownEvent() when event.logicalKey ==
               LogicalKeyboardKey.select =>
           widget.onSelect?.call(_focusNode, event) ?? KeyEventResult.ignored,
+
+          KeyDownEvent() when event.logicalKey ==
+              LogicalKeyboardKey.goBack =>
+          widget.onBack?.call(_focusNode, event) ?? KeyEventResult.ignored,
 
           _ => KeyEventResult.ignored
         };

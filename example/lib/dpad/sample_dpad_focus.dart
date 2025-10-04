@@ -2,17 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:tv_plus/tv_plus.dart';
 
 final class SampleDpadFocus extends StatefulWidget {
-  final bool isEnabled;
-  final bool autofocus;
-  final FocusNode? focusNode;
-  final DpadEventCallback? onUp;
-  final DpadEventCallback? onDown;
-  final DpadEventCallback? onLeft;
-  final DpadEventCallback? onRight;
-  final DpadEventCallback? onSelect;
-  final void Function()? onFocusDisabledWhenWasFocused;
-  final Widget? child;
-
   const SampleDpadFocus({
     super.key,
     this.isEnabled = true,
@@ -23,9 +12,24 @@ final class SampleDpadFocus extends StatefulWidget {
     this.onLeft,
     this.onRight,
     this.onSelect,
+    this.onBack,
+    this.onFocusChanged,
     this.onFocusDisabledWhenWasFocused,
     this.child,
   });
+
+  final bool isEnabled;
+  final bool autofocus;
+  final FocusNode? focusNode;
+  final DpadEventCallback? onUp;
+  final DpadEventCallback? onDown;
+  final DpadEventCallback? onLeft;
+  final DpadEventCallback? onRight;
+  final DpadEventCallback? onSelect;
+  final DpadEventCallback? onBack;
+  final void Function(FocusNode)? onFocusChanged;
+  final void Function()? onFocusDisabledWhenWasFocused;
+  final Widget? child;
 
   @override
   State<StatefulWidget> createState() => _SampleDpadFocusState();
@@ -105,6 +109,7 @@ final class _SampleDpadFocusState extends State<SampleDpadFocus> {
       onLeft: widget.onLeft,
       onRight: widget.onRight,
       onSelect: widget.onSelect,
+      onBack: widget.onBack,
       onFocusDisabledWhenWasFocused: widget.onFocusDisabledWhenWasFocused,
       child: DecoratedBox(
         decoration: BoxDecoration(
