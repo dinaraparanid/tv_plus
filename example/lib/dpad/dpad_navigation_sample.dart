@@ -4,7 +4,24 @@ import 'package:flutter/material.dart';
 import 'package:tv_plus_example/dpad/sample_dpad_focus.dart';
 
 final class DpadNavigationSample extends StatefulWidget {
-  const DpadNavigationSample({super.key});
+  const DpadNavigationSample({
+    super.key,
+    this.isReverseTimerEnabled = true,
+  });
+
+  static const keyOnlyFromCenterButton = ValueKey('only_from_center');
+  static const keyF1 = ValueKey('f1');
+  static const keyF2 = ValueKey('f2');
+  static const keyF3 = ValueKey('f3');
+  static const keyF4 = ValueKey('f4');
+  static const keyF5 = ValueKey('f5');
+  static const keyF6 = ValueKey('f6');
+  static const keyF7 = ValueKey('f7');
+  static const keyF8 = ValueKey('f8');
+  static const keyF9 = ValueKey('f9');
+  static const keyReverseButton = ValueKey('reverse');
+
+  final bool isReverseTimerEnabled;
 
   @override
   State<StatefulWidget> createState() => _DpadNavigationSampleState();
@@ -25,20 +42,21 @@ final class _DpadNavigationSampleState extends State<DpadNavigationSample> {
 
   var isOddFocusable = true;
 
-  late final Timer reverseTimer;
+  late final Timer? reverseTimer;
 
   @override
   void initState() {
-    reverseTimer = Timer.periodic(Duration(seconds: 5), (_) {
-      setState(() => isOddFocusable = !isOddFocusable);
-    });
+    reverseTimer = widget.isReverseTimerEnabled ? Timer.periodic(
+      Duration(seconds: 5), (_) =>
+        setState(() => isOddFocusable = !isOddFocusable),
+    ) : null;
 
     super.initState();
   }
 
   @override
   void dispose() {
-    reverseTimer.cancel();
+    reverseTimer?.cancel();
 
     fn1.dispose();
     fn2.dispose();
@@ -74,6 +92,7 @@ final class _DpadNavigationSampleState extends State<DpadNavigationSample> {
               SizedBox(
                 width: 400,
                 child: SampleDpadFocus(
+                  key: DpadNavigationSample.keyOnlyFromCenterButton,
                   focusNode: onlyFromCenterFn,
                   onDown: (_, _) {
                     fn5.requestFocus();
@@ -98,6 +117,7 @@ final class _DpadNavigationSampleState extends State<DpadNavigationSample> {
                   children: [
                     // ----- row 1 -----
                     SampleDpadFocus(
+                      key: DpadNavigationSample.keyF1,
                       isEnabled: isOddFocusable,
                       autofocus: true,
                       focusNode: fn1,
@@ -116,6 +136,7 @@ final class _DpadNavigationSampleState extends State<DpadNavigationSample> {
                       },
                     ),
                     SampleDpadFocus(
+                      key: DpadNavigationSample.keyF2,
                       isEnabled: !isOddFocusable,
                       focusNode: fn2,
                       onUp: (_, _) => KeyEventResult.handled,
@@ -130,6 +151,7 @@ final class _DpadNavigationSampleState extends State<DpadNavigationSample> {
                       },
                     ),
                     SampleDpadFocus(
+                      key: DpadNavigationSample.keyF3,
                       isEnabled: isOddFocusable,
                       focusNode: fn3,
                       onUp: (_, _) => KeyEventResult.handled,
@@ -149,6 +171,7 @@ final class _DpadNavigationSampleState extends State<DpadNavigationSample> {
 
                     // ----- row 2 -----
                     SampleDpadFocus(
+                      key: DpadNavigationSample.keyF4,
                       isEnabled: !isOddFocusable,
                       focusNode: fn4,
                       onUp: (_, _) => KeyEventResult.handled,
@@ -163,6 +186,7 @@ final class _DpadNavigationSampleState extends State<DpadNavigationSample> {
                       },
                     ),
                     SampleDpadFocus(
+                      key: DpadNavigationSample.keyF5,
                       isEnabled: isOddFocusable,
                       focusNode: fn5,
                       onUp: (_, _) {
@@ -180,6 +204,7 @@ final class _DpadNavigationSampleState extends State<DpadNavigationSample> {
                       },
                     ),
                     SampleDpadFocus(
+                      key: DpadNavigationSample.keyF6,
                       isEnabled: !isOddFocusable,
                       focusNode: fn6,
                       onUp: (_, _) => KeyEventResult.handled,
@@ -196,6 +221,7 @@ final class _DpadNavigationSampleState extends State<DpadNavigationSample> {
 
                     // ----- row 3 -----
                     SampleDpadFocus(
+                      key: DpadNavigationSample.keyF7,
                       isEnabled: isOddFocusable,
                       focusNode: fn7,
                       onUp: (_, _) {
@@ -216,6 +242,7 @@ final class _DpadNavigationSampleState extends State<DpadNavigationSample> {
                       },
                     ),
                     SampleDpadFocus(
+                      key: DpadNavigationSample.keyF8,
                       isEnabled: !isOddFocusable,
                       focusNode: fn8,
                       onUp: (_, _) {
@@ -233,6 +260,7 @@ final class _DpadNavigationSampleState extends State<DpadNavigationSample> {
                       },
                     ),
                     SampleDpadFocus(
+                      key: DpadNavigationSample.keyF9,
                       isEnabled: isOddFocusable,
                       focusNode: fn9,
                       onUp: (_, _) {
@@ -261,6 +289,7 @@ final class _DpadNavigationSampleState extends State<DpadNavigationSample> {
               SizedBox(
                 width: 400,
                 child: SampleDpadFocus(
+                  key: DpadNavigationSample.keyReverseButton,
                   focusNode: reverseFn,
                   onSelect: (_, _) {
                     setState(() => isOddFocusable = !isOddFocusable);

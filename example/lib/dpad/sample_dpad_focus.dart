@@ -18,6 +18,14 @@ final class SampleDpadFocus extends StatefulWidget {
     this.child,
   });
 
+  static const textEnabled = 'enabled';
+  static const textDisabled = 'disabled';
+  static const textFocused = 'focused';
+
+  static const colorEnabled = Colors.indigoAccent;
+  static const colorDisabled = Colors.blueGrey;
+  static const colorFocused = Colors.green;
+
   final bool isEnabled;
   final bool autofocus;
   final FocusNode? focusNode;
@@ -36,19 +44,11 @@ final class SampleDpadFocus extends StatefulWidget {
 }
 
 final class _SampleDpadFocusState extends State<SampleDpadFocus> {
-  static const textEnabled = 'enabled';
-  static const textDisabled = 'disabled';
-  static const textFocused = 'focused';
-
-  static const colorEnabled = Colors.indigoAccent;
-  static const colorDisabled = Colors.blueGrey;
-  static const colorFocused = Colors.green;
-
   late final FocusNode _focusNode;
   bool ownsFocusNode = true;
 
-  String text = textEnabled;
-  Color color = colorEnabled;
+  String text = SampleDpadFocus.textEnabled;
+  Color color = SampleDpadFocus.colorEnabled;
 
   @override
   void initState() {
@@ -57,11 +57,11 @@ final class _SampleDpadFocusState extends State<SampleDpadFocus> {
 
     if (widget.autofocus) {
       _focusNode.requestFocus();
-      text = textFocused;
-      color = colorFocused;
+      text = SampleDpadFocus.textFocused;
+      color = SampleDpadFocus.colorFocused;
     } else if (!widget.isEnabled) {
-      text = textDisabled;
-      color = colorDisabled;
+      text = SampleDpadFocus.textDisabled;
+      color = SampleDpadFocus.colorDisabled;
     }
 
     _focusNode.addListener(onFocusChange);
@@ -88,13 +88,18 @@ final class _SampleDpadFocusState extends State<SampleDpadFocus> {
   void onFocusChange() {
     setState(() {
       if (_focusNode.hasFocus) {
-        text = textFocused;
-        color = colorFocused;
+        text = SampleDpadFocus.textFocused;
+        color = SampleDpadFocus.colorFocused;
         return;
       }
 
-      text = widget.isEnabled ? textEnabled : textDisabled;
-      color = widget.isEnabled ? colorEnabled : colorDisabled;
+      text = widget.isEnabled
+          ? SampleDpadFocus.textEnabled
+          : SampleDpadFocus.textDisabled;
+
+      color = widget.isEnabled
+          ? SampleDpadFocus.colorEnabled
+          : SampleDpadFocus.colorDisabled;
     });
   }
 
