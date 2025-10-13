@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tv_plus_example/dpad/dpad_navigation_sample.dart';
+import 'package:tv_plus_example/material/navigation/navigation_drawer_sample.dart';
 
 final class App extends StatelessWidget {
   const App({super.key});
@@ -8,10 +8,7 @@ final class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       builder: (context, _) {
-        return Scaffold(
-          backgroundColor: Colors.black,
-          body: DpadNavigationSample(),
-        );
+        return NavigationDrawerSample();
       },
     );
   }
