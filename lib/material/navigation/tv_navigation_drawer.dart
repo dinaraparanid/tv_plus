@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import '../../dpad/dpad.dart';
 import '../material.dart';
 
-const _animatedDuration = Duration(milliseconds: 300);
-
 final class TvNavigationDrawer extends StatefulWidget {
   const TvNavigationDrawer({
     super.key,
@@ -14,6 +12,7 @@ final class TvNavigationDrawer extends StatefulWidget {
     this.drawerDecoration,
     this.constraints = const BoxConstraints(minWidth: 90, maxWidth: 280),
     this.drawerPadding = const EdgeInsets.all(12),
+    this.drawerExpandDuration = const Duration(milliseconds: 300),
     required this.itemCount,
     required this.itemBuilder,
     this.separatorBuilder,
@@ -27,6 +26,7 @@ final class TvNavigationDrawer extends StatefulWidget {
   final BoxDecoration? drawerDecoration;
   final BoxConstraints constraints;
   final EdgeInsets drawerPadding;
+  final Duration drawerExpandDuration;
   final int itemCount;
 
   final TvNavigationItem Function(
@@ -117,7 +117,7 @@ final class TvNavigationDrawerState extends State<TvNavigationDrawer> {
           return Row(
             children: [
               AnimatedContainer(
-                duration: _animatedDuration,
+                duration: widget.drawerExpandDuration,
                 constraints: widget.constraints.copyWith(
                   maxWidth: isExpanded ? null : widget.constraints.minWidth,
                 ),
@@ -147,6 +147,7 @@ final class TvNavigationDrawerState extends State<TvNavigationDrawer> {
                             model: item,
                             node: node,
                             isDrawerExpanded: isExpanded,
+                            drawerExpandDuration: widget.drawerExpandDuration,
                           );
                         },
                       );
@@ -202,6 +203,7 @@ final class TvNavigationDrawerState extends State<TvNavigationDrawer> {
                                 node: node,
                                 isSelected: isSelected,
                                 isDrawerExpanded: isExpanded,
+                                drawerExpandDuration: widget.drawerExpandDuration,
                               );
                             },
                           );
@@ -231,6 +233,7 @@ final class TvNavigationDrawerState extends State<TvNavigationDrawer> {
                             model: item,
                             node: node,
                             isDrawerExpanded: isExpanded,
+                            drawerExpandDuration: widget.drawerExpandDuration,
                           );
                         },
                       );
@@ -262,12 +265,14 @@ final class _TvNavigationDrawerItem extends StatelessWidget {
     required this.node,
     this.isSelected = false,
     required this.isDrawerExpanded,
+    required this.drawerExpandDuration,
   });
 
   final TvNavigationItem model;
   final FocusNode node;
   final bool isSelected;
   final bool isDrawerExpanded;
+  final Duration drawerExpandDuration;
 
   @override
   Widget build(BuildContext context) {
@@ -280,18 +285,23 @@ final class _TvNavigationDrawerItem extends StatelessWidget {
         : focusedState;
 
     return AnimatedContainer(
-      duration: _animatedDuration,
+      duration: drawerExpandDuration,
       padding: model.contentPadding,
       decoration: model.decoration.resolve(widgetState),
       child: Row(
         children: [
-          Flexible(child: Icon(model.icon, size: model.iconSize)),
+          Flexible(flex: 0, child: Icon(model.icon, size: model.iconSize)),
           Expanded(
             child: LayoutBuilder(
               builder: (context, constraints) {
                 return Padding(
                   padding: EdgeInsets.only(left: model.iconSpacing),
-                  child: model.builder(context, constraints, widgetState),
+                  child: model.builder(
+                    context,
+                    constraints,
+                    widgetState,
+                    isDrawerExpanded,
+                  ),
                 );
               },
             ),

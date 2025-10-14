@@ -7,7 +7,7 @@ final class NavigationDrawerSample extends StatelessWidget {
   static const _animationDuration = Duration(milliseconds: 300);
 
   static const _items = [
-    ('Search', Icons.search),
+    ('BOB, I want all my Garmonbozia', Icons.search),
     ('Home', Icons.home),
     ('Movies', Icons.movie),
     ('Shows', Icons.tv),
@@ -17,6 +17,7 @@ final class NavigationDrawerSample extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TvNavigationDrawer(
+      drawerExpandDuration: _animationDuration,
       drawerDecoration: BoxDecoration(
         color: Color(0xFF444746),
         borderRadius: BorderRadius.only(
@@ -27,6 +28,7 @@ final class NavigationDrawerSample extends StatelessWidget {
       headerBuilder: _buildHeader,
       footerBuilder: _buildFooter,
       itemCount: 5,
+      separatorBuilder: (_, _, _) => SizedBox(height: 12),
       itemBuilder: (node, index, isSelected) {
         return _buildItem(
           node: node,
@@ -82,33 +84,37 @@ final class NavigationDrawerSample extends StatelessWidget {
           color: Colors.transparent,
         ),
       }),
-      builder: (_, constraints, states) {
+      builder: (_, constraints, states, isDrawerExpanded) {
         return ConstrainedBox(
           constraints: constraints,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Name',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
+          child: AnimatedOpacity(
+            opacity: isDrawerExpanded ? 1 : 0,
+            duration: _animationDuration,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Name',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
-              Text(
-                'Switch account',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.white,
+                Text(
+                  'Switch account',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.white,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
@@ -150,18 +156,26 @@ final class NavigationDrawerSample extends StatelessWidget {
           borderRadius: BorderRadius.all(Radius.circular(24)),
         );
       }),
-      builder: (_, constraints, states) {
+      builder: (_, constraints, states, isDrawerExpanded) {
         return ConstrainedBox(
           constraints: constraints,
-          child: Text(
-            title,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-            ),
+          child: Stack(
+            children: [
+              AnimatedOpacity(
+                opacity: isDrawerExpanded ? 1 : 0,
+                duration: _animationDuration,
+                child: Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
           ),
         );
       },

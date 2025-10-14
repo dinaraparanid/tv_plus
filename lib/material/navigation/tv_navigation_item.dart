@@ -23,5 +23,11 @@ final class TvNavigationItem {
   final EdgeInsets contentPadding;
   final WidgetStateProperty<BoxDecoration> decoration;
   final VoidCallback? onSelect;
-  final Widget Function(BuildContext, BoxConstraints, Set<WidgetState>) builder;
+
+  final Widget Function(
+    BuildContext context,
+    BoxConstraints itemConstraints,
+    Set<WidgetState> itemStates,
+    bool isDrawerExpanded,
+  ) builder;
 }
