@@ -65,7 +65,11 @@ void main() {
         expect(focusDpad.autofocus, expectedAutofocus);
         expect(focusDpad.canRequestFocus, expectedCanRequestFocus);
 
-        final focusBox = focusDpad.child as DecoratedBox;
+        final focusBoxFinder = find.descendant(
+          of: focusDpadFinder,
+          matching: find.byType(DecoratedBox),
+        );
+        final focusBox = tester.firstWidget(focusBoxFinder) as DecoratedBox;
         final f1BoxDecoration = focusBox.decoration as BoxDecoration;
         expect(f1BoxDecoration.color, expectedColor);
       }

@@ -18,7 +18,7 @@ final class DpadFocus extends StatefulWidget {
     this.onBack,
     this.onFocusChanged,
     this.onFocusDisabledWhenWasFocused,
-    required this.child,
+    required this.builder,
   });
 
   final FocusNode? focusNode;
@@ -33,7 +33,7 @@ final class DpadFocus extends StatefulWidget {
   final DpadEventCallback? onBack;
   final void Function(FocusNode)? onFocusChanged;
   final void Function()? onFocusDisabledWhenWasFocused;
-  final Widget child;
+  final Widget Function(FocusNode) builder;
 
   @override
   State<StatefulWidget> createState() => _DpadFocusState();
@@ -52,10 +52,6 @@ final class _DpadFocusState extends State<DpadFocus> {
     _focusNode.addListener(onFocusChange);
 
     ownsFocusNode = widget.focusNode == null;
-
-    if (widget.autofocus) {
-      _focusNode.requestFocus();
-    }
 
     super.initState();
   }
@@ -102,6 +98,7 @@ final class _DpadFocusState extends State<DpadFocus> {
   }
 
   void onFocusChange() {
+    setState(() {});
     widget.onFocusChanged?.call(_focusNode);
   }
 
@@ -111,6 +108,7 @@ final class _DpadFocusState extends State<DpadFocus> {
       focusNode: _focusNode,
       parentNode: widget.parentNode,
       canRequestFocus: widget.canRequestFocus,
+      autofocus: widget.autofocus,
       onKeyEvent: (node, event) {
         return switch (event) {
           KeyDownEvent() when event.logicalKey ==
@@ -140,7 +138,7 @@ final class _DpadFocusState extends State<DpadFocus> {
           _ => KeyEventResult.ignored
         };
       },
-      child: widget.child,
+      child: widget.builder(_focusNode),
     );
   }
 }

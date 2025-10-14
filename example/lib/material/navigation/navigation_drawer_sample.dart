@@ -4,6 +4,16 @@ import 'package:tv_plus/tv_plus.dart';
 final class NavigationDrawerSample extends StatelessWidget {
   const NavigationDrawerSample({super.key});
 
+  static const _animationDuration = Duration(milliseconds: 300);
+
+  static const _items = [
+    ('Search', Icons.search),
+    ('Home', Icons.home),
+    ('Movies', Icons.movie),
+    ('Shows', Icons.tv),
+    ('Library', Icons.video_library),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return TvNavigationDrawer(
@@ -14,41 +24,75 @@ final class NavigationDrawerSample extends StatelessWidget {
           bottomRight: Radius.circular(12),
         )
       ),
-      header: _buildHeader(),
-      footer: _buildFooter(),
-      items: [
-        _buildItem(title: 'Search', icon: Icons.search),
-        _buildItem(title: 'Home', icon: Icons.home),
-        _buildItem(title: 'Movies', icon: Icons.movie),
-        _buildItem(title: 'Shows', icon: Icons.tv),
-        _buildItem(title: 'Library', icon: Icons.video_library),
-      ],
+      headerBuilder: _buildHeader,
+      footerBuilder: _buildFooter,
+      itemCount: 5,
+      itemBuilder: (node, index, isSelected) {
+        return _buildItem(
+          node: node,
+          title: _items[index].$1,
+          icon: _items[index].$2,
+          isSelected: isSelected,
+        );
+      },
       initialItemIndex: 0,
-      builder: (context, index) {
-        return Container(
-          color: Colors.green,
-          child: Text('Item ${index + 1} content'),
+      builder: (context, index, node, drawerNode) {
+        return Stack(
+          children: [
+            Align(
+              child: DpadFocus(
+                focusNode: node,
+                autofocus: true,
+                onLeft: (_, _) {
+                  drawerNode.requestFocus();
+                  return KeyEventResult.handled;
+                },
+                builder: (node) {
+                  return AnimatedContainer(
+                    duration: _animationDuration,
+                    color: node.hasFocus ? Colors.green : Colors.indigoAccent,
+                    width: 300,
+                    height: 300,
+                    alignment: Alignment.center,
+                    child: Text('Item ${index + 1} content'),
+                  );
+                },
+              ),
+            ),
+          ],
         );
       },
     );
   }
 
-  Widget _buildHeader() {
-    return Row(
-      spacing: 12,
-      children: [
-        Icon(
-          Icons.account_circle,
-          size: 32,
+  TvNavigationItem _buildHeader(FocusNode node) {
+    return TvNavigationItem(
+      icon: Icons.account_circle,
+      decoration: WidgetStateProperty.fromMap({
+        WidgetState.selected: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(24)),
+          color: Colors.indigoAccent,
         ),
-
-        Expanded(
+        WidgetState.focused: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(24)),
+          color: Colors.teal.withValues(alpha: 0.33),
+        ),
+        WidgetState.any: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(24)),
+          color: Colors.transparent,
+        ),
+      }),
+      builder: (_, constraints, states) {
+        return ConstrainedBox(
+          constraints: constraints,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'Name',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.white,
@@ -57,6 +101,8 @@ final class NavigationDrawerSample extends StatelessWidget {
               ),
               Text(
                 'Switch account',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.white,
@@ -64,35 +110,65 @@ final class NavigationDrawerSample extends StatelessWidget {
               ),
             ],
           ),
-        ),
-      ],
+        );
+      },
     );
   }
 
-  Widget _buildItem({
+  TvNavigationItem _buildItem({
+    required FocusNode node,
     required String title,
     required IconData icon,
+    bool isSelected = false,
 }) {
-    return Row(
-      spacing: 12,
-      children: [
-        Icon(icon, size: 24),
+    return TvNavigationItem(
+      isSelected: isSelected,
+      icon: icon,
+      decoration: WidgetStateProperty.resolveWith((states) {
+        if (states.containsAll([WidgetState.selected, WidgetState.focused])) {
+          return BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(24)),
+            color: Colors.deepPurpleAccent,
+          );
+        }
 
-        Expanded(
+        if (states.contains(WidgetState.selected)) {
+          return BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(24)),
+            color: Colors.indigoAccent,
+          );
+        }
+
+        if (states.contains(WidgetState.focused)) {
+          return BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(24)),
+            color: Colors.teal.withValues(alpha: 0.33),
+          );
+        }
+
+        return BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(24)),
+        );
+      }),
+      builder: (_, constraints, states) {
+        return ConstrainedBox(
+          constraints: constraints,
           child: Text(
             title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(
               fontSize: 16,
               color: Colors.white,
               fontWeight: FontWeight.w600,
             ),
           ),
-        ),
-      ],
+        );
+      },
     );
   }
 
-  Widget _buildFooter() {
-    return _buildItem(title: 'Settings', icon: Icons.settings);
+  TvNavigationItem _buildFooter(FocusNode node) {
+    return _buildItem(node: node, title: 'Settings', icon: Icons.settings);
   }
 }
