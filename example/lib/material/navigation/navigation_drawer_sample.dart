@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:tv_plus/material/navigation/tv_navigation_drawer_controller.dart';
 import 'package:tv_plus/tv_plus.dart';
 
-final class NavigationDrawerSample extends StatelessWidget {
+final class NavigationDrawerSample extends StatefulWidget {
   const NavigationDrawerSample({super.key});
 
-  static const _animationDuration = Duration(milliseconds: 300);
-
-  static const _items = [
-    ('BOB, I want all my Garmonbozia', Icons.search),
+  static const items = [
+    ('Search', Icons.search),
     ('Home', Icons.home),
     ('Movies', Icons.movie),
     ('Shows', Icons.tv),
@@ -15,38 +14,57 @@ final class NavigationDrawerSample extends StatelessWidget {
   ];
 
   @override
+  State<StatefulWidget> createState() => _NavigationDrawerSampleState();
+}
+
+final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
+
+  static const _animationDuration = Duration(milliseconds: 300);
+
+  final controller = TvNavigationDrawerController(
+    initialSelectedIndex: 0,
+    itemCount: NavigationDrawerSample.items.length,
+  );
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return TvNavigationDrawer(
+      controller: controller,
       drawerExpandDuration: _animationDuration,
       drawerDecoration: BoxDecoration(
         color: Color(0xFF444746),
         borderRadius: BorderRadius.only(
           topRight: Radius.circular(12),
           bottomRight: Radius.circular(12),
-        )
+        ),
       ),
       headerBuilder: _buildHeader,
       footerBuilder: _buildFooter,
       itemCount: 5,
-      separatorBuilder: (_, _, _) => SizedBox(height: 12),
-      itemBuilder: (node, index, isSelected) {
+      separatorBuilder: (_) => SizedBox(height: 12),
+      itemBuilder: (index) {
         return _buildItem(
-          node: node,
-          title: _items[index].$1,
-          icon: _items[index].$2,
-          isSelected: isSelected,
+          node: controller.itemsFocusNodes[index],
+          title: NavigationDrawerSample.items[index].$1,
+          icon: NavigationDrawerSample.items[index].$2,
         );
       },
-      initialItemIndex: 0,
-      builder: (context, index, node, drawerNode) {
+      initialSelectedIndex: 0,
+      builder: (context, entry, focusNode) {
         return Stack(
           children: [
             Align(
               child: DpadFocus(
-                focusNode: node,
+                focusNode: focusNode,
                 autofocus: true,
                 onLeft: (_, _) {
-                  drawerNode.requestFocus();
+                  controller.selectedNode.requestFocus();
                   return KeyEventResult.handled;
                 },
                 builder: (node) {
@@ -56,7 +74,7 @@ final class NavigationDrawerSample extends StatelessWidget {
                     width: 300,
                     height: 300,
                     alignment: Alignment.center,
-                    child: Text('Item ${index + 1} content'),
+                    child: Text('$entry content'),
                   );
                 },
               ),
@@ -67,28 +85,44 @@ final class NavigationDrawerSample extends StatelessWidget {
     );
   }
 
-  TvNavigationItem _buildHeader(FocusNode node) {
-    return TvNavigationItem(
-      icon: Icons.account_circle,
-      decoration: WidgetStateProperty.fromMap({
-        WidgetState.selected: BoxDecoration(
+  WidgetStateProperty<BoxDecoration> _buildDecoration() {
+    return WidgetStateProperty.resolveWith((states) {
+      if (states.containsAll([WidgetState.selected, WidgetState.focused])) {
+        return BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(24)),
+          color: Colors.deepPurpleAccent,
+        );
+      }
+
+      if (states.contains(WidgetState.selected)) {
+        return BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(24)),
           color: Colors.indigoAccent,
-        ),
-        WidgetState.focused: BoxDecoration(
+        );
+      }
+
+      if (states.contains(WidgetState.focused)) {
+        return BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(24)),
           color: Colors.teal.withValues(alpha: 0.33),
-        ),
-        WidgetState.any: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(24)),
-          color: Colors.transparent,
-        ),
-      }),
-      builder: (_, constraints, states, isDrawerExpanded) {
+        );
+      }
+
+      return BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(24)),
+      );
+    });
+  }
+
+  TvNavigationItem _buildHeader() {
+    return TvNavigationItem(
+      icon: Icons.account_circle,
+      decoration: _buildDecoration(),
+      builder: (_, constraints, states) {
         return ConstrainedBox(
           constraints: constraints,
           child: AnimatedOpacity(
-            opacity: isDrawerExpanded ? 1 : 0,
+            opacity: controller.hasFocus ? 1 : 0,
             duration: _animationDuration,
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -125,44 +159,17 @@ final class NavigationDrawerSample extends StatelessWidget {
     required FocusNode node,
     required String title,
     required IconData icon,
-    bool isSelected = false,
-}) {
+  }) {
     return TvNavigationItem(
-      isSelected: isSelected,
       icon: icon,
-      decoration: WidgetStateProperty.resolveWith((states) {
-        if (states.containsAll([WidgetState.selected, WidgetState.focused])) {
-          return BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(24)),
-            color: Colors.deepPurpleAccent,
-          );
-        }
-
-        if (states.contains(WidgetState.selected)) {
-          return BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(24)),
-            color: Colors.indigoAccent,
-          );
-        }
-
-        if (states.contains(WidgetState.focused)) {
-          return BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(24)),
-            color: Colors.teal.withValues(alpha: 0.33),
-          );
-        }
-
-        return BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(24)),
-        );
-      }),
-      builder: (_, constraints, states, isDrawerExpanded) {
+      decoration: _buildDecoration(),
+      builder: (_, constraints, states) {
         return ConstrainedBox(
           constraints: constraints,
           child: Stack(
             children: [
               AnimatedOpacity(
-                opacity: isDrawerExpanded ? 1 : 0,
+                opacity: controller.hasFocus ? 1 : 0,
                 duration: _animationDuration,
                 child: Text(
                   title,
@@ -182,7 +189,11 @@ final class NavigationDrawerSample extends StatelessWidget {
     );
   }
 
-  TvNavigationItem _buildFooter(FocusNode node) {
-    return _buildItem(node: node, title: 'Settings', icon: Icons.settings);
+  TvNavigationItem _buildFooter() {
+    return _buildItem(
+      node: controller.footerFocusNode,
+      title: 'Settings',
+      icon: Icons.settings,
+    );
   }
 }

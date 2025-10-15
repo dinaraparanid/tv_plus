@@ -3,7 +3,6 @@ import 'package:flutter/widgets.dart';
 @immutable
 final class TvNavigationItem {
   const TvNavigationItem({
-    this.isSelected = false,
     required this.icon,
     this.iconSize = 32,
     this.iconSpacing = 12,
@@ -16,7 +15,6 @@ final class TvNavigationItem {
     required this.builder,
   });
 
-  final bool isSelected;
   final IconData icon;
   final double iconSize;
   final double iconSpacing;
@@ -28,6 +26,5 @@ final class TvNavigationItem {
     BuildContext context,
     BoxConstraints itemConstraints,
     Set<WidgetState> itemStates,
-    bool isDrawerExpanded,
   ) builder;
 }

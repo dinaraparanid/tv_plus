@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 
 import '../../dpad/dpad.dart';
 import '../material.dart';
+import 'selection_entry.dart';
+import 'tv_navigation_drawer_controller.dart';
 
 final class TvNavigationDrawer extends StatefulWidget {
   const TvNavigationDrawer({
     super.key,
+    this.controller,
+    this.childNode,
     this.headerBuilder,
     this.footerBuilder,
     this.backgroundColor,
@@ -14,94 +18,63 @@ final class TvNavigationDrawer extends StatefulWidget {
     this.drawerPadding = const EdgeInsets.all(12),
     this.drawerExpandDuration = const Duration(milliseconds: 300),
     required this.itemCount,
+    required this.initialSelectedIndex,
     required this.itemBuilder,
     this.separatorBuilder,
-    required this.initialItemIndex,
     required this.builder,
   }) : assert(itemCount > 0);
 
-  final TvNavigationItem Function(FocusNode)? headerBuilder;
-  final TvNavigationItem Function(FocusNode)? footerBuilder;
+  final TvNavigationDrawerController? controller;
+  final FocusNode? childNode;
+  final TvNavigationItem Function()? headerBuilder;
+  final TvNavigationItem Function()? footerBuilder;
   final Color? backgroundColor;
   final BoxDecoration? drawerDecoration;
   final BoxConstraints constraints;
   final EdgeInsets drawerPadding;
   final Duration drawerExpandDuration;
   final int itemCount;
-
-  final TvNavigationItem Function(
-    FocusNode node,
-    int index,
-    bool isSelected,
-  ) itemBuilder;
-
-  final Widget Function(FocusNode, int, bool)? separatorBuilder;
-  final int initialItemIndex;
-
+  final int initialSelectedIndex;
+  final TvNavigationItem Function(int index) itemBuilder;
+  final Widget Function(int index)? separatorBuilder;
   final Widget Function(
     BuildContext context,
-    int index,
-    FocusNode childNode,
-    FocusNode drawerItemNode,
+    SelectionEntry entry,
+    FocusNode childFocusNode,
   ) builder;
 
   @override
-  State<StatefulWidget> createState() => TvNavigationDrawerState();
+  State<StatefulWidget> createState() => _TvNavigationDrawerState();
 }
 
-final class TvNavigationDrawerState extends State<TvNavigationDrawer> {
+final class _TvNavigationDrawerState extends State<TvNavigationDrawer> {
 
-  late int _selectedIndex;
-
-  int get selectedIndex => _selectedIndex;
-  FocusNode get selectedItemFocusNode => itemsFocusNodes[selectedIndex];
-
-  late final FocusNode? headerFocusNode;
-  late final FocusNode? footerFocusNode;
-  late final FocusNode childFocusNode;
-  late final List<FocusNode> itemsFocusNodes;
-  late final List<FocusNode> _focusNodes;
-  late final Listenable _focusListenable;
-
-  var _hasFocus = false;
-  bool get isExpanded => _hasFocus;
+  late final TvNavigationDrawerController _controller;
+  bool _ownsController = false;
 
   @override
   void initState() {
-    _selectedIndex = widget.initialItemIndex;
+    _controller = widget.controller ?? TvNavigationDrawerController(
+      initialSelectedIndex: widget.initialSelectedIndex,
+      itemCount: widget.itemCount,
+      childNode: widget.childNode,
+    );
 
-    headerFocusNode = widget.headerBuilder != null ? FocusNode() : null;
-    footerFocusNode = widget.footerBuilder != null ? FocusNode() : null;
-    childFocusNode = FocusNode();
-    itemsFocusNodes = List.generate(widget.itemCount, (_) => FocusNode());
-    _focusNodes = [?headerFocusNode, ?footerFocusNode, ...itemsFocusNodes];
+    _ownsController = widget.controller == null;
 
-    _focusListenable = Listenable
-        .merge(_focusNodes)
-        ..addListener(focusChangeListener);
+    _controller.addListener(_controllerListener);
 
     super.initState();
   }
 
-  void focusChangeListener() {
-    final nextHasFocus = _focusNodes.any((it) {
-      return it.hasFocus;
-    });
-
-    if (nextHasFocus != _hasFocus) {
-      setState(() => _hasFocus = nextHasFocus);
-    }
-  }
+  void _controllerListener() => setState(() {});
 
   @override
   void dispose() {
-    _focusListenable.removeListener(focusChangeListener);
-    headerFocusNode?.dispose();
-    footerFocusNode?.dispose();
-    childFocusNode.dispose();
+    _controller.removeListener(_controllerListener);
 
-    for (final it in itemsFocusNodes) {
-      it.dispose();
+    if (_ownsController) {
+      _controller.dispose();
     }
 
     super.dispose();
@@ -119,125 +92,43 @@ final class TvNavigationDrawerState extends State<TvNavigationDrawer> {
               AnimatedContainer(
                 duration: widget.drawerExpandDuration,
                 constraints: widget.constraints.copyWith(
-                  maxWidth: isExpanded ? null : widget.constraints.minWidth,
+                  maxWidth: _controller.hasFocus
+                      ? null
+                      : widget.constraints.minWidth,
                 ),
                 decoration: widget.drawerDecoration,
                 padding: widget.drawerPadding,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (widget.headerBuilder != null) () {
-                      final item = widget.headerBuilder!(headerFocusNode!);
-                      return DpadFocus(
-                        focusNode: headerFocusNode,
-                        onSelect: (_, _) {
-                          item.onSelect?.call();
-                          return KeyEventResult.handled;
-                        },
-                        onDown: (_, _) {
-                          itemsFocusNodes.first.requestFocus();
-                          return KeyEventResult.handled;
-                        },
-                        onRight: (_, _) {
-                          childFocusNode.requestFocus();
-                          return KeyEventResult.handled;
-                        },
-                        builder: (node) {
-                          return _TvNavigationDrawerItem(
-                            model: item,
-                            node: node,
-                            isDrawerExpanded: isExpanded,
-                            drawerExpandDuration: widget.drawerExpandDuration,
-                          );
-                        },
-                      );
-                    }(),
+                    if (widget.headerBuilder != null) _Header(
+                      item: widget.headerBuilder!(),
+                      controller: _controller,
+                      drawerExpandDuration: widget.drawerExpandDuration,
+                    ),
 
                     const Spacer(),
 
                     for (var i = 0; i < widget.itemCount; ++i)
                       ...[
                         if (i != 0)
-                          ?widget.separatorBuilder?.call(
-                            itemsFocusNodes[i],
-                            i,
-                            selectedIndex == i,
-                          ),
+                          ?widget.separatorBuilder?.call(i),
 
-                        () {
-                          final isSelected = selectedIndex == i;
-                          final node = itemsFocusNodes[i];
-                          final item = widget.itemBuilder(node, i, isSelected);
-
-                          return DpadFocus(
-                            focusNode: node,
-                            onSelect: (_, _) {
-                              setState(() => _selectedIndex = i);
-                              item.onSelect?.call();
-                              return KeyEventResult.handled;
-                            },
-                            onUp: (_, _) {
-                              switch (i) {
-                                case 0: headerFocusNode?.requestFocus();
-                                default: itemsFocusNodes[i - 1].requestFocus();
-                              }
-
-                              return KeyEventResult.handled;
-                            },
-                            onDown: (_, _) {
-                              if (i == widget.itemCount - 1) {
-                                footerFocusNode?.requestFocus();
-                              } else {
-                                itemsFocusNodes[i + 1].requestFocus();
-                              }
-
-                              return KeyEventResult.handled;
-                            },
-                            onRight: (_, _) {
-                              childFocusNode.requestFocus();
-                              return KeyEventResult.handled;
-                            },
-                            builder: (node) {
-                              return _TvNavigationDrawerItem(
-                                model: item,
-                                node: node,
-                                isSelected: isSelected,
-                                isDrawerExpanded: isExpanded,
-                                drawerExpandDuration: widget.drawerExpandDuration,
-                              );
-                            },
-                          );
-                        }(),
+                        _Item(
+                          index: i,
+                          item: widget.itemBuilder(i),
+                          controller: _controller,
+                          drawerExpandDuration: widget.drawerExpandDuration,
+                        ),
                       ],
 
                     const Spacer(),
 
-                    if (widget.footerBuilder != null) () {
-                      final item = widget.footerBuilder!(footerFocusNode!);
-                      return DpadFocus(
-                        focusNode: footerFocusNode,
-                        onSelect: (_, _) {
-                          item.onSelect?.call();
-                          return KeyEventResult.handled;
-                        },
-                        onDown: (_, _) {
-                          itemsFocusNodes.last.requestFocus();
-                          return KeyEventResult.handled;
-                        },
-                        onRight: (_, _) {
-                          childFocusNode.requestFocus();
-                          return KeyEventResult.handled;
-                        },
-                        builder: (node) {
-                          return _TvNavigationDrawerItem(
-                            model: item,
-                            node: node,
-                            isDrawerExpanded: isExpanded,
-                            drawerExpandDuration: widget.drawerExpandDuration,
-                          );
-                        },
-                      );
-                    }(),
+                    if (widget.footerBuilder != null) _Footer(
+                      item: widget.footerBuilder!(),
+                      controller: _controller,
+                      drawerExpandDuration: widget.drawerExpandDuration,
+                    ),
                   ],
                 ),
               ),
@@ -245,9 +136,8 @@ final class TvNavigationDrawerState extends State<TvNavigationDrawer> {
               Expanded(
                 child: widget.builder(
                   context,
-                  _selectedIndex,
-                  childFocusNode,
-                  selectedItemFocusNode,
+                  _controller.entry,
+                  _controller.childFocusNode,
                 ),
               ),
             ],
@@ -258,8 +148,217 @@ final class TvNavigationDrawerState extends State<TvNavigationDrawer> {
   }
 }
 
-final class _TvNavigationDrawerItem extends StatelessWidget {
+final class _Header extends StatefulWidget {
+  const _Header({
+    required this.item,
+    required this.controller,
+    required this.drawerExpandDuration,
+  });
 
+  final TvNavigationItem item;
+  final TvNavigationDrawerController controller;
+  final Duration drawerExpandDuration;
+
+  @override
+  State<StatefulWidget> createState() => _HeaderState();
+}
+
+final class _HeaderState extends State<_Header> {
+
+  late final node = widget.controller.headerFocusNode;
+
+  @override
+  void initState() {
+    node.addListener(_focusListener);
+    super.initState();
+  }
+
+  void _focusListener() => setState(() {});
+
+  @override
+  void dispose() {
+    node.removeListener(_focusListener);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DpadFocus(
+      focusNode: node,
+      onSelect: (_, _) {
+        widget.controller.select(HeaderEntry());
+        widget.item.onSelect?.call();
+        return KeyEventResult.handled;
+      },
+      onDown: (_, _) {
+        widget.controller.itemsFocusNodes.first.requestFocus();
+        return KeyEventResult.handled;
+      },
+      onRight: (_, _) {
+        widget.controller.childFocusNode.requestFocus();
+        return KeyEventResult.handled;
+      },
+      builder: (node) {
+        return _TvNavigationDrawerItem(
+          model: widget.item,
+          node: node,
+          isSelected: widget.controller.entry == HeaderEntry(),
+          isDrawerExpanded: widget.controller.hasFocus,
+          drawerExpandDuration: widget.drawerExpandDuration,
+        );
+      },
+    );
+  }
+}
+
+final class _Item extends StatefulWidget {
+  const _Item({
+    required this.index,
+    required this.item,
+    required this.controller,
+    required this.drawerExpandDuration,
+  });
+
+  final int index;
+  final TvNavigationItem item;
+  final TvNavigationDrawerController controller;
+  final Duration drawerExpandDuration;
+
+  @override
+  State<StatefulWidget> createState() => _ItemState();
+}
+
+final class _ItemState extends State<_Item> {
+
+  late final node = widget.controller.itemsFocusNodes[widget.index];
+
+  @override
+  void initState() {
+    node.addListener(_focusListener);
+    super.initState();
+  }
+
+  void _focusListener() => setState(() {});
+
+  @override
+  void dispose() {
+    node.removeListener(_focusListener);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DpadFocus(
+      focusNode: node,
+      onSelect: (_, _) {
+        widget.controller.select(ItemEntry(index: widget.index));
+        widget.item.onSelect?.call();
+        return KeyEventResult.handled;
+      },
+      onUp: (_, _) {
+        switch (widget.index) {
+          case 0:
+            widget.controller.headerFocusNode.requestFocus();
+
+          default:
+            widget.controller.itemsFocusNodes[widget.index - 1].requestFocus();
+        }
+
+        return KeyEventResult.handled;
+      },
+      onDown: (_, _) {
+        if (widget.index == widget.controller.itemCount - 1) {
+          widget.controller.footerFocusNode.requestFocus();
+        } else {
+          widget.controller.itemsFocusNodes[widget.index + 1].requestFocus();
+        }
+
+        return KeyEventResult.handled;
+      },
+      onRight: (_, _) {
+        widget.controller.childFocusNode.requestFocus();
+        return KeyEventResult.handled;
+      },
+      builder: (node) {
+        final isSelected = widget.controller.entry ==
+            ItemEntry(index: widget.index);
+
+        return _TvNavigationDrawerItem(
+          model: widget.item,
+          node: node,
+          isSelected: isSelected,
+          isDrawerExpanded: widget.controller.hasFocus,
+          drawerExpandDuration: widget.drawerExpandDuration,
+        );
+      },
+    );
+  }
+}
+
+final class _Footer extends StatefulWidget {
+  const _Footer({
+    required this.item,
+    required this.controller,
+    required this.drawerExpandDuration,
+  });
+
+  final TvNavigationItem item;
+  final TvNavigationDrawerController controller;
+  final Duration drawerExpandDuration;
+
+  @override
+  State<StatefulWidget> createState() => _FooterState();
+}
+
+final class _FooterState extends State<_Footer> {
+
+  late final node = widget.controller.footerFocusNode;
+
+  @override
+  void initState() {
+    node.addListener(_focusListener);
+    super.initState();
+  }
+
+  void _focusListener() => setState(() {});
+
+  @override
+  void dispose() {
+    node.removeListener(_focusListener);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DpadFocus(
+      focusNode: node,
+      onSelect: (_, _) {
+        widget.item.onSelect?.call();
+        widget.controller.select(FooterEntry());
+        return KeyEventResult.handled;
+      },
+      onDown: (_, _) {
+        widget.controller.itemsFocusNodes.last.requestFocus();
+        return KeyEventResult.handled;
+      },
+      onRight: (_, _) {
+        widget.controller.childFocusNode.requestFocus();
+        return KeyEventResult.handled;
+      },
+      builder: (node) {
+        return _TvNavigationDrawerItem(
+          model: widget.item,
+          node: node,
+          isSelected: widget.controller.entry == FooterEntry(),
+          isDrawerExpanded: widget.controller.hasFocus,
+          drawerExpandDuration: widget.drawerExpandDuration,
+        );
+      },
+    );
+  }
+}
+
+final class _TvNavigationDrawerItem extends StatelessWidget {
   const _TvNavigationDrawerItem({
     required this.model,
     required this.node,
@@ -296,12 +395,7 @@ final class _TvNavigationDrawerItem extends StatelessWidget {
               builder: (context, constraints) {
                 return Padding(
                   padding: EdgeInsets.only(left: model.iconSpacing),
-                  child: model.builder(
-                    context,
-                    constraints,
-                    widgetState,
-                    isDrawerExpanded,
-                  ),
+                  child: model.builder(context, constraints, widgetState),
                 );
               },
             ),
