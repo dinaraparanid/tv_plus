@@ -115,7 +115,7 @@ final class _HeaderState extends State<_Header> {
     return DpadFocus(
       focusNode: node,
       onSelect: (_, _) {
-        widget.controller.select(HeaderEntry());
+        widget.controller.select(const HeaderEntry());
         widget.item.onSelect?.call();
         return KeyEventResult.handled;
       },
@@ -131,7 +131,7 @@ final class _HeaderState extends State<_Header> {
         return _TvNavigationDrawerItem(
           model: widget.item,
           node: node,
-          isSelected: widget.controller.entry == HeaderEntry(),
+          isSelected: widget.controller.entry == const HeaderEntry(),
           isDrawerExpanded: widget.controller.hasFocus,
           drawerExpandDuration: widget.drawerExpandDuration,
         );
@@ -263,7 +263,7 @@ final class _FooterState extends State<_Footer> {
       focusNode: node,
       onSelect: (_, _) {
         widget.item.onSelect?.call();
-        widget.controller.select(FooterEntry());
+        widget.controller.select(const FooterEntry());
         return KeyEventResult.handled;
       },
       onDown: (_, _) {
@@ -278,7 +278,7 @@ final class _FooterState extends State<_Footer> {
         return _TvNavigationDrawerItem(
           model: widget.item,
           node: node,
-          isSelected: widget.controller.entry == FooterEntry(),
+          isSelected: widget.controller.entry == const FooterEntry(),
           isDrawerExpanded: widget.controller.hasFocus,
           drawerExpandDuration: widget.drawerExpandDuration,
         );
