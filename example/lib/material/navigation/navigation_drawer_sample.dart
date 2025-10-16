@@ -59,7 +59,6 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
       separatorBuilder: (_) => SizedBox(height: 12),
       itemBuilder: (index) {
         return _buildItem(
-          node: controller.itemsFocusNodes[index],
           title: NavigationDrawerSample.items[index].$1,
           icon: NavigationDrawerSample.items[index].$2,
         );
@@ -174,7 +173,6 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
   }
 
   TvNavigationItem _buildItem({
-    required FocusNode node,
     required String title,
     required IconData icon,
   }) {
@@ -209,7 +207,6 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
 
   TvNavigationItem _buildFooter() {
     return _buildItem(
-      node: controller.footerFocusNode,
       title: 'Settings',
       icon: Icons.settings,
     );
