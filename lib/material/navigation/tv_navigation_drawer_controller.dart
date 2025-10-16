@@ -4,12 +4,12 @@ import 'selection_entry.dart';
 
 final class TvNavigationDrawerController extends ChangeNotifier {
   TvNavigationDrawerController({
-    required int initialSelectedIndex,
+    required SelectionEntry initialEntry,
     required this.itemCount,
     FocusNode? childNode,
   })
       : assert(itemCount > 0),
-        _entry = ItemEntry(index: initialSelectedIndex) {
+        _entry = initialEntry {
     childFocusNode = childNode ?? FocusNode();
     _ownsChildNode = childNode == null;
 

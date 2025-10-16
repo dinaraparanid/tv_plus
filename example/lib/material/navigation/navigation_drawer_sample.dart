@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tv_plus/material/navigation/tv_navigation_drawer_controller.dart';
+import 'package:tv_plus/material/navigation/selection_entry.dart';
 import 'package:tv_plus/tv_plus.dart';
 
 final class NavigationDrawerSample extends StatefulWidget {
@@ -20,9 +20,10 @@ final class NavigationDrawerSample extends StatefulWidget {
 final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
 
   static const _animationDuration = Duration(milliseconds: 300);
+  static const _initialEntry = ItemEntry(index: 0);
 
   final controller = TvNavigationDrawerController(
-    initialSelectedIndex: 0,
+    initialEntry: ItemEntry(index: 0),
     itemCount: NavigationDrawerSample.items.length,
   );
 
@@ -55,7 +56,7 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
           icon: NavigationDrawerSample.items[index].$2,
         );
       },
-      initialSelectedIndex: 0,
+      initialEntry: _initialEntry,
       builder: (context, entry, focusNode) {
         return Stack(
           children: [

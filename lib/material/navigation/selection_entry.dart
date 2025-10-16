@@ -1,10 +1,13 @@
 import 'package:flutter/widgets.dart';
 
 @immutable
-sealed class SelectionEntry {}
-
+sealed class SelectionEntry {
+  const SelectionEntry();
+}
 
 final class HeaderEntry extends SelectionEntry {
+  const HeaderEntry();
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -18,7 +21,7 @@ final class HeaderEntry extends SelectionEntry {
 }
 
 final class ItemEntry extends SelectionEntry {
-  ItemEntry({required this.index});
+  const ItemEntry({required this.index});
 
   final int index;
 
@@ -37,6 +40,8 @@ final class ItemEntry extends SelectionEntry {
 }
 
 final class FooterEntry extends SelectionEntry {
+  const FooterEntry();
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
