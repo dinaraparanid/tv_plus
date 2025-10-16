@@ -46,7 +46,7 @@ void main() {
         required Color expectedColor,
       }) {
         final focusFinder = find.byKey(key);
-        final focus = tester.firstWidget(focusFinder) as SampleDpadFocus;
+        final _ = tester.firstWidget(focusFinder) as SampleDpadFocus;
 
         final focusTextFinder = find.descendant(
           of: focusFinder,

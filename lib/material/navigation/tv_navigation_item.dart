@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 final class TvNavigationItem {
   const TvNavigationItem({
     required this.icon,
-    this.iconSize = 32,
+    this.iconColor,
     this.iconSpacing = 12,
     this.contentPadding = const EdgeInsets.symmetric(
       vertical: 12,
@@ -15,8 +15,8 @@ final class TvNavigationItem {
     required this.builder,
   });
 
-  final IconData icon;
-  final double iconSize;
+  final WidgetStateProperty<Icon> icon;
+  final Color? iconColor;
   final double iconSpacing;
   final EdgeInsets contentPadding;
   final WidgetStateProperty<BoxDecoration> decoration;

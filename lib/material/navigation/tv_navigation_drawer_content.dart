@@ -318,7 +318,7 @@ final class _TvNavigationDrawerItem extends StatelessWidget {
       decoration: model.decoration.resolve(widgetState),
       child: Row(
         children: [
-          Flexible(flex: 0, child: Icon(model.icon, size: model.iconSize)),
+          Flexible(flex: 0, child: model.icon.resolve(widgetState)),
           Expanded(
             child: LayoutBuilder(
               builder: (context, constraints) {

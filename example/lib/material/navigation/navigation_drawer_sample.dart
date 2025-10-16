@@ -5,6 +5,9 @@ import 'package:tv_plus/tv_plus.dart';
 final class NavigationDrawerSample extends StatefulWidget {
   const NavigationDrawerSample({super.key});
 
+  static const backgroundColor = Color(0xFF131314);
+  static const initialEntry = ItemEntry(index: 0);
+
   static const items = [
     ('Search', Icons.search),
     ('Home', Icons.home),
@@ -20,7 +23,6 @@ final class NavigationDrawerSample extends StatefulWidget {
 final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
 
   static const _animationDuration = Duration(milliseconds: 300);
-  static const _initialEntry = ItemEntry(index: 0);
 
   final controller = TvNavigationDrawerController(
     initialEntry: ItemEntry(index: 0),
@@ -35,11 +37,17 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
 
   @override
   Widget build(BuildContext context) {
-    return TvNavigationDrawer(
+    return TvModalNavigationDrawer(
       controller: controller,
+      backgroundColor: NavigationDrawerSample.backgroundColor,
       drawerExpandDuration: _animationDuration,
       drawerDecoration: BoxDecoration(
-        color: Color(0xFF444746),
+        gradient: LinearGradient(
+          colors: [
+            NavigationDrawerSample.backgroundColor,
+            Colors.transparent,
+          ]
+        ),
         borderRadius: BorderRadius.only(
           topRight: Radius.circular(12),
           bottomRight: Radius.circular(12),
@@ -56,7 +64,7 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
           icon: NavigationDrawerSample.items[index].$2,
         );
       },
-      initialEntry: _initialEntry,
+      initialEntry: NavigationDrawerSample.initialEntry,
       builder: (context, entry, focusNode) {
         return Stack(
           children: [
@@ -72,8 +80,8 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
                   return AnimatedContainer(
                     duration: _animationDuration,
                     color: node.hasFocus ? Colors.green : Colors.indigoAccent,
-                    width: 300,
-                    height: 300,
+                    width: 700,
+                    height: 500,
                     alignment: Alignment.center,
                     child: Text('$entry content'),
                   );
@@ -115,9 +123,18 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
     });
   }
 
+  Color _buildContentColor(Set<WidgetState> states) =>
+      states.contains(WidgetState.selected) ? Colors.black : Colors.white;
+
+  WidgetStateProperty<Icon> _buildIcon(IconData data) {
+    return WidgetStateProperty.resolveWith((states) {
+      return Icon(data, size: 32, color: _buildContentColor(states));
+    });
+  }
+
   TvNavigationItem _buildHeader() {
     return TvNavigationItem(
-      icon: Icons.account_circle,
+      icon: _buildIcon(Icons.account_circle),
       decoration: _buildDecoration(),
       builder: (_, constraints, states) {
         return ConstrainedBox(
@@ -135,7 +152,7 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 16,
-                    color: Colors.white,
+                    color: _buildContentColor(states),
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -145,7 +162,7 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 12,
-                    color: Colors.white,
+                    color: _buildContentColor(states),
                   ),
                 ),
               ],
@@ -162,7 +179,7 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
     required IconData icon,
   }) {
     return TvNavigationItem(
-      icon: icon,
+      icon: _buildIcon(icon),
       decoration: _buildDecoration(),
       builder: (_, constraints, states) {
         return ConstrainedBox(
@@ -178,7 +195,7 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 16,
-                    color: Colors.white,
+                    color: _buildContentColor(states),
                     fontWeight: FontWeight.w600,
                   ),
                 ),
