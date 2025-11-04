@@ -1,0 +1,1 @@
+enum TvNavigationDrawerMode { standard, modal }

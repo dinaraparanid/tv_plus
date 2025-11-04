@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 @immutable
 final class TvNavigationItem {
   const TvNavigationItem({
+    required this.key,
     required this.icon,
     this.iconColor,
     this.iconSpacing = 12,
@@ -15,6 +16,7 @@ final class TvNavigationItem {
     required this.builder,
   });
 
+  final Key key;
   final WidgetStateProperty<Icon> icon;
   final Color? iconColor;
   final double iconSpacing;

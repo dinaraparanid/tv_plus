@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../../dpad/dpad.dart';
+import '../../foundation/foundation.dart';
 import 'selection_entry.dart';
 import 'tv_navigation_drawer_controller.dart';
 import 'tv_navigation_item.dart';
 
-final class TvNavigationDrawerContent extends StatelessWidget {
+final class TvNavigationDrawerContent extends StatefulWidget {
   const TvNavigationDrawerContent({
     super.key,
     required this.controller,
@@ -15,8 +15,7 @@ final class TvNavigationDrawerContent extends StatelessWidget {
     required this.constraints,
     required this.drawerPadding,
     required this.drawerExpandDuration,
-    required this.itemCount,
-    required this.itemBuilder,
+    required this.menuItems,
     required this.separatorBuilder,
   });
 
@@ -27,49 +26,77 @@ final class TvNavigationDrawerContent extends StatelessWidget {
   final BoxConstraints constraints;
   final EdgeInsets drawerPadding;
   final Duration drawerExpandDuration;
-  final int itemCount;
-  final TvNavigationItem Function(int index) itemBuilder;
+  final List<TvNavigationItem> menuItems;
   final Widget Function(int index)? separatorBuilder;
+
+  @override
+  State<StatefulWidget> createState() => _TvNavigationDrawerContentState();
+}
+
+final class _TvNavigationDrawerContentState
+    extends State<TvNavigationDrawerContent> {
+
+  @override
+  void initState() {
+    _attachItemsFocusNodes();
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant TvNavigationDrawerContent oldWidget) {
+    if (oldWidget.menuItems != widget.menuItems) {
+      _attachItemsFocusNodes();
+    }
+
+    super.didUpdateWidget(oldWidget);
+  }
+
+  void _attachItemsFocusNodes() {
+    widget.controller.attachItemsFocusNodes(
+      widget.menuItems.map((child) => child.key).toList(),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
-      duration: drawerExpandDuration,
-      constraints: constraints.copyWith(
-        maxWidth: controller.hasFocus ? null : constraints.minWidth,
+      duration: widget.drawerExpandDuration,
+      constraints: widget.constraints.copyWith(
+        maxWidth: widget.controller.hasFocus
+            ? null : widget.constraints.minWidth,
       ),
-      decoration: drawerDecoration,
-      padding: drawerPadding,
+      decoration: widget.drawerDecoration,
+      padding: widget.drawerPadding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (headerBuilder != null) _Header(
-            item: headerBuilder!(),
-            controller: controller,
-            drawerExpandDuration: drawerExpandDuration,
+          if (widget.headerBuilder != null) _Header(
+            item: widget.headerBuilder!(),
+            controller: widget.controller,
+            drawerExpandDuration: widget.drawerExpandDuration,
           ),
 
           const Spacer(),
 
-          for (var i = 0; i < itemCount; ++i)
+          for (final (index, child) in widget.menuItems.indexed)
             ...[
-              if (i != 0)
-                ?separatorBuilder?.call(i),
+              if (index != 0)
+                ?widget.separatorBuilder?.call(index),
 
               _Item(
-                index: i,
-                item: itemBuilder(i),
-                controller: controller,
-                drawerExpandDuration: drawerExpandDuration,
+                index: index,
+                item: child,
+                controller: widget.controller,
+                drawerExpandDuration: widget.drawerExpandDuration,
               ),
             ],
 
           const Spacer(),
 
-          if (footerBuilder != null) _Footer(
-            item: footerBuilder!(),
-            controller: controller,
-            drawerExpandDuration: drawerExpandDuration,
+          if (widget.footerBuilder != null) _Footer(
+            item: widget.footerBuilder!(),
+            controller: widget.controller,
+            drawerExpandDuration: widget.drawerExpandDuration,
           ),
         ],
       ),
@@ -113,6 +140,7 @@ final class _HeaderState extends State<_Header> {
   @override
   Widget build(BuildContext context) {
     return DpadFocus(
+      key: widget.key,
       focusNode: node,
       onSelect: (_, _) {
         widget.controller.select(const HeaderEntry());
@@ -120,7 +148,7 @@ final class _HeaderState extends State<_Header> {
         return KeyEventResult.handled;
       },
       onDown: (_, _) {
-        widget.controller.itemsFocusNodes.first.requestFocus();
+        widget.controller.getItemFocusNodeAt(0)!.requestFocus();
         return KeyEventResult.handled;
       },
       onRight: (_, _) {
@@ -159,11 +187,14 @@ final class _Item extends StatefulWidget {
 
 final class _ItemState extends State<_Item> {
 
-  late final node = widget.controller.itemsFocusNodes[widget.index];
+  late final FocusNode node;
 
   @override
   void initState() {
-    node.addListener(_focusListener);
+    node = widget.controller
+      .getItemFocusNodeAt(widget.index)!
+      ..addListener(_focusListener);
+
     super.initState();
   }
 
@@ -177,10 +208,13 @@ final class _ItemState extends State<_Item> {
 
   @override
   Widget build(BuildContext context) {
+    final entryKey = widget.item.key;
+
     return DpadFocus(
+      key: entryKey,
       focusNode: node,
       onSelect: (_, _) {
-        widget.controller.select(ItemEntry(index: widget.index));
+        widget.controller.select(ItemEntry(key: entryKey));
         widget.item.onSelect?.call();
         return KeyEventResult.handled;
       },
@@ -190,7 +224,9 @@ final class _ItemState extends State<_Item> {
             widget.controller.headerFocusNode.requestFocus();
 
           default:
-            widget.controller.itemsFocusNodes[widget.index - 1].requestFocus();
+            widget.controller
+                .getItemFocusNodeAt(widget.index - 1)!
+                .requestFocus();
         }
 
         return KeyEventResult.handled;
@@ -199,7 +235,9 @@ final class _ItemState extends State<_Item> {
         if (widget.index == widget.controller.itemCount - 1) {
           widget.controller.footerFocusNode.requestFocus();
         } else {
-          widget.controller.itemsFocusNodes[widget.index + 1].requestFocus();
+          widget.controller
+              .getItemFocusNodeAt(widget.index + 1)!
+              .requestFocus();
         }
 
         return KeyEventResult.handled;
@@ -209,8 +247,7 @@ final class _ItemState extends State<_Item> {
         return KeyEventResult.handled;
       },
       builder: (node) {
-        final isSelected = widget.controller.entry ==
-            ItemEntry(index: widget.index);
+        final isSelected = widget.controller.entry == ItemEntry(key: entryKey);
 
         return _TvNavigationDrawerItem(
           model: widget.item,
@@ -260,14 +297,18 @@ final class _FooterState extends State<_Footer> {
   @override
   Widget build(BuildContext context) {
     return DpadFocus(
+      key: widget.key,
       focusNode: node,
       onSelect: (_, _) {
         widget.item.onSelect?.call();
         widget.controller.select(const FooterEntry());
         return KeyEventResult.handled;
       },
-      onDown: (_, _) {
-        widget.controller.itemsFocusNodes.last.requestFocus();
+      onUp: (_, _) {
+        widget.controller
+            .getItemFocusNodeAt(widget.controller.itemCount - 1)!
+            .requestFocus();
+
         return KeyEventResult.handled;
       },
       onRight: (_, _) {

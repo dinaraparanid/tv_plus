@@ -5,25 +5,14 @@ import 'selection_entry.dart';
 final class TvNavigationDrawerController extends ChangeNotifier {
   TvNavigationDrawerController({
     required SelectionEntry initialEntry,
-    required this.itemCount,
     FocusNode? childNode,
-  })
-      : assert(itemCount > 0),
-        _entry = initialEntry {
+  }) : _entry = initialEntry, _itemsKeys = [], _itemsFocusNodes = {} {
     childFocusNode = childNode ?? FocusNode();
     _ownsChildNode = childNode == null;
 
     headerFocusNode = FocusNode();
     footerFocusNode = FocusNode();
-    itemsFocusNodes = List.generate(itemCount, (_) => FocusNode());
-    _focusNodes = [headerFocusNode, footerFocusNode, ...itemsFocusNodes];
-
-    _focusListenable = Listenable
-      .merge(_focusNodes)
-      ..addListener(_focusChangeListener);
   }
-
-  final int itemCount;
 
   SelectionEntry _entry;
   SelectionEntry get entry => _entry;
@@ -33,20 +22,24 @@ final class TvNavigationDrawerController extends ChangeNotifier {
 
   late final FocusNode headerFocusNode;
   late final FocusNode footerFocusNode;
-  late final List<FocusNode> itemsFocusNodes;
 
-  late final List<FocusNode> _focusNodes;
-  late final Listenable _focusListenable;
+  List<Key> _itemsKeys = [];
+  late final Map<Key, FocusNode> _itemsFocusNodes;
+
+  List<FocusNode> _focusNodes = [];
+  Listenable? _focusListenable;
 
   bool _hasFocus = false;
 
   /// = isExpanded
   bool get hasFocus => _hasFocus;
 
+  int get itemCount => _itemsKeys.length;
+
   FocusNode get selectedNode {
     return switch (entry) {
       HeaderEntry() => headerFocusNode,
-      ItemEntry(index: final index) => itemsFocusNodes[index],
+      ItemEntry(key: final key) => _itemsFocusNodes[key]!,
       FooterEntry() => footerFocusNode,
     };
   }
@@ -62,6 +55,43 @@ final class TvNavigationDrawerController extends ChangeNotifier {
     }
   }
 
+  FocusNode? getItemFocusNodeAt(int index) =>
+      _itemsFocusNodes[_itemsKeys[index]];
+
+  FocusNode? getItemFocusNodeByKey(Key key) => _itemsFocusNodes[key];
+
+  void attachItemsFocusNodes(List<Key> keys) {
+    _itemsKeys = keys;
+
+    final presentKeys = _itemsKeys.toSet();
+
+    for (final key in _itemsKeys) {
+      _itemsFocusNodes.update(
+        key,
+        (focusNode) => focusNode,
+        ifAbsent: () => FocusNode(),
+      );
+    }
+
+    _itemsFocusNodes
+        .keys
+        .where((key) => !presentKeys.contains(key))
+        .toList()
+        .forEach((key) => _itemsFocusNodes.remove(key)?.dispose());
+
+    _focusNodes = [
+      headerFocusNode,
+      footerFocusNode,
+      ..._itemsFocusNodes.values,
+    ];
+
+    _focusListenable?.removeListener(_focusChangeListener);
+
+    _focusListenable = Listenable
+        .merge(_focusNodes)
+        ..addListener(_focusChangeListener);
+  }
+
   void select(SelectionEntry entry) {
     _entry = entry;
     notifyListeners();
@@ -69,7 +99,7 @@ final class TvNavigationDrawerController extends ChangeNotifier {
 
   @override
   void dispose() {
-    _focusListenable.removeListener(_focusChangeListener);
+    _focusListenable?.removeListener(_focusChangeListener);
 
     if (_ownsChildNode) {
       childFocusNode.dispose();
@@ -78,8 +108,8 @@ final class TvNavigationDrawerController extends ChangeNotifier {
     headerFocusNode.dispose();
     footerFocusNode.dispose();
 
-    for (final it in itemsFocusNodes) {
-      it.dispose();
+    for (final itemFocusNode in _itemsFocusNodes.values) {
+      itemFocusNode.dispose();
     }
 
     super.dispose();

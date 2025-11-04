@@ -6,7 +6,6 @@ final class NavigationDrawerSample extends StatefulWidget {
   const NavigationDrawerSample({super.key});
 
   static const backgroundColor = Color(0xFF131314);
-  static const initialEntry = ItemEntry(index: 0);
 
   static const items = [
     ('Search', Icons.search),
@@ -24,23 +23,40 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
 
   static const _animationDuration = Duration(milliseconds: 300);
 
+  var items = NavigationDrawerSample.items.toList();
+
+  // late final Timer timer;
+
   final controller = TvNavigationDrawerController(
-    initialEntry: ItemEntry(index: 0),
-    itemCount: NavigationDrawerSample.items.length,
+    initialEntry: ItemEntry(key: ValueKey(NavigationDrawerSample.items[0].$1)),
   );
 
   @override
+  void initState() {
+    // Testing
+    // timer = Timer.periodic(Duration(seconds: 3), (_) {
+    //   if (items.length > 1) {
+    //     setState(() => items.removeLast());
+    //   }
+    // });
+
+    super.initState();
+  }
+
+  @override
   void dispose() {
+    // timer.cancel();
     controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return TvModalNavigationDrawer(
+    return TvNavigationDrawer(
       controller: controller,
       backgroundColor: NavigationDrawerSample.backgroundColor,
       drawerExpandDuration: _animationDuration,
+      mode: TvNavigationDrawerMode.modal,
       drawerDecoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -55,15 +71,10 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
       ),
       headerBuilder: _buildHeader,
       footerBuilder: _buildFooter,
-      itemCount: 5,
       separatorBuilder: (_) => SizedBox(height: 12),
-      itemBuilder: (index) {
-        return _buildItem(
-          title: NavigationDrawerSample.items[index].$1,
-          icon: NavigationDrawerSample.items[index].$2,
-        );
-      },
-      initialEntry: NavigationDrawerSample.initialEntry,
+      menuItems: items.map((item) {
+        return _buildItem(title: item.$1, icon: item.$2);
+      }).toList(),
       builder: (context, entry, focusNode) {
         return Stack(
           children: [
@@ -133,6 +144,7 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
 
   TvNavigationItem _buildHeader() {
     return TvNavigationItem(
+      key: UniqueKey(),
       icon: _buildIcon(Icons.account_circle),
       decoration: _buildDecoration(),
       builder: (_, constraints, states) {
@@ -177,6 +189,7 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
     required IconData icon,
   }) {
     return TvNavigationItem(
+      key: ValueKey(title),
       icon: _buildIcon(icon),
       decoration: _buildDecoration(),
       builder: (_, constraints, states) {

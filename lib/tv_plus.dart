@@ -1,2 +1,2 @@
-export 'dpad/dpad.dart';
+export 'foundation/foundation.dart';
 export 'material/material.dart';

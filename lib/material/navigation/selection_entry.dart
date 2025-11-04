@@ -21,22 +21,24 @@ final class HeaderEntry extends SelectionEntry {
 }
 
 final class ItemEntry extends SelectionEntry {
-  const ItemEntry({required this.index});
+  const ItemEntry({required this.key});
 
-  final int index;
+  final Key key;
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is ItemEntry &&
           runtimeType == other.runtimeType &&
-          index == other.index;
+          key == other.key;
 
   @override
-  int get hashCode => index.hashCode;
+  int get hashCode => key.hashCode;
 
   @override
-  String toString() => 'ItemEntry{index: $index}';
+  String toString() {
+    return 'ItemEntry{key: $key}';
+  }
 }
 
 final class FooterEntry extends SelectionEntry {
