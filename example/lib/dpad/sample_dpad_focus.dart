@@ -81,7 +81,11 @@ final class _SampleDpadFocusState extends State<SampleDpadFocus> {
   @override
   void dispose() {
     _focusNode.removeListener(onFocusChange);
-    if (ownsFocusNode) _focusNode.dispose();
+
+    if (ownsFocusNode) {
+      _focusNode.dispose();
+    }
+
     super.dispose();
   }
 

@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../foundation/foundation.dart';
-import 'selection_entry.dart';
-import 'tv_navigation_drawer_controller.dart';
-import 'tv_navigation_item.dart';
 
 final class TvNavigationDrawerContent extends StatefulWidget {
   const TvNavigationDrawerContent({
@@ -19,7 +16,7 @@ final class TvNavigationDrawerContent extends StatefulWidget {
     required this.separatorBuilder,
   });
 
-  final TvNavigationDrawerController controller;
+  final TvNavigationController controller;
   final TvNavigationItem Function()? headerBuilder;
   final TvNavigationItem Function()? footerBuilder;
   final BoxDecoration? drawerDecoration;
@@ -35,7 +32,6 @@ final class TvNavigationDrawerContent extends StatefulWidget {
 
 final class _TvNavigationDrawerContentState
     extends State<TvNavigationDrawerContent> {
-
   @override
   void initState() {
     _attachItemsFocusNodes();
@@ -63,41 +59,42 @@ final class _TvNavigationDrawerContentState
       duration: widget.drawerExpandDuration,
       constraints: widget.constraints.copyWith(
         maxWidth: widget.controller.hasFocus
-            ? null : widget.constraints.minWidth,
+            ? null
+            : widget.constraints.minWidth,
       ),
       decoration: widget.drawerDecoration,
       padding: widget.drawerPadding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (widget.headerBuilder != null) _Header(
-            item: widget.headerBuilder!(),
-            controller: widget.controller,
-            drawerExpandDuration: widget.drawerExpandDuration,
-          ),
+          if (widget.headerBuilder != null)
+            _Header(
+              item: widget.headerBuilder!(),
+              controller: widget.controller,
+              drawerExpandDuration: widget.drawerExpandDuration,
+            ),
 
           const Spacer(),
 
-          for (final (index, child) in widget.menuItems.indexed)
-            ...[
-              if (index != 0)
-                ?widget.separatorBuilder?.call(index),
+          for (final (index, child) in widget.menuItems.indexed) ...[
+            if (index != 0) ?widget.separatorBuilder?.call(index),
 
-              _Item(
-                index: index,
-                item: child,
-                controller: widget.controller,
-                drawerExpandDuration: widget.drawerExpandDuration,
-              ),
-            ],
+            _Item(
+              index: index,
+              item: child,
+              controller: widget.controller,
+              drawerExpandDuration: widget.drawerExpandDuration,
+            ),
+          ],
 
           const Spacer(),
 
-          if (widget.footerBuilder != null) _Footer(
-            item: widget.footerBuilder!(),
-            controller: widget.controller,
-            drawerExpandDuration: widget.drawerExpandDuration,
-          ),
+          if (widget.footerBuilder != null)
+            _Footer(
+              item: widget.footerBuilder!(),
+              controller: widget.controller,
+              drawerExpandDuration: widget.drawerExpandDuration,
+            ),
         ],
       ),
     );
@@ -112,7 +109,7 @@ final class _Header extends StatefulWidget {
   });
 
   final TvNavigationItem item;
-  final TvNavigationDrawerController controller;
+  final TvNavigationController controller;
   final Duration drawerExpandDuration;
 
   @override
@@ -120,7 +117,6 @@ final class _Header extends StatefulWidget {
 }
 
 final class _HeaderState extends State<_Header> {
-
   late final node = widget.controller.headerFocusNode;
 
   @override
@@ -178,7 +174,7 @@ final class _Item extends StatefulWidget {
 
   final int index;
   final TvNavigationItem item;
-  final TvNavigationDrawerController controller;
+  final TvNavigationController controller;
   final Duration drawerExpandDuration;
 
   @override
@@ -186,13 +182,11 @@ final class _Item extends StatefulWidget {
 }
 
 final class _ItemState extends State<_Item> {
-
   late final FocusNode node;
 
   @override
   void initState() {
-    node = widget.controller
-      .getItemFocusNodeAt(widget.index)!
+    node = widget.controller.getItemFocusNodeAt(widget.index)!
       ..addListener(_focusListener);
 
     super.initState();
@@ -269,7 +263,7 @@ final class _Footer extends StatefulWidget {
   });
 
   final TvNavigationItem item;
-  final TvNavigationDrawerController controller;
+  final TvNavigationController controller;
   final Duration drawerExpandDuration;
 
   @override
@@ -277,7 +271,6 @@ final class _Footer extends StatefulWidget {
 }
 
 final class _FooterState extends State<_Footer> {
-
   late final node = widget.controller.footerFocusNode;
 
   @override
@@ -346,11 +339,11 @@ final class _TvNavigationDrawerItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Set<WidgetState> focusedState = node.hasFocus
-        ? { WidgetState.focused }
+        ? {WidgetState.focused}
         : {};
 
     final widgetState = isSelected
-        ? { WidgetState.selected, ...focusedState }
+        ? {WidgetState.selected, ...focusedState}
         : focusedState;
 
     return AnimatedContainer(

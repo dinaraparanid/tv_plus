@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../material.dart';
-import 'selection_entry.dart';
+import '../../foundation/foundation.dart';
 import 'tv_navigation_drawer_content.dart';
 import 'tv_navigation_drawer_mode.dart';
 
@@ -17,7 +16,7 @@ final class TvNavigationDrawer extends StatefulWidget {
     this.constraints = const BoxConstraints(minWidth: 90, maxWidth: 280),
     this.drawerPadding = const EdgeInsets.all(12),
     this.drawerExpandDuration = const Duration(milliseconds: 300),
-    this.alignment = TvNavigationDrawerAlignment.start,
+    this.alignment = TvNavigationAlignment.start,
     this.mode = TvNavigationDrawerMode.standard,
     this.initialEntry,
     required this.menuItems,
@@ -25,7 +24,7 @@ final class TvNavigationDrawer extends StatefulWidget {
     required this.builder,
   }) : assert(menuItems.length > 0);
 
-  final TvNavigationDrawerController controller;
+  final TvNavigationController controller;
   final FocusNode? childNode;
   final TvNavigationItem Function()? headerBuilder;
   final TvNavigationItem Function()? footerBuilder;
@@ -34,23 +33,23 @@ final class TvNavigationDrawer extends StatefulWidget {
   final BoxConstraints constraints;
   final EdgeInsets drawerPadding;
   final Duration drawerExpandDuration;
-  final TvNavigationDrawerAlignment alignment;
+  final TvNavigationAlignment alignment;
   final TvNavigationDrawerMode mode;
-  final SelectionEntry? initialEntry;
+  final TvSelectionEntry? initialEntry;
   final List<TvNavigationItem> menuItems;
   final Widget Function(int index)? separatorBuilder;
   final Widget Function(
     BuildContext context,
-    SelectionEntry? entry,
+    TvSelectionEntry? entry,
     FocusNode childFocusNode,
-  ) builder;
+  )
+  builder;
 
   @override
   State<StatefulWidget> createState() => _TvNavigationDrawerState();
 }
 
 final class _TvNavigationDrawerState extends State<TvNavigationDrawer> {
-
   @override
   void initState() {
     widget.controller.addListener(_controllerListener);
@@ -84,8 +83,7 @@ final class _TvNavigationDrawerState extends State<TvNavigationDrawer> {
   Widget _buildStandard() {
     return Row(
       children: [
-        if (widget.alignment == TvNavigationDrawerAlignment.start)
-          _buildContent(),
+        if (widget.alignment == TvNavigationAlignment.start) _buildContent(),
 
         Expanded(
           child: widget.builder(
@@ -95,15 +93,14 @@ final class _TvNavigationDrawerState extends State<TvNavigationDrawer> {
           ),
         ),
 
-        if (widget.alignment == TvNavigationDrawerAlignment.end)
-          _buildContent(),
+        if (widget.alignment == TvNavigationAlignment.end) _buildContent(),
       ],
     );
   }
 
   Widget _buildModal() {
     return switch (widget.alignment) {
-      TvNavigationDrawerAlignment.start => Stack(
+      TvNavigationAlignment.start => Stack(
         children: [
           Positioned.fill(
             left: widget.constraints.minWidth,
@@ -114,14 +111,11 @@ final class _TvNavigationDrawerState extends State<TvNavigationDrawer> {
             ),
           ),
 
-          Align(
-            alignment: Alignment.centerLeft,
-            child: _buildContent(),
-          ),
+          Align(alignment: Alignment.centerLeft, child: _buildContent()),
         ],
       ),
 
-      TvNavigationDrawerAlignment.end => Stack(
+      TvNavigationAlignment.end => Stack(
         children: [
           Positioned.fill(
             right: widget.constraints.minWidth,
@@ -132,10 +126,7 @@ final class _TvNavigationDrawerState extends State<TvNavigationDrawer> {
             ),
           ),
 
-          Align(
-            alignment: Alignment.centerRight,
-            child: _buildContent(),
-          ),
+          Align(alignment: Alignment.centerRight, child: _buildContent()),
         ],
       ),
     };

@@ -30,7 +30,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           builder: (context, _) {
-            return Scaffold(
+            return const Scaffold(
               backgroundColor: Colors.black,
               body: DpadNavigationSample(isReverseTimerEnabled: false),
             );
@@ -77,7 +77,7 @@ void main() {
       void testAllWidgets(List<SampleDpadData> widgetsData) {
         expect(widgetsData.length, 11);
 
-        for (var data in widgetsData) {
+        for (final data in widgetsData) {
           testDpadFocus(
             key: data.key,
             expectedText: data.text,
@@ -151,7 +151,9 @@ void main() {
       // ( F - reverse buttons )
       await sendDpadEvent(LogicalKeyboardKey.arrowDown);
       await sendDpadEvent(LogicalKeyboardKey.arrowDown);
-      testAllWidgets(_buildSampleDataList(isOddEnabled: true, focusedIndex: 10));
+      testAllWidgets(
+        _buildSampleDataList(isOddEnabled: true, focusedIndex: 10),
+      );
 
       // ( only from center )
       //
@@ -161,7 +163,9 @@ void main() {
       //
       // ( F - reverse buttons )
       await sendDpadEvent(LogicalKeyboardKey.select);
-      testAllWidgets(_buildSampleDataList(isOddEnabled: false, focusedIndex: 10));
+      testAllWidgets(
+        _buildSampleDataList(isOddEnabled: false, focusedIndex: 10),
+      );
 
       // ( only from center )
       //
@@ -171,7 +175,9 @@ void main() {
       //
       // ( reverse buttons )
       await sendDpadEvent(LogicalKeyboardKey.arrowUp);
-      testAllWidgets(_buildSampleDataList(isOddEnabled: false, focusedIndex: 8));
+      testAllWidgets(
+        _buildSampleDataList(isOddEnabled: false, focusedIndex: 8),
+      );
 
       // ( only from center )
       //
@@ -181,7 +187,9 @@ void main() {
       //
       // ( reverse buttons )
       await sendDpadEvent(LogicalKeyboardKey.arrowUp);
-      testAllWidgets(_buildSampleDataList(isOddEnabled: false, focusedIndex: 2));
+      testAllWidgets(
+        _buildSampleDataList(isOddEnabled: false, focusedIndex: 2),
+      );
 
       // ( only from center )
       //
@@ -191,7 +199,9 @@ void main() {
       //
       // ( reverse buttons )
       await sendDpadEvent(LogicalKeyboardKey.arrowUp); // nothing must change
-      testAllWidgets(_buildSampleDataList(isOddEnabled: false, focusedIndex: 2));
+      testAllWidgets(
+        _buildSampleDataList(isOddEnabled: false, focusedIndex: 2),
+      );
 
       // ( only from center )
       //
@@ -202,7 +212,9 @@ void main() {
       // ( F - reverse buttons )
       await sendDpadEvent(LogicalKeyboardKey.arrowDown);
       await sendDpadEvent(LogicalKeyboardKey.arrowDown);
-      testAllWidgets(_buildSampleDataList(isOddEnabled: false, focusedIndex: 10));
+      testAllWidgets(
+        _buildSampleDataList(isOddEnabled: false, focusedIndex: 10),
+      );
 
       // ( only from center )
       //
@@ -242,18 +254,23 @@ List<SampleDpadData> _buildSampleDataList({
   required int focusedIndex,
 }) {
   String gridCellText(int index) {
-    if (index == 0) return 'Focusable only from center (fn5)';
-    if (index == 10) return 'Reverse grid';
+    if (index == 0) {
+      return 'Focusable only from center (fn5)';
+    }
+
+    if (index == 10) {
+      return 'Reverse grid';
+    }
 
     if (index == focusedIndex) {
       return SampleDpadFocus.textFocused;
     }
 
-    if (isOddEnabled && index % 2 == 1) {
+    if (isOddEnabled && index.isOdd) {
       return SampleDpadFocus.textEnabled;
     }
 
-    if (!isOddEnabled && index % 2 == 0) {
+    if (!isOddEnabled && index.isEven) {
       return SampleDpadFocus.textEnabled;
     }
 
@@ -271,11 +288,11 @@ List<SampleDpadData> _buildSampleDataList({
       return SampleDpadFocus.colorFocused;
     }
 
-    if (isOddEnabled && index % 2 == 1) {
+    if (isOddEnabled && index.isOdd) {
       return SampleDpadFocus.colorEnabled;
     }
 
-    if (!isOddEnabled && index % 2 == 0) {
+    if (!isOddEnabled && index.isEven) {
       return SampleDpadFocus.colorEnabled;
     }
 
@@ -283,26 +300,26 @@ List<SampleDpadData> _buildSampleDataList({
   }
 
   bool gridCellCanRequestFocus(int index) {
-    if (index == 0 || index == 10) return true;
+    if (index == 0 || index == 10) {
+      return true;
+    }
 
-    return (isOddEnabled && index % 2 == 1) ||
-        (!isOddEnabled && index % 2 == 0);
+    return (isOddEnabled && index.isOdd) || (!isOddEnabled && index.isEven);
   }
 
   return [
-    DpadNavigationSample.keyOnlyFromCenterButton,
-    DpadNavigationSample.keyF1,
-    DpadNavigationSample.keyF2,
-    DpadNavigationSample.keyF3,
-    DpadNavigationSample.keyF4,
-    DpadNavigationSample.keyF5,
-    DpadNavigationSample.keyF6,
-    DpadNavigationSample.keyF7,
-    DpadNavigationSample.keyF8,
-    DpadNavigationSample.keyF9,
-    DpadNavigationSample.keyReverseButton,
-  ]
-      .indexed
+        DpadNavigationSample.keyOnlyFromCenterButton,
+        DpadNavigationSample.keyF1,
+        DpadNavigationSample.keyF2,
+        DpadNavigationSample.keyF3,
+        DpadNavigationSample.keyF4,
+        DpadNavigationSample.keyF5,
+        DpadNavigationSample.keyF6,
+        DpadNavigationSample.keyF7,
+        DpadNavigationSample.keyF8,
+        DpadNavigationSample.keyF9,
+        DpadNavigationSample.keyReverseButton,
+      ].indexed
       .map((indexWithKey) {
         return SampleDpadData(
           key: indexWithKey.$2,

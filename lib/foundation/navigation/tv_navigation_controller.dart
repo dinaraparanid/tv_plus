@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
-import 'selection_entry.dart';
+import 'tv_selection_entry.dart';
 
-final class TvNavigationDrawerController extends ChangeNotifier {
-  TvNavigationDrawerController({
-    required SelectionEntry initialEntry,
+final class TvNavigationController extends ChangeNotifier {
+  TvNavigationController({
+    required TvSelectionEntry initialEntry,
     FocusNode? childNode,
   }) : _entry = initialEntry, _itemsKeys = [], _itemsFocusNodes = {} {
     childFocusNode = childNode ?? FocusNode();
@@ -14,8 +14,8 @@ final class TvNavigationDrawerController extends ChangeNotifier {
     footerFocusNode = FocusNode();
   }
 
-  SelectionEntry _entry;
-  SelectionEntry get entry => _entry;
+  TvSelectionEntry _entry;
+  TvSelectionEntry get entry => _entry;
 
   late final FocusNode childFocusNode;
   bool _ownsChildNode = false;
@@ -92,7 +92,7 @@ final class TvNavigationDrawerController extends ChangeNotifier {
         ..addListener(_focusChangeListener);
   }
 
-  void select(SelectionEntry entry) {
+  void select(TvSelectionEntry entry) {
     _entry = entry;
     notifyListeners();
   }

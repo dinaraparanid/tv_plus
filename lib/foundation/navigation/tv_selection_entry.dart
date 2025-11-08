@@ -1,11 +1,11 @@
 import 'package:flutter/widgets.dart';
 
 @immutable
-sealed class SelectionEntry {
-  const SelectionEntry();
+sealed class TvSelectionEntry {
+  const TvSelectionEntry();
 }
 
-final class HeaderEntry extends SelectionEntry {
+final class HeaderEntry extends TvSelectionEntry {
   const HeaderEntry();
 
   @override
@@ -20,7 +20,7 @@ final class HeaderEntry extends SelectionEntry {
   String toString() => 'HeaderEntry';
 }
 
-final class ItemEntry extends SelectionEntry {
+final class ItemEntry extends TvSelectionEntry {
   const ItemEntry({required this.key});
 
   final Key key;
@@ -41,7 +41,7 @@ final class ItemEntry extends SelectionEntry {
   }
 }
 
-final class FooterEntry extends SelectionEntry {
+final class FooterEntry extends TvSelectionEntry {
   const FooterEntry();
 
   @override

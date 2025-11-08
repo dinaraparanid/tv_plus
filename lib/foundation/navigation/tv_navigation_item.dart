@@ -5,7 +5,6 @@ final class TvNavigationItem {
   const TvNavigationItem({
     required this.key,
     required this.icon,
-    this.iconColor,
     this.iconSpacing = 12,
     this.contentPadding = const EdgeInsets.symmetric(
       vertical: 12,
@@ -18,7 +17,6 @@ final class TvNavigationItem {
 
   final Key key;
   final WidgetStateProperty<Icon> icon;
-  final Color? iconColor;
   final double iconSpacing;
   final EdgeInsets contentPadding;
   final WidgetStateProperty<BoxDecoration> decoration;

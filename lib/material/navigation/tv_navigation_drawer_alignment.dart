@@ -1,1 +1,0 @@
-enum TvNavigationDrawerAlignment { start, end }

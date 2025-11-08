@@ -1,0 +1,1 @@
+enum TvNavigationAlignment { start, end }
