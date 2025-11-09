@@ -96,7 +96,7 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
                     focusNode: focusNode,
                     autofocus: true,
                     onLeft: (_, _) {
-                      controller.selectedNode.requestFocus();
+                      controller.mediatorFocusNode.requestFocus();
                       return KeyEventResult.handled;
                     },
                     builder: (node) {

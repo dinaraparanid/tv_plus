@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../foundation/foundation.dart';
-import 'tv_navigation_drawer_content.dart';
 import 'tv_navigation_drawer_mode.dart';
 
 final class TvNavigationDrawer extends StatefulWidget {
@@ -69,14 +68,10 @@ final class _TvNavigationDrawerState extends State<TvNavigationDrawer> {
     return Material(
       key: widget.key,
       color: widget.backgroundColor,
-      child: LayoutBuilder(
-        builder: (context, _) {
-          return switch (widget.mode) {
-            TvNavigationDrawerMode.standard => _buildStandard(),
-            TvNavigationDrawerMode.modal => _buildModal(),
-          };
-        },
-      ),
+      child: switch (widget.mode) {
+        TvNavigationDrawerMode.standard => _buildStandard(),
+        TvNavigationDrawerMode.modal => _buildModal(),
+      },
     );
   }
 
@@ -88,7 +83,7 @@ final class _TvNavigationDrawerState extends State<TvNavigationDrawer> {
         Expanded(
           child: widget.builder(
             context,
-            widget.controller.entry,
+            widget.controller.selectedEntry,
             widget.controller.childFocusNode,
           ),
         ),
@@ -106,7 +101,7 @@ final class _TvNavigationDrawerState extends State<TvNavigationDrawer> {
             left: widget.constraints.minWidth,
             child: widget.builder(
               context,
-              widget.controller.entry,
+              widget.controller.selectedEntry,
               widget.controller.childFocusNode,
             ),
           ),
@@ -121,7 +116,7 @@ final class _TvNavigationDrawerState extends State<TvNavigationDrawer> {
             right: widget.constraints.minWidth,
             child: widget.builder(
               context,
-              widget.controller.entry,
+              widget.controller.selectedEntry,
               widget.controller.childFocusNode,
             ),
           ),
@@ -133,16 +128,27 @@ final class _TvNavigationDrawerState extends State<TvNavigationDrawer> {
   }
 
   Widget _buildContent() {
-    return TvNavigationDrawerContent(
-      controller: widget.controller,
-      headerBuilder: widget.headerBuilder,
-      footerBuilder: widget.footerBuilder,
-      drawerDecoration: widget.drawerDecoration,
-      constraints: widget.constraints,
-      drawerPadding: widget.drawerPadding,
-      drawerExpandDuration: widget.drawerExpandDuration,
-      menuItems: widget.menuItems,
-      separatorBuilder: widget.separatorBuilder,
+    return DpadFocus(
+      focusNode: widget.controller.mediatorFocusNode,
+      onFocusChanged: (node) {
+        if (node.hasFocus) {
+          widget.controller.selectedFocusNode.requestFocus();
+        }
+      },
+      builder: (_) {
+        return TvNavigationContent(
+          controller: widget.controller,
+          headerBuilder: widget.headerBuilder,
+          footerBuilder: widget.footerBuilder,
+          drawerDecoration: widget.drawerDecoration,
+          constraints: widget.constraints,
+          drawerPadding: widget.drawerPadding,
+          animateDrawerExpansion: true,
+          drawerAnimationsDuration: widget.drawerExpandDuration,
+          menuItems: widget.menuItems,
+          separatorBuilder: widget.separatorBuilder,
+        );
+      },
     );
   }
 }

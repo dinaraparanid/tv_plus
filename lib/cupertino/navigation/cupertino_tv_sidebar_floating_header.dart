@@ -9,6 +9,7 @@ final class CupertinoTvSidebarFloatingHeader extends StatelessWidget {
   const CupertinoTvSidebarFloatingHeader({
     super.key,
     required this.selectedItem,
+    required this.controller,
   });
 
   static const _backgroundLight = Color(0x29FFFFFF);
@@ -21,6 +22,7 @@ final class CupertinoTvSidebarFloatingHeader extends StatelessWidget {
   static const _blurSigma = 135.91;
 
   final TvNavigationItem selectedItem;
+  final TvNavigationController controller;
 
   @override
   Widget build(BuildContext context) {

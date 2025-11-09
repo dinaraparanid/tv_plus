@@ -6,22 +6,26 @@ final class TvNavigationController extends ChangeNotifier {
   TvNavigationController({
     required TvSelectionEntry initialEntry,
     FocusNode? childNode,
-  }) : _entry = initialEntry, _itemsKeys = [], _itemsFocusNodes = {} {
+  }) : _entry = initialEntry,
+       _itemsKeys = [],
+       _itemsFocusNodes = {} {
     childFocusNode = childNode ?? FocusNode();
     _ownsChildNode = childNode == null;
 
     headerFocusNode = FocusNode();
     footerFocusNode = FocusNode();
+    mediatorFocusNode = FocusNode();
   }
 
   TvSelectionEntry _entry;
-  TvSelectionEntry get entry => _entry;
+  TvSelectionEntry get selectedEntry => _entry;
 
   late final FocusNode childFocusNode;
   bool _ownsChildNode = false;
 
   late final FocusNode headerFocusNode;
   late final FocusNode footerFocusNode;
+  late final FocusNode mediatorFocusNode;
 
   List<Key> _itemsKeys = [];
   late final Map<Key, FocusNode> _itemsFocusNodes;
@@ -36,8 +40,8 @@ final class TvNavigationController extends ChangeNotifier {
 
   int get itemCount => _itemsKeys.length;
 
-  FocusNode get selectedNode {
-    return switch (entry) {
+  FocusNode get selectedFocusNode {
+    return switch (selectedEntry) {
       HeaderEntry() => headerFocusNode,
       ItemEntry(key: final key) => _itemsFocusNodes[key]!,
       FooterEntry() => footerFocusNode,
@@ -73,8 +77,7 @@ final class TvNavigationController extends ChangeNotifier {
       );
     }
 
-    _itemsFocusNodes
-        .keys
+    _itemsFocusNodes.keys
         .where((key) => !presentKeys.contains(key))
         .toList()
         .forEach((key) => _itemsFocusNodes.remove(key)?.dispose());
@@ -82,14 +85,14 @@ final class TvNavigationController extends ChangeNotifier {
     _focusNodes = [
       headerFocusNode,
       footerFocusNode,
+      mediatorFocusNode,
       ..._itemsFocusNodes.values,
     ];
 
     _focusListenable?.removeListener(_focusChangeListener);
 
-    _focusListenable = Listenable
-        .merge(_focusNodes)
-        ..addListener(_focusChangeListener);
+    _focusListenable = Listenable.merge(_focusNodes)
+      ..addListener(_focusChangeListener);
   }
 
   void select(TvSelectionEntry entry) {
@@ -107,6 +110,7 @@ final class TvNavigationController extends ChangeNotifier {
 
     headerFocusNode.dispose();
     footerFocusNode.dispose();
+    mediatorFocusNode.dispose();
 
     for (final itemFocusNode in _itemsFocusNodes.values) {
       itemFocusNode.dispose();

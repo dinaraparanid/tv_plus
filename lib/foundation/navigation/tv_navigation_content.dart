@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
-import '../../foundation/foundation.dart';
+import '../foundation.dart';
 
-final class TvNavigationDrawerContent extends StatefulWidget {
-  const TvNavigationDrawerContent({
+final class TvNavigationContent extends StatefulWidget {
+  const TvNavigationContent({
     super.key,
     required this.controller,
     required this.headerBuilder,
@@ -11,7 +12,8 @@ final class TvNavigationDrawerContent extends StatefulWidget {
     required this.drawerDecoration,
     required this.constraints,
     required this.drawerPadding,
-    required this.drawerExpandDuration,
+    required this.animateDrawerExpansion,
+    required this.drawerAnimationsDuration,
     required this.menuItems,
     required this.separatorBuilder,
   });
@@ -22,16 +24,17 @@ final class TvNavigationDrawerContent extends StatefulWidget {
   final BoxDecoration? drawerDecoration;
   final BoxConstraints constraints;
   final EdgeInsets drawerPadding;
-  final Duration drawerExpandDuration;
+  final bool animateDrawerExpansion;
+  final Duration drawerAnimationsDuration;
   final List<TvNavigationItem> menuItems;
   final Widget Function(int index)? separatorBuilder;
 
   @override
-  State<StatefulWidget> createState() => _TvNavigationDrawerContentState();
+  State<StatefulWidget> createState() => _TvNavigationContentState();
 }
 
-final class _TvNavigationDrawerContentState
-    extends State<TvNavigationDrawerContent> {
+final class _TvNavigationContentState
+    extends State<TvNavigationContent> {
   @override
   void initState() {
     _attachItemsFocusNodes();
@@ -39,7 +42,7 @@ final class _TvNavigationDrawerContentState
   }
 
   @override
-  void didUpdateWidget(covariant TvNavigationDrawerContent oldWidget) {
+  void didUpdateWidget(covariant TvNavigationContent oldWidget) {
     if (oldWidget.menuItems != widget.menuItems) {
       _attachItemsFocusNodes();
     }
@@ -56,22 +59,22 @@ final class _TvNavigationDrawerContentState
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
-      duration: widget.drawerExpandDuration,
-      constraints: widget.constraints.copyWith(
+      duration: widget.drawerAnimationsDuration,
+      constraints: widget.animateDrawerExpansion ? widget.constraints.copyWith(
         maxWidth: widget.controller.hasFocus
             ? null
             : widget.constraints.minWidth,
-      ),
+      ) : null,
       decoration: widget.drawerDecoration,
       padding: widget.drawerPadding,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (widget.headerBuilder != null)
             _Header(
               item: widget.headerBuilder!(),
               controller: widget.controller,
-              drawerExpandDuration: widget.drawerExpandDuration,
+              drawerExpandDuration: widget.drawerAnimationsDuration,
             ),
 
           const Spacer(),
@@ -83,7 +86,7 @@ final class _TvNavigationDrawerContentState
               index: index,
               item: child,
               controller: widget.controller,
-              drawerExpandDuration: widget.drawerExpandDuration,
+              drawerExpandDuration: widget.drawerAnimationsDuration,
             ),
           ],
 
@@ -93,7 +96,7 @@ final class _TvNavigationDrawerContentState
             _Footer(
               item: widget.footerBuilder!(),
               controller: widget.controller,
-              drawerExpandDuration: widget.drawerExpandDuration,
+              drawerExpandDuration: widget.drawerAnimationsDuration,
             ),
         ],
       ),
@@ -155,9 +158,9 @@ final class _HeaderState extends State<_Header> {
         return _TvNavigationDrawerItem(
           model: widget.item,
           node: node,
-          isSelected: widget.controller.entry == const HeaderEntry(),
+          isSelected: widget.controller.selectedEntry == const HeaderEntry(),
           isDrawerExpanded: widget.controller.hasFocus,
-          drawerExpandDuration: widget.drawerExpandDuration,
+          drawerAnimationsDuration: widget.drawerExpandDuration,
         );
       },
     );
@@ -241,14 +244,15 @@ final class _ItemState extends State<_Item> {
         return KeyEventResult.handled;
       },
       builder: (node) {
-        final isSelected = widget.controller.entry == ItemEntry(key: entryKey);
+        final isSelected =
+            widget.controller.selectedEntry == ItemEntry(key: entryKey);
 
         return _TvNavigationDrawerItem(
           model: widget.item,
           node: node,
           isSelected: isSelected,
           isDrawerExpanded: widget.controller.hasFocus,
-          drawerExpandDuration: widget.drawerExpandDuration,
+          drawerAnimationsDuration: widget.drawerExpandDuration,
         );
       },
     );
@@ -312,9 +316,9 @@ final class _FooterState extends State<_Footer> {
         return _TvNavigationDrawerItem(
           model: widget.item,
           node: node,
-          isSelected: widget.controller.entry == const FooterEntry(),
+          isSelected: widget.controller.selectedEntry == const FooterEntry(),
           isDrawerExpanded: widget.controller.hasFocus,
-          drawerExpandDuration: widget.drawerExpandDuration,
+          drawerAnimationsDuration: widget.drawerExpandDuration,
         );
       },
     );
@@ -327,14 +331,14 @@ final class _TvNavigationDrawerItem extends StatelessWidget {
     required this.node,
     this.isSelected = false,
     required this.isDrawerExpanded,
-    required this.drawerExpandDuration,
+    required this.drawerAnimationsDuration,
   });
 
   final TvNavigationItem model;
   final FocusNode node;
   final bool isSelected;
   final bool isDrawerExpanded;
-  final Duration drawerExpandDuration;
+  final Duration drawerAnimationsDuration;
 
   @override
   Widget build(BuildContext context) {
@@ -347,7 +351,7 @@ final class _TvNavigationDrawerItem extends StatelessWidget {
         : focusedState;
 
     return AnimatedContainer(
-      duration: drawerExpandDuration,
+      duration: drawerAnimationsDuration,
       padding: model.contentPadding,
       decoration: model.decoration.resolve(widgetState),
       child: Row(

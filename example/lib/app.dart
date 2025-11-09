@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'cupertino/sidebar_sample.dart';
+import 'cupertino/navigation/sidebar_sample.dart';
 
 final class App extends StatelessWidget {
   const App({super.key});
