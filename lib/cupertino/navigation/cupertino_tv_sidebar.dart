@@ -11,19 +11,15 @@ final class CupertinoTvSidebar extends StatefulWidget {
     this.headerBuilder,
     this.footerBuilder,
     this.backgroundColor,
-    this.drawerDecoration,
-    required this.drawerOffset,
-    this.constraints = const BoxConstraints(minWidth: 90, maxWidth: 280),
-    this.drawerPadding = const EdgeInsets.symmetric(
-      vertical: 20,
-      horizontal: 10,
-    ),
+    this.constraints = const BoxConstraints(minWidth: 90, maxWidth: 200),
+    this.drawerMargin = const EdgeInsets.all(16),
     required this.drawerAnimationsDuration,
     this.alignment = TvNavigationAlignment.start,
     this.initialEntry,
     required this.menuItems,
     this.separatorBuilder,
     this.collapsedHeaderBuilder,
+    required this.drawerBuilder,
     required this.builder,
   });
 
@@ -32,10 +28,8 @@ final class CupertinoTvSidebar extends StatefulWidget {
   final TvNavigationItem Function()? headerBuilder;
   final TvNavigationItem Function()? footerBuilder;
   final Color? backgroundColor;
-  final BoxDecoration? drawerDecoration;
-  final Offset drawerOffset;
   final BoxConstraints constraints;
-  final EdgeInsets drawerPadding;
+  final EdgeInsets drawerMargin;
   final Duration drawerAnimationsDuration;
   final TvNavigationAlignment alignment;
   final TvSelectionEntry? initialEntry;
@@ -47,6 +41,7 @@ final class CupertinoTvSidebar extends StatefulWidget {
     FocusNode childFocusNode,
   )?
   collapsedHeaderBuilder;
+  final Widget Function(BuildContext context, Widget child) drawerBuilder;
   final Widget Function(
     BuildContext context,
     TvSelectionEntry? entry,
@@ -93,8 +88,9 @@ final class _CupertinoTvSidebarState extends State<CupertinoTvSidebar> {
             ),
 
             Positioned(
-              top: widget.drawerOffset.dy,
-              left: widget.drawerOffset.dx,
+              top: widget.drawerMargin.top,
+              bottom: widget.drawerMargin.bottom,
+              left: widget.drawerMargin.left,
               child: _buildContent(),
             ),
           ],
@@ -114,8 +110,9 @@ final class _CupertinoTvSidebarState extends State<CupertinoTvSidebar> {
             ),
 
             Positioned(
-              top: widget.drawerOffset.dy,
-              right: widget.drawerOffset.dx,
+              top: widget.drawerMargin.top,
+              bottom: widget.drawerMargin.bottom,
+              right: widget.drawerMargin.right,
               child: _buildContent(),
             ),
           ],
@@ -142,17 +139,18 @@ final class _CupertinoTvSidebarState extends State<CupertinoTvSidebar> {
               : CrossFadeState.showSecond,
           firstChild: ConstrainedBox(
             constraints: widget.constraints,
-            child: TvNavigationContent(
-              controller: widget.controller,
-              headerBuilder: widget.headerBuilder,
-              footerBuilder: widget.footerBuilder,
-              drawerDecoration: widget.drawerDecoration,
-              constraints: widget.constraints,
-              drawerPadding: widget.drawerPadding,
-              animateDrawerExpansion: false,
-              drawerAnimationsDuration: widget.drawerAnimationsDuration,
-              menuItems: widget.menuItems,
-              separatorBuilder: widget.separatorBuilder,
+            child: widget.drawerBuilder(
+              context,
+              TvNavigationContent(
+                controller: widget.controller,
+                headerBuilder: widget.headerBuilder,
+                footerBuilder: widget.footerBuilder,
+                constraints: widget.constraints,
+                animateDrawerExpansion: false,
+                drawerAnimationsDuration: widget.drawerAnimationsDuration,
+                menuItems: widget.menuItems,
+                separatorBuilder: widget.separatorBuilder,
+              ),
             ),
           ),
           secondChild:

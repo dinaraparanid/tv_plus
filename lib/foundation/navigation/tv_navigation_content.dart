@@ -9,9 +9,7 @@ final class TvNavigationContent extends StatefulWidget {
     required this.controller,
     required this.headerBuilder,
     required this.footerBuilder,
-    required this.drawerDecoration,
     required this.constraints,
-    required this.drawerPadding,
     required this.animateDrawerExpansion,
     required this.drawerAnimationsDuration,
     required this.menuItems,
@@ -21,9 +19,7 @@ final class TvNavigationContent extends StatefulWidget {
   final TvNavigationController controller;
   final TvNavigationItem Function()? headerBuilder;
   final TvNavigationItem Function()? footerBuilder;
-  final BoxDecoration? drawerDecoration;
   final BoxConstraints constraints;
-  final EdgeInsets drawerPadding;
   final bool animateDrawerExpansion;
   final Duration drawerAnimationsDuration;
   final List<TvNavigationItem> menuItems;
@@ -33,8 +29,7 @@ final class TvNavigationContent extends StatefulWidget {
   State<StatefulWidget> createState() => _TvNavigationContentState();
 }
 
-final class _TvNavigationContentState
-    extends State<TvNavigationContent> {
+final class _TvNavigationContentState extends State<TvNavigationContent> {
   @override
   void initState() {
     _attachItemsFocusNodes();
@@ -60,13 +55,13 @@ final class _TvNavigationContentState
   Widget build(BuildContext context) {
     return AnimatedContainer(
       duration: widget.drawerAnimationsDuration,
-      constraints: widget.animateDrawerExpansion ? widget.constraints.copyWith(
-        maxWidth: widget.controller.hasFocus
-            ? null
-            : widget.constraints.minWidth,
-      ) : null,
-      decoration: widget.drawerDecoration,
-      padding: widget.drawerPadding,
+      constraints: widget.animateDrawerExpansion
+          ? widget.constraints.copyWith(
+              maxWidth: widget.controller.hasFocus
+                  ? null
+                  : widget.constraints.minWidth,
+            )
+          : null,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

@@ -57,18 +57,6 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
           backgroundColor: NavigationDrawerSample.backgroundColor,
           drawerExpandDuration: _animationDuration,
           mode: TvNavigationDrawerMode.modal,
-          drawerDecoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                NavigationDrawerSample.backgroundColor,
-                Colors.transparent,
-              ],
-            ),
-            borderRadius: BorderRadius.only(
-              topRight: Radius.circular(12),
-              bottomRight: Radius.circular(12),
-            ),
-          ),
           headerBuilder: _buildHeader,
           footerBuilder: _buildFooter,
           separatorBuilder: (i) {
@@ -88,6 +76,23 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
           menuItems: items.map((item) {
             return _buildItem(title: item.$1, icon: item.$2);
           }).toList(),
+          drawerBuilder: (context, child) {
+            return DecoratedBox(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    NavigationDrawerSample.backgroundColor,
+                    Colors.transparent,
+                  ],
+                ),
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(12),
+                  bottomRight: Radius.circular(12),
+                ),
+              ),
+              child: Padding(padding: const EdgeInsets.all(20), child: child),
+            );
+          },
           builder: (context, entry, focusNode) {
             return Stack(
               children: [
@@ -205,7 +210,6 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
     return TvNavigationItem(
       key: ValueKey(title),
       icon: _buildIcon(icon),
-      iconSpacing: 0,
       decoration: _buildDecoration(),
       builder: (_, constraints, states) {
         return ConstrainedBox(
@@ -220,7 +224,7 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    fontSize: 29,
+                    fontSize: 16,
                     color: _buildContentColor(states),
                     fontWeight: FontWeight.w600,
                   ),
@@ -243,13 +247,19 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
       crossFadeState: controller.hasFocus
           ? CrossFadeState.showFirst
           : CrossFadeState.showSecond,
-      firstChild: const Text(
-        'Content',
-        style: TextStyle(
-          fontSize: 14,
-          color: Colors.white,
-          fontWeight: FontWeight.w800,
-        ),
+      firstChild: const Row(
+        children: [
+          SizedBox(width: 16),
+
+          Text(
+            'Content',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.white,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ],
       ),
       secondChild: const SizedBox(
         height: 1,

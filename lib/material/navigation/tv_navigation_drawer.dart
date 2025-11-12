@@ -11,15 +11,14 @@ final class TvNavigationDrawer extends StatefulWidget {
     this.headerBuilder,
     this.footerBuilder,
     this.backgroundColor,
-    this.drawerDecoration,
-    this.constraints = const BoxConstraints(minWidth: 90, maxWidth: 280),
-    this.drawerPadding = const EdgeInsets.all(12),
+    this.constraints = const BoxConstraints(minWidth: 60, maxWidth: 280),
     this.drawerExpandDuration = const Duration(milliseconds: 300),
     this.alignment = TvNavigationAlignment.start,
     this.mode = TvNavigationDrawerMode.standard,
     this.initialEntry,
     required this.menuItems,
     this.separatorBuilder,
+    required this.drawerBuilder,
     required this.builder,
   }) : assert(menuItems.length > 0);
 
@@ -28,15 +27,14 @@ final class TvNavigationDrawer extends StatefulWidget {
   final TvNavigationItem Function()? headerBuilder;
   final TvNavigationItem Function()? footerBuilder;
   final Color? backgroundColor;
-  final BoxDecoration? drawerDecoration;
   final BoxConstraints constraints;
-  final EdgeInsets drawerPadding;
   final Duration drawerExpandDuration;
   final TvNavigationAlignment alignment;
   final TvNavigationDrawerMode mode;
   final TvSelectionEntry? initialEntry;
   final List<TvNavigationItem> menuItems;
   final Widget Function(int index)? separatorBuilder;
+  final Widget Function(BuildContext context, Widget child) drawerBuilder;
   final Widget Function(
     BuildContext context,
     TvSelectionEntry? entry,
@@ -136,17 +134,18 @@ final class _TvNavigationDrawerState extends State<TvNavigationDrawer> {
         }
       },
       builder: (_) {
-        return TvNavigationContent(
-          controller: widget.controller,
-          headerBuilder: widget.headerBuilder,
-          footerBuilder: widget.footerBuilder,
-          drawerDecoration: widget.drawerDecoration,
-          constraints: widget.constraints,
-          drawerPadding: widget.drawerPadding,
-          animateDrawerExpansion: true,
-          drawerAnimationsDuration: widget.drawerExpandDuration,
-          menuItems: widget.menuItems,
-          separatorBuilder: widget.separatorBuilder,
+        return widget.drawerBuilder(
+          context,
+          TvNavigationContent(
+            controller: widget.controller,
+            headerBuilder: widget.headerBuilder,
+            footerBuilder: widget.footerBuilder,
+            constraints: widget.constraints,
+            animateDrawerExpansion: true,
+            drawerAnimationsDuration: widget.drawerExpandDuration,
+            menuItems: widget.menuItems,
+            separatorBuilder: widget.separatorBuilder,
+          ),
         );
       },
     );

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:tv_plus/tv_plus.dart';
 
@@ -78,12 +80,31 @@ final class _SidebarSampleState extends State<SidebarSample> {
             return _buildItem(title: item.$1, icon: item.$2);
           }).toList(),
           backgroundColor: CupertinoColors.darkBackgroundGray,
-          drawerDecoration: const BoxDecoration(
-            color: SidebarSample.backgroundColor,
-            borderRadius: BorderRadius.all(Radius.circular(40)),
-          ),
-          drawerOffset: const Offset(35, 18),
           drawerAnimationsDuration: _animationDuration,
+          drawerBuilder: (context, child) {
+            const radius = BorderRadius.all(Radius.circular(40));
+            const blurSigma = 135.91;
+
+            return ClipRRect(
+              borderRadius: radius,
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
+                child: DecoratedBox(
+                  decoration: const BoxDecoration(
+                    color: SidebarSample.backgroundColor,
+                    borderRadius: radius,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 20,
+                      horizontal: 10,
+                    ),
+                    child: child,
+                  ),
+                ),
+              ),
+            );
+          },
           builder: (context, entry, focusNode) {
             return Stack(
               children: [
