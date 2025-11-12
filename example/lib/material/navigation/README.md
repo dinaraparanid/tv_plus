@@ -5,6 +5,3 @@
 
 * Material modal navigation drawer (draw over content)
 ![Modal navigation drawer](/example/assets/video/ex_2_modal_navigation_drawer.gif)
-
-* Cupertino tvOS sidebar
-![tvos_sidebar](/example/assets/video/ex_2_sidebar.gif)
