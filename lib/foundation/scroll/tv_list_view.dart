@@ -1,111 +1,153 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:tv_plus/foundation/dpad/dpad.dart';
+import 'package:tv_plus/foundation/scroll/scroll_group_dpad_focus.dart';
 
-final class TvListView extends StatefulWidget {
-  const TvListView({super.key});
+// TODO(paranid5): SliverTvListView
+final class TvListView extends BoxScrollView {
+  TvListView({
+    super.key,
+    super.scrollDirection,
+    super.reverse,
+    super.controller,
+    super.primary,
+    super.physics,
+    super.shrinkWrap,
+    super.padding,
+    this.itemExtent,
+    this.itemExtentBuilder,
+    this.prototypeItem,
+    bool addAutomaticKeepAlives = true,
+    bool addRepaintBoundaries = true,
+    bool addSemanticIndexes = true,
+    super.cacheExtent,
+    List<ScrollGroupDpadFocus> children = const [],
+    int? semanticChildCount,
+    super.dragStartBehavior,
+    super.keyboardDismissBehavior,
+    super.restorationId,
+    super.clipBehavior,
+    super.hitTestBehavior,
+  }) : childrenDelegate = SliverChildListDelegate(
+         children,
+         addAutomaticKeepAlives: addAutomaticKeepAlives,
+         addRepaintBoundaries: addRepaintBoundaries,
+         addSemanticIndexes: addSemanticIndexes,
+       ),
+       super(semanticChildCount: semanticChildCount ?? children.length);
 
-  @override
-  State<StatefulWidget> createState() => _TvListViewState();
-}
+  TvListView.builder({
+    super.key,
+    super.scrollDirection,
+    super.reverse,
+    super.controller,
+    super.primary,
+    super.physics,
+    super.shrinkWrap,
+    super.padding,
+    this.itemExtent,
+    this.itemExtentBuilder,
+    this.prototypeItem,
+    required ScrollGroupDpadFocus Function(BuildContext, int) itemBuilder,
+    int? Function(Key)? findChildIndexCallback,
+    required Widget Function(BuildContext, int) separatorBuilder,
+    required int itemCount,
+    bool addAutomaticKeepAlives = true,
+    bool addRepaintBoundaries = true,
+    bool addSemanticIndexes = true,
+    super.cacheExtent,
+    super.semanticChildCount,
+    super.dragStartBehavior,
+    super.keyboardDismissBehavior,
+    super.restorationId,
+    super.clipBehavior,
+    super.hitTestBehavior,
+  }) : childrenDelegate = SliverChildBuilderDelegate(
+         itemBuilder,
+         findChildIndexCallback: findChildIndexCallback,
+         childCount: itemCount,
+         addAutomaticKeepAlives: addAutomaticKeepAlives,
+         addRepaintBoundaries: addRepaintBoundaries,
+         addSemanticIndexes: addSemanticIndexes,
+       );
 
-final class _TvListViewState extends State<TvListView> {
-  late final _scrollController = ScrollController();
-  late final _focusNodes = List.generate(50, (_) => FocusNode());
+  TvListView.separated({
+    super.key,
+    super.scrollDirection,
+    super.reverse,
+    super.controller,
+    super.primary,
+    super.physics,
+    super.shrinkWrap,
+    super.padding,
+    required ScrollGroupDpadFocus Function(BuildContext, int) itemBuilder,
+    int? Function(Key)? findChildIndexCallback,
+    required Widget Function(BuildContext, int) separatorBuilder,
+    required int itemCount,
+    bool addAutomaticKeepAlives = true,
+    bool addRepaintBoundaries = true,
+    bool addSemanticIndexes = true,
+    super.cacheExtent,
+    super.dragStartBehavior,
+    super.keyboardDismissBehavior,
+    super.restorationId,
+    super.clipBehavior,
+    super.hitTestBehavior,
+  }) : itemExtent = null,
+       itemExtentBuilder = null,
+       prototypeItem = null,
+       childrenDelegate = SliverChildBuilderDelegate(
+         (context, index) {
+           final int itemIndex = index ~/ 2;
 
-  @override
-  void dispose() {
-    _scrollController.dispose();
+           if (index.isEven) {
+             return itemBuilder(context, itemIndex);
+           }
 
-    for (final node in _focusNodes) {
-      node.dispose();
-    }
+           return separatorBuilder(context, itemIndex);
+         },
+         findChildIndexCallback: findChildIndexCallback,
+         childCount: _computeActualChildCount(itemCount),
+         addAutomaticKeepAlives: addAutomaticKeepAlives,
+         addRepaintBoundaries: addRepaintBoundaries,
+         addSemanticIndexes: addSemanticIndexes,
+         semanticIndexCallback: (widget, index) =>
+             index.isEven ? index ~/ 2 : null,
+       );
 
-    super.dispose();
+  final SliverChildDelegate childrenDelegate;
+  final double? itemExtent;
+  final ItemExtentBuilder? itemExtentBuilder;
+  final Widget? prototypeItem;
+
+  static int _computeActualChildCount(int itemCount) {
+    return max(0, itemCount * 2 - 1);
   }
 
   @override
-  Widget build(BuildContext context) {
-    return ListView.separated(
-      itemCount: 50,
-      controller: _scrollController,
-      separatorBuilder: (context, index) => const SizedBox(height: 20),
-      itemBuilder: (context, index) {
-        return DpadFocus(
-          focusNode: _focusNodes[index],
-          autofocus: index == 0,
-          onUp: (node, _) {
-            if (index == 0) {
-              return KeyEventResult.handled;
-            }
-
-            final nextNode = _focusNodes[index - 1]..requestFocus();
-            final nextBox =
-                nextNode.context!.findRenderSliverChild() as RenderBox;
-            final listSliver = context.findRenderObject() as RenderSliverList;
-            final nextScrollPosition = listSliver.childScrollOffset(nextBox)!;
-
-            _scrollController.animateTo(
-              nextScrollPosition,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.linear,
-            );
-
-            return KeyEventResult.handled;
-          },
-          onDown: (node, _) {
-            if (index == _focusNodes.length - 1) {
-              return KeyEventResult.handled;
-            }
-
-            final nextNode = _focusNodes[index + 1]..requestFocus();
-            final nextBox =
-                nextNode.context!.findRenderSliverChild() as RenderBox;
-            final listSliver = context.findRenderObject() as RenderSliverList;
-            final nextScrollPosition = listSliver.childScrollOffset(nextBox)!;
-
-            _scrollController.animateTo(
-              nextScrollPosition,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.linear,
-            );
-
-            return KeyEventResult.handled;
-          },
-          builder: (node) {
-            return Container(
-              decoration: BoxDecoration(
-                color: node.hasFocus ? Colors.green : Colors.transparent,
-                borderRadius: const BorderRadius.all(Radius.circular(16)),
-              ),
-              child: Text(
-                'Item $index',
-                style: const TextStyle(color: Colors.white),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-}
-
-extension _FindRenderSliverChild on BuildContext {
-  RenderBox? findRenderSliverChild() {
-    var box = findRenderObject();
-
-    if (box is! RenderBox) {
-      return null;
+  Widget buildChildLayout(BuildContext context) {
+    if (itemExtent != null) {
+      return SliverFixedExtentList(
+        delegate: childrenDelegate,
+        itemExtent: itemExtent!,
+      );
     }
 
-    while (box != null && box.parentData is! SliverMultiBoxAdaptorParentData) {
-      box = box.parent;
+    if (itemExtentBuilder != null) {
+      return SliverVariedExtentList(
+        delegate: childrenDelegate,
+        itemExtentBuilder: itemExtentBuilder!,
+      );
     }
 
-    if (box == null) {
-      return null;
+    if (prototypeItem != null) {
+      return SliverPrototypeExtentList(
+        delegate: childrenDelegate,
+        prototypeItem: prototypeItem!,
+      );
     }
 
-    return box as RenderBox;
+    return SliverList(delegate: childrenDelegate);
   }
 }
