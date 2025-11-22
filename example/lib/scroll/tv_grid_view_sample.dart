@@ -89,22 +89,18 @@ final class _TvGridViewSampleState extends State<TvGridViewSample> {
                         itemCount: TvGridViewSample.itemCount,
                         focusScopeNode: _gridFocusScopeNode,
                         onOutOfScopeUp: (_, _) {
-                          _gridFocusScopeNode.unfocus();
                           _upButtonFocusNode.requestFocus();
                           return KeyEventResult.handled;
                         },
                         onOutOfScopeDown: (_, _) {
-                          _gridFocusScopeNode.unfocus();
                           _downButtonFocusNode.requestFocus();
                           return KeyEventResult.handled;
                         },
                         onOutOfScopeLeft: (_, _) {
-                          _gridFocusScopeNode.unfocus();
                           _leftButtonFocusNode.requestFocus();
                           return KeyEventResult.handled;
                         },
                         onOutOfScopeRight: (_, _) {
-                          _gridFocusScopeNode.unfocus();
                           _rightButtonFocusNode.requestFocus();
                           return KeyEventResult.handled;
                         },

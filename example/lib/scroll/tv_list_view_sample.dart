@@ -14,31 +14,29 @@ final class TvListViewSample extends StatefulWidget {
 }
 
 final class _TvListViewSampleState extends State<TvListViewSample> {
+  late final _horizontalListFocusScopeNode = FocusScopeNode();
+
   late final _horizontalListFocusNodes = List.generate(
     TvListViewSample.itemCount,
     (_) => FocusNode(),
   );
+
+  late final _verticalListFocusScopeNode = FocusScopeNode();
 
   late final _verticalListFocusNodes = List.generate(
     TvListViewSample.itemCount,
     (_) => FocusNode(),
   );
 
-  late FocusNode _currentHorizontalNode;
-  late FocusNode _currentVerticalNode;
-
-  @override
-  void initState() {
-    _currentHorizontalNode = _horizontalListFocusNodes.first;
-    _currentVerticalNode = _verticalListFocusNodes.first;
-    super.initState();
-  }
-
   @override
   void dispose() {
+    _horizontalListFocusScopeNode.dispose();
+
     for (final node in _horizontalListFocusNodes) {
       node.dispose();
     }
+
+    _verticalListFocusScopeNode.dispose();
 
     for (final node in _verticalListFocusNodes) {
       node.dispose();
@@ -61,32 +59,16 @@ final class _TvListViewSampleState extends State<TvListViewSample> {
                 child: TvListView.separated(
                   scrollDirection: Axis.horizontal,
                   itemCount: TvListViewSample.itemCount,
+                  focusScopeNode: _horizontalListFocusScopeNode,
+                  onOutOfScopeDown: (_, _) {
+                    _requestFocusOnVerticalListItem();
+                    return KeyEventResult.handled;
+                  },
                   itemBuilder: (context, index) {
                     return ScrollGroupDpadFocus(
                       focusNode: _horizontalListFocusNodes[index],
                       autofocus: index == 0,
                       viewportAlignment: 0,
-                      downHandler: ScrollGroupDpadEventHandler(
-                        onEvent: (_, _) {
-                          _currentVerticalNode.requestFocus();
-                          return KeyEventResult.handled;
-                        },
-                      ),
-                      leftHandler: ScrollGroupDpadEventHandler(
-                        nextNode: index != 0
-                            ? _horizontalListFocusNodes[index - 1]
-                            : null,
-                      ),
-                      rightHandler: ScrollGroupDpadEventHandler(
-                        nextNode: index != TvListViewSample.itemCount - 1
-                            ? _horizontalListFocusNodes[index + 1]
-                            : null,
-                      ),
-                      onFocusChanged: (node) {
-                        if (node.hasFocus) {
-                          _currentHorizontalNode = node;
-                        }
-                      },
                       builder: (node) => _itemBuilder(node: node, index: index),
                     );
                   },
@@ -97,30 +79,14 @@ final class _TvListViewSampleState extends State<TvListViewSample> {
               Expanded(
                 child: TvListView.separated(
                   itemCount: TvListViewSample.itemCount,
+                  focusScopeNode: _verticalListFocusScopeNode,
+                  onOutOfScopeUp: (_, _) {
+                    _requestFocusOnHorizontalListItem();
+                    return KeyEventResult.handled;
+                  },
                   itemBuilder: (context, index) {
                     return ScrollGroupDpadFocus(
                       focusNode: _verticalListFocusNodes[index],
-                      upHandler: ScrollGroupDpadEventHandler(
-                        onEvent: index != 0
-                            ? null
-                            : (_, _) {
-                                _currentHorizontalNode.requestFocus();
-                                return KeyEventResult.handled;
-                              },
-                        nextNode: index != 0
-                            ? _verticalListFocusNodes[index - 1]
-                            : null,
-                      ),
-                      downHandler: ScrollGroupDpadEventHandler(
-                        nextNode: index != TvListViewSample.itemCount - 1
-                            ? _verticalListFocusNodes[index + 1]
-                            : null,
-                      ),
-                      onFocusChanged: (node) {
-                        if (node.hasFocus) {
-                          _currentVerticalNode = node;
-                        }
-                      },
                       builder: (node) => _itemBuilder(node: node, index: index),
                     );
                   },
@@ -132,6 +98,28 @@ final class _TvListViewSampleState extends State<TvListViewSample> {
         );
       },
     );
+  }
+
+  void _requestFocusOnHorizontalListItem() {
+    final nextNode = _horizontalListFocusScopeNode.focusedChild;
+
+    if (nextNode != null) {
+      nextNode.requestFocus();
+      return;
+    }
+
+    _horizontalListFocusNodes[0].requestFocus();
+  }
+
+  void _requestFocusOnVerticalListItem() {
+    final nextNode = _verticalListFocusScopeNode.focusedChild;
+
+    if (nextNode != null) {
+      nextNode.requestFocus();
+      return;
+    }
+
+    _verticalListFocusNodes[0].requestFocus();
   }
 
   static Widget _itemBuilder({required FocusNode node, required int index}) {

@@ -30,8 +30,6 @@ final class TvGridView extends BoxScrollView with DpadEvents {
     this.onOutOfScopeDown,
     this.onOutOfScopeLeft,
     this.onOutOfScopeRight,
-    this.onSelect,
-    this.onBack,
     super.dragStartBehavior,
     super.keyboardDismissBehavior,
     super.restorationId,
@@ -68,8 +66,6 @@ final class TvGridView extends BoxScrollView with DpadEvents {
     this.onOutOfScopeDown,
     this.onOutOfScopeLeft,
     this.onOutOfScopeRight,
-    this.onSelect,
-    this.onBack,
     bool addAutomaticKeepAlives = true,
     bool addRepaintBoundaries = true,
     bool addSemanticIndexes = true,
@@ -102,8 +98,6 @@ final class TvGridView extends BoxScrollView with DpadEvents {
   final DpadEventCallback? onOutOfScopeDown;
   final DpadEventCallback? onOutOfScopeLeft;
   final DpadEventCallback? onOutOfScopeRight;
-  final DpadEventCallback? onSelect;
-  final DpadEventCallback? onBack;
 
   @override
   KeyEventResult onUpEvent(FocusNode node, KeyDownEvent event) {
@@ -155,8 +149,6 @@ final class TvGridView extends BoxScrollView with DpadEvents {
       onDown: onDownEvent,
       onLeft: onLeftEvent,
       onRight: onRightEvent,
-      onSelect: onSelect,
-      onBack: onBack,
       builder: (_) => super.build(context),
     );
   }

@@ -19,6 +19,7 @@ final class ScrollGroupDpadFocus extends StatefulWidget {
     this.onBack,
     this.onFocusChanged,
     this.onFocusDisabledWhenWasFocused,
+    this.scrollToNextNodeDuration,
     required this.builder,
   });
 
@@ -35,6 +36,7 @@ final class ScrollGroupDpadFocus extends StatefulWidget {
   final DpadEventCallback? onBack;
   final void Function(FocusNode)? onFocusChanged;
   final void Function()? onFocusDisabledWhenWasFocused;
+  final Duration? scrollToNextNodeDuration;
   final Widget Function(FocusNode) builder;
 
   @override
@@ -107,7 +109,21 @@ final class _ScrollGroupDpadFocusState extends State<ScrollGroupDpadFocus> {
           _handleEvent(handler: widget.rightHandler, node: node, event: event),
       onSelect: widget.onSelect,
       onBack: widget.onBack,
-      onFocusChanged: widget.onFocusChanged,
+      onFocusChanged: (node) async {
+        final context = node.context;
+
+        if (context != null && node.hasFocus) {
+          await Scrollable.ensureVisible(
+            node.context!,
+            alignment: widget.viewportAlignment,
+            duration:
+                widget.scrollToNextNodeDuration ??
+                const Duration(milliseconds: 100),
+          );
+        }
+
+        widget.onFocusChanged?.call(node);
+      },
       onFocusDisabledWhenWasFocused: widget.onFocusDisabledWhenWasFocused,
       builder: (node) => widget.builder(node),
     );
@@ -129,26 +145,14 @@ final class _ScrollGroupDpadFocusState extends State<ScrollGroupDpadFocus> {
       return handler.onEvent?.call(node, event) ?? KeyEventResult.ignored;
     }
 
-    Scrollable.ensureVisible(
-      nextContext,
-      alignment: widget.viewportAlignment,
-      duration:
-          handler.scrollToNextNodeDuration ?? const Duration(milliseconds: 100),
-    );
-
     return handler.onEvent?.call(node, event) ?? KeyEventResult.handled;
   }
 }
 
 @immutable
 final class ScrollGroupDpadEventHandler {
-  const ScrollGroupDpadEventHandler({
-    this.nextNode,
-    this.onEvent,
-    this.scrollToNextNodeDuration,
-  });
+  const ScrollGroupDpadEventHandler({this.nextNode, this.onEvent});
 
   final FocusNode? nextNode;
   final DpadEventCallback? onEvent;
-  final Duration? scrollToNextNodeDuration;
 }
