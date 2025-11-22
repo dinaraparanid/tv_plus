@@ -3,8 +3,8 @@ import 'dart:math';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/rendering.dart';
 import 'package:tv_plus/foundation/scroll/scroll_group_dpad_focus.dart';
+import 'package:tv_plus/foundation/scroll/types.dart';
 
-// TODO(paranid5): SliverTvListView
 final class TvListView extends BoxScrollView {
   TvListView({
     super.key,
@@ -49,7 +49,7 @@ final class TvListView extends BoxScrollView {
     this.itemExtent,
     this.itemExtentBuilder,
     this.prototypeItem,
-    required ScrollGroupDpadFocus Function(BuildContext, int) itemBuilder,
+    required TvScrollItemBuilder itemBuilder,
     int? Function(Key)? findChildIndexCallback,
     required Widget Function(BuildContext, int) separatorBuilder,
     required int itemCount,
@@ -57,7 +57,7 @@ final class TvListView extends BoxScrollView {
     bool addRepaintBoundaries = true,
     bool addSemanticIndexes = true,
     super.cacheExtent,
-    super.semanticChildCount,
+    int? semanticChildCount,
     super.dragStartBehavior,
     super.keyboardDismissBehavior,
     super.restorationId,
@@ -70,7 +70,8 @@ final class TvListView extends BoxScrollView {
          addAutomaticKeepAlives: addAutomaticKeepAlives,
          addRepaintBoundaries: addRepaintBoundaries,
          addSemanticIndexes: addSemanticIndexes,
-       );
+       ),
+       super(semanticChildCount: semanticChildCount ?? itemCount);
 
   TvListView.separated({
     super.key,
@@ -81,7 +82,7 @@ final class TvListView extends BoxScrollView {
     super.physics,
     super.shrinkWrap,
     super.padding,
-    required ScrollGroupDpadFocus Function(BuildContext, int) itemBuilder,
+    required TvScrollItemBuilder itemBuilder,
     int? Function(Key)? findChildIndexCallback,
     required Widget Function(BuildContext, int) separatorBuilder,
     required int itemCount,

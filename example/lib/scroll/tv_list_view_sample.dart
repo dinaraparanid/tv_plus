@@ -4,6 +4,8 @@ import 'package:tv_plus/tv_plus.dart';
 final class TvListViewSample extends StatefulWidget {
   const TvListViewSample({super.key});
 
+  static const backgroundColor = Color(0xFF131314);
+
   static const itemCount = 50;
   static const focusedColor = Colors.indigoAccent;
 
@@ -49,8 +51,9 @@ final class _TvListViewSampleState extends State<TvListViewSample> {
   Widget build(BuildContext context) {
     return MaterialApp(
       builder: (context, _) {
-        return Material(
-          child: Column(
+        return Scaffold(
+          backgroundColor: TvListViewSample.backgroundColor,
+          body: Column(
             spacing: 12,
             children: [
               SizedBox(
@@ -140,7 +143,14 @@ final class _TvListViewSampleState extends State<TvListViewSample> {
             : Colors.transparent,
       ),
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-      child: Text('Item $index'),
+      child: Text(
+        'Item $index',
+        style: const TextStyle(
+          fontSize: 16,
+          color: Colors.white,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
     );
   }
 }
