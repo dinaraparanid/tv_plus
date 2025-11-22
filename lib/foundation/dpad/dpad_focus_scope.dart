@@ -1,17 +1,17 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:tv_plus/foundation/dpad/dpad.dart';
 
-import 'dpad_events.dart';
-
-typedef DpadEventCallback = KeyEventResult Function(FocusNode, KeyDownEvent);
-
-final class DpadFocus extends StatefulWidget with DpadEvents {
-  const DpadFocus({
+final class DpadFocusScope extends StatefulWidget with DpadEvents {
+  const DpadFocusScope({
     super.key,
-    this.focusNode,
+    this.focusScopeNode,
     this.parentNode,
     this.autofocus = false,
     this.canRequestFocus = true,
+    this.policy,
+    this.descendantsAreFocusable = true,
+    this.descendantsAreTraversable = true,
     this.onUp,
     this.onDown,
     this.onLeft,
@@ -23,10 +23,13 @@ final class DpadFocus extends StatefulWidget with DpadEvents {
     required this.builder,
   });
 
-  final FocusNode? focusNode;
+  final FocusScopeNode? focusScopeNode;
   final FocusNode? parentNode;
   final bool autofocus;
   final bool canRequestFocus;
+  final FocusTraversalPolicy? policy;
+  final bool descendantsAreFocusable;
+  final bool descendantsAreTraversable;
   final DpadEventCallback? onUp;
   final DpadEventCallback? onDown;
   final DpadEventCallback? onLeft;
@@ -38,7 +41,7 @@ final class DpadFocus extends StatefulWidget with DpadEvents {
   final Widget Function(FocusNode) builder;
 
   @override
-  State<StatefulWidget> createState() => _DpadFocusState();
+  State<StatefulWidget> createState() => _DpadFocusScopeState();
 
   @override
   KeyEventResult onUpEvent(FocusNode node, KeyDownEvent event) {
@@ -71,25 +74,26 @@ final class DpadFocus extends StatefulWidget with DpadEvents {
   }
 }
 
-final class _DpadFocusState extends State<DpadFocus> {
-  late final FocusNode _focusNode;
+final class _DpadFocusScopeState extends State<DpadFocusScope> {
+  late final FocusScopeNode _focusNode;
 
   bool ownsFocusNode = false;
 
   @override
   void initState() {
     _focusNode =
-        widget.focusNode ?? FocusNode(canRequestFocus: widget.canRequestFocus);
+        widget.focusScopeNode ??
+        FocusScopeNode(canRequestFocus: widget.canRequestFocus);
 
     _focusNode.addListener(onFocusChange);
 
-    ownsFocusNode = widget.focusNode == null;
+    ownsFocusNode = widget.focusScopeNode == null;
 
     super.initState();
   }
 
   @override
-  void didUpdateWidget(covariant DpadFocus oldWidget) {
+  void didUpdateWidget(covariant DpadFocusScope oldWidget) {
     if (widget.canRequestFocus != oldWidget.canRequestFocus) {
       if (_focusNode.hasFocus && widget.canRequestFocus == false) {
         widget.onFocusDisabledWhenWasFocused?.call();
@@ -98,7 +102,7 @@ final class _DpadFocusState extends State<DpadFocus> {
       _focusNode.canRequestFocus = widget.canRequestFocus;
     }
 
-    final nextFocusNode = widget.focusNode;
+    final nextFocusNode = widget.focusScopeNode;
 
     if (nextFocusNode != _focusNode && nextFocusNode != null) {
       _focusNode.removeListener(onFocusChange);
@@ -135,38 +139,44 @@ final class _DpadFocusState extends State<DpadFocus> {
 
   @override
   Widget build(BuildContext context) {
-    return Focus(
-      focusNode: _focusNode,
-      parentNode: widget.parentNode,
-      canRequestFocus: widget.canRequestFocus,
-      autofocus: widget.autofocus,
-      onKeyEvent: (node, event) {
-        return switch (event) {
-          KeyDownEvent() when event.logicalKey == LogicalKeyboardKey.arrowUp =>
-            widget.onUpEvent(node, event),
+    return FocusTraversalGroup(
+      policy: widget.policy,
+      descendantsAreFocusable: widget.descendantsAreFocusable,
+      descendantsAreTraversable: widget.descendantsAreTraversable,
+      child: FocusScope(
+        node: _focusNode,
+        parentNode: widget.parentNode,
+        canRequestFocus: widget.canRequestFocus,
+        autofocus: widget.autofocus,
+        onKeyEvent: (node, event) {
+          return switch (event) {
+            KeyDownEvent()
+                when event.logicalKey == LogicalKeyboardKey.arrowUp =>
+              widget.onUpEvent(node, event),
 
-          KeyDownEvent()
-              when event.logicalKey == LogicalKeyboardKey.arrowDown =>
-            widget.onDownEvent(node, event),
+            KeyDownEvent()
+                when event.logicalKey == LogicalKeyboardKey.arrowDown =>
+              widget.onDownEvent(node, event),
 
-          KeyDownEvent()
-              when event.logicalKey == LogicalKeyboardKey.arrowLeft =>
-            widget.onLeftEvent(node, event),
+            KeyDownEvent()
+                when event.logicalKey == LogicalKeyboardKey.arrowLeft =>
+              widget.onLeftEvent(node, event),
 
-          KeyDownEvent()
-              when event.logicalKey == LogicalKeyboardKey.arrowRight =>
-            widget.onRightEvent(node, event),
+            KeyDownEvent()
+                when event.logicalKey == LogicalKeyboardKey.arrowRight =>
+              widget.onRightEvent(node, event),
 
-          KeyDownEvent() when event.logicalKey == LogicalKeyboardKey.select =>
-            widget.onSelectEvent(node, event),
+            KeyDownEvent() when event.logicalKey == LogicalKeyboardKey.select =>
+              widget.onSelectEvent(node, event),
 
-          KeyDownEvent() when event.logicalKey == LogicalKeyboardKey.goBack =>
-            widget.onBackEvent(node, event),
+            KeyDownEvent() when event.logicalKey == LogicalKeyboardKey.goBack =>
+              widget.onBackEvent(node, event),
 
-          _ => KeyEventResult.ignored,
-        };
-      },
-      child: widget.builder(_focusNode),
+            _ => KeyEventResult.ignored,
+          };
+        },
+        child: widget.builder(_focusNode),
+      ),
     );
   }
 }

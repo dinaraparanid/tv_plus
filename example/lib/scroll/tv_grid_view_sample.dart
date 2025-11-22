@@ -14,28 +14,34 @@ final class TvGridViewSample extends StatefulWidget {
 }
 
 final class _TvGridViewSampleState extends State<TvGridViewSample> {
-  late final _focusNodes = List.generate(
+  late final _gridFocusScopeNode = FocusScopeNode();
+
+  late final _gridFocusNodes = List.generate(
     TvGridViewSample.itemCount,
     (_) => FocusNode(),
   );
 
-  late FocusNode _currentNode;
-
-  @override
-  void initState() {
-    _currentNode = _focusNodes.first;
-    super.initState();
-  }
+  late final _upButtonFocusNode = FocusNode();
+  late final _downButtonFocusNode = FocusNode();
+  late final _leftButtonFocusNode = FocusNode();
+  late final _rightButtonFocusNode = FocusNode();
 
   @override
   void dispose() {
-    for (final node in _focusNodes) {
+    _gridFocusScopeNode.dispose();
+
+    for (final node in _gridFocusNodes) {
       node.dispose();
     }
 
-    for (final node in _focusNodes) {
+    for (final node in _gridFocusNodes) {
       node.dispose();
     }
+
+    _upButtonFocusNode.dispose();
+    _downButtonFocusNode.dispose();
+    _leftButtonFocusNode.dispose();
+    _rightButtonFocusNode.dispose();
 
     super.dispose();
   }
@@ -46,44 +52,121 @@ final class _TvGridViewSampleState extends State<TvGridViewSample> {
       builder: (context, _) {
         return Scaffold(
           backgroundColor: TvGridViewSample.backgroundColor,
-          body: TvGridView.builder(
-            itemCount: TvGridViewSample.itemCount,
-            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 300,
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 12,
-              mainAxisExtent: 300,
-            ),
-            itemBuilder: (context, index) {
-              return ScrollGroupDpadFocus(
-                focusNode: _focusNodes[index],
-                autofocus: index == 0,
-                downHandler: ScrollGroupDpadEventHandler(
-                  onEvent: (_, _) {
-                    _currentNode.requestFocus();
-                    return KeyEventResult.handled;
-                  },
-                ),
-                leftHandler: ScrollGroupDpadEventHandler(
-                  nextNode: index != 0 ? _focusNodes[index - 1] : null,
-                ),
-                rightHandler: ScrollGroupDpadEventHandler(
-                  nextNode: index != TvGridViewSample.itemCount - 1
-                      ? _focusNodes[index + 1]
-                      : null,
-                ),
-                onFocusChanged: (node) {
-                  if (node.hasFocus) {
-                    _currentNode = node;
-                  }
+          body: Column(
+            spacing: 12,
+            children: [
+              DpadFocus(
+                focusNode: _upButtonFocusNode,
+                onDown: (_, _) {
+                  _requestFocusOnGridItem();
+                  return KeyEventResult.handled;
                 },
-                builder: (node) => _itemBuilder(node: node, index: index),
-              );
-            },
+                onLeft: (_, _) => KeyEventResult.handled,
+                onRight: (_, _) => KeyEventResult.handled,
+                builder: (node) =>
+                    _buttonBuilder(node: node, text: 'Up Button'),
+              ),
+              Expanded(
+                child: Row(
+                  spacing: 12,
+                  children: [
+                    DpadFocus(
+                      focusNode: _leftButtonFocusNode,
+                      autofocus: true,
+                      onUp: (_, _) => KeyEventResult.handled,
+                      onDown: (_, _) => KeyEventResult.handled,
+                      onLeft: (_, _) => KeyEventResult.handled,
+                      onRight: (_, _) {
+                        _requestFocusOnGridItem();
+                        return KeyEventResult.handled;
+                      },
+                      builder: (node) =>
+                          _buttonBuilder(node: node, text: 'Left Button'),
+                    ),
+
+                    Expanded(
+                      child: TvGridView.builder(
+                        itemCount: TvGridViewSample.itemCount,
+                        focusScopeNode: _gridFocusScopeNode,
+                        onOutOfScopeUp: (_, _) {
+                          _gridFocusScopeNode.unfocus();
+                          _upButtonFocusNode.requestFocus();
+                          return KeyEventResult.handled;
+                        },
+                        onOutOfScopeDown: (_, _) {
+                          _gridFocusScopeNode.unfocus();
+                          _downButtonFocusNode.requestFocus();
+                          return KeyEventResult.handled;
+                        },
+                        onOutOfScopeLeft: (_, _) {
+                          _gridFocusScopeNode.unfocus();
+                          _leftButtonFocusNode.requestFocus();
+                          return KeyEventResult.handled;
+                        },
+                        onOutOfScopeRight: (_, _) {
+                          _gridFocusScopeNode.unfocus();
+                          _rightButtonFocusNode.requestFocus();
+                          return KeyEventResult.handled;
+                        },
+                        gridDelegate:
+                            const SliverGridDelegateWithMaxCrossAxisExtent(
+                              maxCrossAxisExtent: 250,
+                              mainAxisSpacing: 12,
+                              crossAxisSpacing: 12,
+                              mainAxisExtent: 80,
+                            ),
+                        itemBuilder: (context, index) {
+                          return ScrollGroupDpadFocus(
+                            focusNode: _gridFocusNodes[index],
+                            builder: (node) =>
+                                _itemBuilder(node: node, index: index),
+                          );
+                        },
+                      ),
+                    ),
+
+                    DpadFocus(
+                      focusNode: _rightButtonFocusNode,
+                      onUp: (_, _) => KeyEventResult.handled,
+                      onDown: (_, _) => KeyEventResult.handled,
+                      onLeft: (_, _) {
+                        _requestFocusOnGridItem();
+                        return KeyEventResult.handled;
+                      },
+                      onRight: (_, _) => KeyEventResult.handled,
+                      builder: (node) =>
+                          _buttonBuilder(node: node, text: 'Right Button'),
+                    ),
+                  ],
+                ),
+              ),
+              DpadFocus(
+                focusNode: _downButtonFocusNode,
+                onUp: (_, _) {
+                  _requestFocusOnGridItem();
+                  return KeyEventResult.handled;
+                },
+                onLeft: (_, _) => KeyEventResult.handled,
+                onRight: (_, _) => KeyEventResult.handled,
+                builder: (node) =>
+                    _buttonBuilder(node: node, text: 'Down Button'),
+              ),
+            ],
           ),
         );
       },
     );
+  }
+
+  void _requestFocusOnGridItem() {
+    final nextNode = _gridFocusScopeNode.focusedChild;
+
+    if (nextNode != null) {
+      nextNode.requestFocus();
+      return;
+    }
+
+    _gridFocusNodes[0].requestFocus();
   }
 
   static Widget _itemBuilder({required FocusNode node, required int index}) {
@@ -97,6 +180,29 @@ final class _TvGridViewSampleState extends State<TvGridViewSample> {
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       child: Text(
         'Item $index',
+        style: const TextStyle(
+          fontSize: 16,
+          color: Colors.white,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+  static Widget _buttonBuilder({
+    required FocusNode node,
+    required String text,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.all(Radius.circular(16)),
+        color: node.hasFocus
+            ? TvGridViewSample.focusedColor
+            : Colors.transparent,
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      child: Text(
+        text,
         style: const TextStyle(
           fontSize: 16,
           color: Colors.white,
