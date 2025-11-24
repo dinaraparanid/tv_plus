@@ -12,6 +12,7 @@ final class DpadFocusScope extends StatefulWidget with DpadEvents {
     this.policy,
     this.descendantsAreFocusable = true,
     this.descendantsAreTraversable = true,
+    this.includeSemantics = true,
     this.onUp,
     this.onDown,
     this.onLeft,
@@ -30,6 +31,7 @@ final class DpadFocusScope extends StatefulWidget with DpadEvents {
   final FocusTraversalPolicy? policy;
   final bool descendantsAreFocusable;
   final bool descendantsAreTraversable;
+  final bool includeSemantics;
   final DpadEventCallback? onUp;
   final DpadEventCallback? onDown;
   final DpadEventCallback? onLeft;
@@ -148,6 +150,7 @@ final class _DpadFocusScopeState extends State<DpadFocusScope> {
         parentNode: widget.parentNode,
         canRequestFocus: widget.canRequestFocus,
         autofocus: widget.autofocus,
+        includeSemantics: widget.includeSemantics,
         onKeyEvent: (node, event) {
           return switch (event) {
             KeyDownEvent()
