@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
 import 'package:tv_plus/foundation/foundation.dart';
-import 'package:tv_plus/material/navigation/tab/tv_tab.dart';
 import 'package:tv_plus/material/navigation/tab/tv_tab_bar_controller.dart';
 
 final class TvTabBar extends StatefulWidget {
@@ -29,7 +28,7 @@ final class TvTabBar extends StatefulWidget {
     this.onFocusDisabledWhenWasFocused,
   }) : policy = policy ?? ReadingOrderTraversalPolicy();
 
-  final List<TvTab> tabs;
+  final List<Widget> tabs;
   final TvTabBarController? controller;
   final MainAxisSize mainAxisSize;
   final MainAxisAlignment mainAxisAlignment;
@@ -142,6 +141,7 @@ final class _TvTabBarState extends State<TvTabBar> with DpadEvents {
   @override
   KeyEventResult onLeftEvent(FocusNode node, KeyDownEvent event) {
     if (widget.policy.inDirection(node, TraversalDirection.left)) {
+      _controller.selectIndex(_controller.selectedIndex - 1);
       return widget.onLeft?.call(node, event, false) ?? KeyEventResult.handled;
     }
 
@@ -151,6 +151,7 @@ final class _TvTabBarState extends State<TvTabBar> with DpadEvents {
   @override
   KeyEventResult onRightEvent(FocusNode node, KeyDownEvent event) {
     if (widget.policy.inDirection(node, TraversalDirection.right)) {
+      _controller.selectIndex(_controller.selectedIndex + 1);
       return widget.onRight?.call(node, event, false) ?? KeyEventResult.handled;
     }
 

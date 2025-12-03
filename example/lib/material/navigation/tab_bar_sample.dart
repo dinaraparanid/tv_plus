@@ -7,7 +7,10 @@ final class TabBarSample extends StatefulWidget {
   static const backgroundColor = Color(0xFF131314);
   static const focusedColor = Colors.indigoAccent;
   static const selectedColor = Colors.green;
+  static const contentColor = Colors.white;
+  static const contentHighlightedColor = Colors.black;
   static const radius = BorderRadius.all(Radius.circular(16.0));
+  static const animationDuration = Duration(milliseconds: 300);
 
   static const items = [
     ('Search', Icons.search),
@@ -23,6 +26,8 @@ final class TabBarSample extends StatefulWidget {
 
 final class _TabBarSampleState extends State<TabBarSample>
     with SingleTickerProviderStateMixin {
+  static final _tabBarKey = GlobalKey();
+
   late final _focusScopeNode = FocusScopeNode();
 
   late final _tabsFocusNodes = List.generate(
@@ -30,43 +35,32 @@ final class _TabBarSampleState extends State<TabBarSample>
     (_) => FocusNode(),
   );
 
+  late final _tabsKeys = List.generate(
+    TabBarSample.items.length,
+    (_) => GlobalKey(),
+  );
+
   late final _contentFocusNode = FocusNode();
 
-  late final _tabController = TvTabBarController(initialIndex: 1);
+  late final _tabController = TvTabBarController(initialIndex: 3);
 
-  var _currentIndex = 0;
-
-  FocusNode? _focusedNode;
-  FocusNode? _selectedNode;
+  late var _currentIndex = _tabController.selectedIndex;
 
   @override
   void initState() {
     _tabController.addListener(_tabListener);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _refreshFocusedNode();
-      _refreshSelectedNode();
+      setState(() {});
     });
 
     super.initState();
   }
 
   void _tabListener() {
-    if (_currentIndex != _tabController.selectedIndex ||
-        _selectedNode != _tabsFocusNodes[_currentIndex]) {
-      _refreshSelectedNode();
+    if (_currentIndex != _tabController.selectedIndex) {
+      setState(() => _currentIndex = _tabController.selectedIndex);
     }
-  }
-
-  void _refreshFocusedNode() {
-    setState(() => _focusedNode = _focusScopeNode.focusedChild);
-  }
-
-  void _refreshSelectedNode() {
-    setState(() {
-      _currentIndex = _tabController.selectedIndex;
-      _selectedNode = _tabsFocusNodes[_currentIndex];
-    });
   }
 
   @override
@@ -86,67 +80,22 @@ final class _TabBarSampleState extends State<TabBarSample>
   Widget build(BuildContext context) {
     final (text, icon) = TabBarSample.items[_currentIndex];
 
-    final selectedObj = _selectedNode?.context?.findRenderObject();
-    final selectedBox = selectedObj is RenderBox ? selectedObj : null;
-    final selectedHasSize = selectedBox?.hasSize ?? false;
-    final selectedOffset = selectedHasSize
-        ? selectedBox?.localToGlobal(Offset.zero)
-        : null;
-    final selectedSize = selectedHasSize ? selectedBox?.size : null;
-
-    final focusedObj = _focusedNode?.context?.findRenderObject();
-    final focusedBox = focusedObj is RenderBox ? focusedObj : null;
-    final focusedHasSize = focusedBox?.hasSize ?? false;
-    final focusedOffset = focusedHasSize
-        ? focusedBox?.localToGlobal(Offset.zero)
-        : null;
-    final focusedSize = focusedHasSize ? focusedBox?.size : null;
-
     return MaterialApp(
       home: Scaffold(
         backgroundColor: TabBarSample.backgroundColor,
         appBar: AppBar(
+          backgroundColor: TabBarSample.backgroundColor,
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(80),
             child: Stack(
               children: [
-                if (selectedOffset != null && selectedSize != null)
-                  Positioned(
-                    top: 0,
-                    bottom: 0,
-                    left: selectedOffset.dx,
-                    child: SizedBox(
-                      width: selectedSize.width,
-                      child: const DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: TabBarSample.selectedColor,
-                          borderRadius: TabBarSample.radius,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                if (_focusedNode != _selectedNode &&
-                    focusedOffset != null &&
-                    focusedSize != null)
-                  Positioned(
-                    top: 0,
-                    bottom: 0,
-                    left: focusedOffset.dx,
-                    child: SizedBox(
-                      width: focusedSize.width,
-                      child: const DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: TabBarSample.focusedColor,
-                          borderRadius: TabBarSample.radius,
-                        ),
-                      ),
-                    ),
-                  ),
+                ?_buildSelection(),
 
                 TvTabBar(
+                  key: _tabBarKey,
                   controller: _tabController,
                   focusScopeNode: _focusScopeNode,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   onDown: (_, _, isOutOfScope) {
                     if (isOutOfScope) {
                       _contentFocusNode.requestFocus();
@@ -154,34 +103,59 @@ final class _TabBarSampleState extends State<TabBarSample>
 
                     return KeyEventResult.handled;
                   },
-                  onLeft: (_, _, _) {
-                    _refreshFocusedNode();
-                    return KeyEventResult.handled;
-                  },
-                  onRight: (_, _, _) {
-                    _refreshFocusedNode();
-                    return KeyEventResult.handled;
-                  },
                   tabs: [
-                    for (var i = 0; i < TabBarSample.items.length; i++)
-                      TvTab(
-                        text: TabBarSample.items[i].$1,
-                        icon: Icon(TabBarSample.items[i].$2),
-                        focusNode: _tabsFocusNodes[i],
-                        autofocus: i == _currentIndex,
-                        onSelect: (_, _) {
-                          _tabController.selectIndex(i);
-                          return KeyEventResult.handled;
-                        },
+                    for (var i = 0; i < TabBarSample.items.length; ++i)
+                      Expanded(
+                        child: NotificationListener(
+                          onNotification: (notification) {
+                            setState(() {});
+                            return true;
+                          },
+                          child: SizeChangedLayoutNotifier(
+                            child: _TabItem(
+                              key: _tabsKeys[i],
+                              index: i,
+                              focusNode: _tabsFocusNodes[i],
+                              currentIndex: _currentIndex,
+                            ),
+                          ),
+                        ),
                       ),
                   ],
                 ),
               ],
             ),
           ),
-          title: const Text('Tabs Demo'),
+          title: const Text(
+            'Tabs Demo',
+            style: TextStyle(color: TabBarSample.contentColor, fontSize: 32),
+          ),
         ),
         body: _buildContent(text: text, icon: icon),
+      ),
+    );
+  }
+
+  Widget? _buildSelection() {
+    final (selectedOffset, selectedSize) = _getSelectionConstraints();
+
+    if (selectedOffset == null || selectedSize == null) {
+      return null;
+    }
+
+    return AnimatedPositioned(
+      duration: TabBarSample.animationDuration,
+      top: 0,
+      bottom: 0,
+      left: selectedOffset.dx,
+      child: SizedBox(
+        width: selectedSize.width,
+        child: const DecoratedBox(
+          decoration: BoxDecoration(
+            color: TabBarSample.selectedColor,
+            borderRadius: TabBarSample.radius,
+          ),
+        ),
       ),
     );
   }
@@ -231,6 +205,68 @@ final class _TabBarSampleState extends State<TabBarSample>
           ),
         ),
       ],
+    );
+  }
+
+  (Offset?, Size?) _getSelectionConstraints() {
+    final obj = _tabsKeys[_currentIndex].currentContext?.findRenderObject();
+    final box = obj is RenderBox ? obj : null;
+
+    final parentObj = _tabBarKey.currentContext?.findRenderObject();
+    final parentBox = parentObj is RenderBox ? parentObj : null;
+
+    final hasSize = (box?.hasSize ?? false) && box?.size.width != 0;
+    final globalOffset = hasSize ? box?.localToGlobal(Offset.zero) : null;
+
+    final localOffset = globalOffset != null
+        ? parentBox?.globalToLocal(globalOffset)
+        : null;
+
+    final size = hasSize ? box?.size : null;
+
+    return (localOffset, size);
+  }
+}
+
+final class _TabItem extends StatelessWidget {
+  const _TabItem({
+    super.key,
+    required this.index,
+    required this.focusNode,
+    required this.currentIndex,
+  });
+
+  final int index;
+  final FocusNode focusNode;
+  final int currentIndex;
+
+  @override
+  Widget build(BuildContext context) {
+    final isHighlighted = index == currentIndex;
+
+    final contentColor = isHighlighted
+        ? TabBarSample.contentHighlightedColor
+        : TabBarSample.contentColor;
+
+    return AnimatedScale(
+      scale: isHighlighted ? 1.2 : 1.0,
+      duration: TabBarSample.animationDuration,
+      child: TvTab(
+        focusNode: focusNode,
+        autofocus: index == currentIndex,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          spacing: 8,
+          children: [
+            Icon(TabBarSample.items[index].$2, color: contentColor),
+
+            Text(
+              TabBarSample.items[index].$1,
+              style: TextStyle(color: contentColor, fontSize: 20),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
