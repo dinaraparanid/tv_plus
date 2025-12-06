@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'material/navigation/tab_bar_sample.dart';
+import 'tab/tab_bar_sample.dart';
 
 final class App extends StatelessWidget {
   const App({super.key});

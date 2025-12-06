@@ -21,13 +21,22 @@ final class NavigationDrawerSample extends StatefulWidget {
 final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
   static const _animationDuration = Duration(milliseconds: 350);
 
-  var items = NavigationDrawerSample.items.toList();
+  final _items = NavigationDrawerSample.items.toList();
 
   // late final Timer timer;
 
-  final controller = TvNavigationController(
+  late final _controller = TvNavigationMenuController(
     initialEntry: ItemEntry(key: ValueKey(NavigationDrawerSample.items[0].$1)),
+    focusScopeNode: FocusScopeNode(),
+    headerNode: FocusNode(),
+    footerNode: FocusNode(),
+    itemsNodes: {
+      for (final item in NavigationDrawerSample.items)
+        ValueKey(item.$1): FocusNode(),
+    },
   );
+
+  late final _contentFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -44,7 +53,8 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
   @override
   void dispose() {
     // timer.cancel();
-    controller.dispose();
+    _controller.dispose();
+    _contentFocusNode.dispose();
     super.dispose();
   }
 
@@ -53,12 +63,12 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
     return MaterialApp(
       builder: (context, _) {
         return TvNavigationDrawer(
-          controller: controller,
+          controller: _controller,
           backgroundColor: NavigationDrawerSample.backgroundColor,
           drawerExpandDuration: _animationDuration,
           mode: TvNavigationDrawerMode.modal,
-          headerBuilder: _buildHeader,
-          footerBuilder: _buildFooter,
+          header: _buildHeader(),
+          footer: _buildFooter(),
           separatorBuilder: (i) {
             if (i == 2) {
               return Column(
@@ -73,9 +83,16 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
 
             return const SizedBox(height: 12);
           },
-          menuItems: items.map((item) {
+          menuItems: _items.map((item) {
             return _buildItem(title: item.$1, icon: item.$2);
           }).toList(),
+          onRight: (_, _, isOutOfScope) {
+            if (isOutOfScope) {
+              _contentFocusNode.requestFocus();
+            }
+
+            return KeyEventResult.handled;
+          },
           drawerBuilder: (context, child) {
             return DecoratedBox(
               decoration: const BoxDecoration(
@@ -93,15 +110,15 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
               child: Padding(padding: const EdgeInsets.all(20), child: child),
             );
           },
-          builder: (context, entry, focusNode) {
+          builder: (context, entry) {
             return Stack(
               children: [
                 Align(
                   child: DpadFocus(
-                    focusNode: focusNode,
+                    focusNode: _contentFocusNode,
                     autofocus: true,
                     onLeft: (_, _) {
-                      controller.mediatorFocusNode.requestFocus();
+                      _controller.requestFocusOnMenu();
                       return KeyEventResult.handled;
                     },
                     builder: (node) {
@@ -164,8 +181,8 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
     });
   }
 
-  TvNavigationItem _buildHeader() {
-    return TvNavigationItem(
+  TvNavigationMenuItem _buildHeader() {
+    return TvNavigationMenuItem(
       key: UniqueKey(),
       icon: _buildIcon(Icons.account_circle),
       decoration: _buildDecoration(),
@@ -173,7 +190,7 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
         return ConstrainedBox(
           constraints: constraints,
           child: AnimatedOpacity(
-            opacity: controller.hasFocus ? 1 : 0,
+            opacity: _controller.hasFocus ? 1 : 0,
             duration: _animationDuration,
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -206,8 +223,11 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
     );
   }
 
-  TvNavigationItem _buildItem({required String title, required IconData icon}) {
-    return TvNavigationItem(
+  TvNavigationMenuItem _buildItem({
+    required String title,
+    required IconData icon,
+  }) {
+    return TvNavigationMenuItem(
       key: ValueKey(title),
       icon: _buildIcon(icon),
       decoration: _buildDecoration(),
@@ -217,7 +237,7 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
           child: Stack(
             children: [
               AnimatedOpacity(
-                opacity: controller.hasFocus ? 1 : 0,
+                opacity: _controller.hasFocus ? 1 : 0,
                 duration: _animationDuration,
                 child: Text(
                   title,
@@ -237,14 +257,14 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
     );
   }
 
-  TvNavigationItem _buildFooter() {
+  TvNavigationMenuItem _buildFooter() {
     return _buildItem(title: 'Settings', icon: Icons.settings);
   }
 
   Widget _buildContentSeparator() {
     return AnimatedCrossFade(
       duration: _animationDuration,
-      crossFadeState: controller.hasFocus
+      crossFadeState: _controller.hasFocus
           ? CrossFadeState.showFirst
           : CrossFadeState.showSecond,
       firstChild: const Row(

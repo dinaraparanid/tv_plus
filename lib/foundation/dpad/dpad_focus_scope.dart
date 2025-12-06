@@ -40,7 +40,7 @@ final class DpadFocusScope extends StatefulWidget with DpadEvents {
   final DpadEventCallback? onBack;
   final void Function(FocusNode)? onFocusChanged;
   final void Function()? onFocusDisabledWhenWasFocused;
-  final Widget Function(FocusNode) builder;
+  final Widget Function(FocusScopeNode) builder;
 
   @override
   State<StatefulWidget> createState() => _DpadFocusScopeState();

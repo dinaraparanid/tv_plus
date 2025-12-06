@@ -1,2 +1,2 @@
 export 'drawer/drawer.dart';
-export 'tab/tab.dart';
+export '../../foundation/navigation/tab/tab.dart';

@@ -23,15 +23,24 @@ final class SidebarSample extends StatefulWidget {
 final class _SidebarSampleState extends State<SidebarSample> {
   static const _animationDuration = Duration(milliseconds: 350);
 
-  final controller = TvNavigationController(
+  late final _controller = TvNavigationMenuController(
     initialEntry: ItemEntry(key: ValueKey(SidebarSample.items[0].$1)),
+    focusScopeNode: FocusScopeNode(),
+    headerNode: FocusNode(),
+    footerNode: FocusNode(),
+    itemsNodes: {
+      for (final item in SidebarSample.items) ValueKey(item.$1): FocusNode(),
+    },
   );
 
-  var items = SidebarSample.items.toList();
+  late final _contentFocusNode = FocusNode();
+
+  final _items = SidebarSample.items.toList();
 
   @override
   void dispose() {
-    controller.dispose();
+    _controller.dispose();
+    _contentFocusNode.dispose();
     super.dispose();
   }
 
@@ -41,9 +50,9 @@ final class _SidebarSampleState extends State<SidebarSample> {
       theme: const CupertinoThemeData(brightness: Brightness.dark),
       builder: (context, _) {
         return CupertinoTvSidebar(
-          controller: controller,
-          headerBuilder: _buildHeader,
-          footerBuilder: _buildFooter,
+          controller: _controller,
+          header: _buildHeader(),
+          footer: _buildFooter(),
           separatorBuilder: (i) {
             if (i == 2) {
               return const Row(
@@ -76,12 +85,19 @@ final class _SidebarSampleState extends State<SidebarSample> {
 
             return const SizedBox(height: 6);
           },
-          menuItems: items.map((item) {
+          menuItems: _items.map((item) {
             return _buildItem(title: item.$1, icon: item.$2);
           }).toList(),
           backgroundColor: CupertinoColors.darkBackgroundGray,
           drawerAnimationsDuration: _animationDuration,
-          drawerBuilder: (context, child) {
+          onRight: (_, _, isOutOfScope) {
+            if (isOutOfScope) {
+              _contentFocusNode.requestFocus();
+            }
+
+            return KeyEventResult.handled;
+          },
+          sidebarBuilder: (context, child) {
             const radius = BorderRadius.all(Radius.circular(40));
             const blurSigma = 135.91;
 
@@ -105,15 +121,15 @@ final class _SidebarSampleState extends State<SidebarSample> {
               ),
             );
           },
-          builder: (context, entry, focusNode) {
+          builder: (context, entry) {
             return Stack(
               children: [
                 Align(
                   child: DpadFocus(
-                    focusNode: focusNode,
+                    focusNode: _contentFocusNode,
                     autofocus: true,
                     onLeft: (_, _) {
-                      controller.mediatorFocusNode.requestFocus();
+                      _controller.requestFocusOnMenu();
                       return KeyEventResult.handled;
                     },
                     builder: (node) {
@@ -138,8 +154,8 @@ final class _SidebarSampleState extends State<SidebarSample> {
     );
   }
 
-  TvNavigationItem _buildHeader() {
-    return TvNavigationItem(
+  TvNavigationMenuItem _buildHeader() {
+    return TvNavigationMenuItem(
       key: UniqueKey(),
       icon: _buildIcon(CupertinoIcons.profile_circled),
       decoration: _buildDecoration(),
@@ -147,7 +163,7 @@ final class _SidebarSampleState extends State<SidebarSample> {
         return ConstrainedBox(
           constraints: constraints,
           child: AnimatedOpacity(
-            opacity: controller.hasFocus ? 1 : 0,
+            opacity: _controller.hasFocus ? 1 : 0,
             duration: _animationDuration,
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -180,8 +196,11 @@ final class _SidebarSampleState extends State<SidebarSample> {
     );
   }
 
-  TvNavigationItem _buildItem({required String title, required IconData icon}) {
-    return TvNavigationItem(
+  TvNavigationMenuItem _buildItem({
+    required String title,
+    required IconData icon,
+  }) {
+    return TvNavigationMenuItem(
       key: ValueKey(title),
       icon: _buildIcon(icon),
       decoration: _buildDecoration(),
@@ -208,7 +227,7 @@ final class _SidebarSampleState extends State<SidebarSample> {
     );
   }
 
-  TvNavigationItem _buildFooter() {
+  TvNavigationMenuItem _buildFooter() {
     return _buildItem(title: 'Settings', icon: CupertinoIcons.settings);
   }
 
