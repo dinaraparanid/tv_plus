@@ -83,10 +83,6 @@ final class _TvNavigationDrawerState extends State<TvNavigationDrawer> {
     final passedController = widget.controller;
     final passedInitialEntry = widget.initialEntry;
 
-    if (passedController == null && passedInitialEntry == null) {
-      throw ArgumentError('Either controller or initialEntry must be provided');
-    }
-
     switch ((passedController, passedInitialEntry)) {
       case (null, null):
         throw ArgumentError(
@@ -128,6 +124,14 @@ final class _TvNavigationDrawerState extends State<TvNavigationDrawer> {
 
       _controller = passedController..addListener(_controllerListener);
       _ownsController = false;
+    }
+
+    if (widget.menuItems.length != oldWidget.menuItems.length &&
+        _controller.itemsNodes.length != widget.menuItems.length) {
+      throw ArgumentError(
+        'Updated menu items count does not match focus nodes count. '
+        'Recreate the controller with valid `itemsNodes` count.',
+      );
     }
 
     super.didUpdateWidget(oldWidget);

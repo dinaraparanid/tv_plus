@@ -56,7 +56,7 @@ final class TvNavigationMenuContent extends StatefulWidget {
 
 final class _TvNavigationMenuContentState extends State<TvNavigationMenuContent>
     with DpadEvents {
-  late final TvNavigationMenuController _controller;
+  late TvNavigationMenuController _controller;
   var _ownsController = false;
 
   void _validateController(TvNavigationMenuController controller) {
@@ -77,10 +77,6 @@ final class _TvNavigationMenuContentState extends State<TvNavigationMenuContent>
   void initState() {
     final passedController = widget.controller;
     final passedInitialEntry = widget.initialEntry;
-
-    if (passedController == null && passedInitialEntry == null) {
-      throw ArgumentError('Either controller or initialEntry must be provided');
-    }
 
     switch ((passedController, passedInitialEntry)) {
       case (null, null):
@@ -121,6 +117,14 @@ final class _TvNavigationMenuContentState extends State<TvNavigationMenuContent>
 
       _controller = passedController;
       _ownsController = false;
+    }
+
+    if (widget.menuItems.length != oldWidget.menuItems.length &&
+        _controller.itemsNodes.length != widget.menuItems.length) {
+      throw ArgumentError(
+        'Updated menu items count does not match focus nodes count. '
+        'Recreate the controller with valid `itemsNodes` count.',
+      );
     }
 
     super.didUpdateWidget(oldWidget);

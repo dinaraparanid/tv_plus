@@ -163,7 +163,7 @@ final class _SidebarSampleState extends State<SidebarSample> {
         return ConstrainedBox(
           constraints: constraints,
           child: AnimatedOpacity(
-            opacity: _controller.focusScopeNode.hasFocus ? 1 : 0,
+            opacity: _controller.hasFocus ? 1 : 0,
             duration: _animationDuration,
             child: Column(
               mainAxisSize: MainAxisSize.min,

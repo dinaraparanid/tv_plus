@@ -190,7 +190,7 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
         return ConstrainedBox(
           constraints: constraints,
           child: AnimatedOpacity(
-            opacity: _controller.focusScopeNode.hasFocus ? 1 : 0,
+            opacity: _controller.hasFocus ? 1 : 0,
             duration: _animationDuration,
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -237,7 +237,7 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
           child: Stack(
             children: [
               AnimatedOpacity(
-                opacity: _controller.focusScopeNode.hasFocus ? 1 : 0,
+                opacity: _controller.hasFocus ? 1 : 0,
                 duration: _animationDuration,
                 child: Text(
                   title,
@@ -264,7 +264,7 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
   Widget _buildContentSeparator() {
     return AnimatedCrossFade(
       duration: _animationDuration,
-      crossFadeState: _controller.focusScopeNode.hasFocus
+      crossFadeState: _controller.hasFocus
           ? CrossFadeState.showFirst
           : CrossFadeState.showSecond,
       firstChild: const Row(
