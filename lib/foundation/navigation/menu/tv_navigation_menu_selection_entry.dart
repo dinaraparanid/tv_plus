@@ -1,12 +1,14 @@
 import 'package:flutter/widgets.dart';
 
 @immutable
-sealed class TvSelectionEntry {
-  const TvSelectionEntry();
+sealed class TvNavigationMenuSelectionEntry {
+  const TvNavigationMenuSelectionEntry({required this.key});
+
+  final Key key;
 }
 
-final class HeaderEntry extends TvSelectionEntry {
-  const HeaderEntry();
+final class HeaderEntry extends TvNavigationMenuSelectionEntry {
+  const HeaderEntry({required super.key});
 
   @override
   bool operator ==(Object other) =>
@@ -20,10 +22,8 @@ final class HeaderEntry extends TvSelectionEntry {
   String toString() => 'HeaderEntry';
 }
 
-final class ItemEntry extends TvSelectionEntry {
-  const ItemEntry({required this.key});
-
-  final Key key;
+final class ItemEntry extends TvNavigationMenuSelectionEntry {
+  const ItemEntry({required super.key});
 
   @override
   bool operator ==(Object other) =>
@@ -41,8 +41,8 @@ final class ItemEntry extends TvSelectionEntry {
   }
 }
 
-final class FooterEntry extends TvSelectionEntry {
-  const FooterEntry();
+final class FooterEntry extends TvNavigationMenuSelectionEntry {
+  const FooterEntry({required super.key});
 
   @override
   bool operator ==(Object other) =>

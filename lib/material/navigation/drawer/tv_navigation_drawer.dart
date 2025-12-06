@@ -1,19 +1,19 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
-import '../../foundation/foundation.dart';
-import 'cupertino_tv_sidebar_floating_header.dart';
+import '../../../foundation/foundation.dart';
+import 'tv_navigation_drawer_mode.dart';
 
-final class CupertinoTvSidebar extends StatefulWidget {
-  CupertinoTvSidebar({
+final class TvNavigationDrawer extends StatefulWidget {
+  TvNavigationDrawer({
     super.key,
     this.controller,
     this.header,
     this.footer,
     this.backgroundColor,
-    this.constraints = const BoxConstraints(minWidth: 90, maxWidth: 200),
-    this.drawerMargin = const EdgeInsets.all(16),
-    required this.drawerAnimationsDuration,
+    this.constraints = const BoxConstraints(minWidth: 64, maxWidth: 280),
+    this.drawerExpandDuration = const Duration(milliseconds: 300),
     this.alignment = TvNavigationMenuAlignment.start,
+    this.mode = TvNavigationDrawerMode.standard,
     this.initialEntry,
     required this.menuItems,
     this.separatorBuilder,
@@ -25,8 +25,7 @@ final class CupertinoTvSidebar extends StatefulWidget {
     this.onDown,
     this.onLeft,
     this.onRight,
-    this.collapsedHeaderBuilder,
-    required this.sidebarBuilder,
+    required this.drawerBuilder,
     required this.builder,
   }) : assert(menuItems.isNotEmpty),
        policy = policy ?? ReadingOrderTraversalPolicy();
@@ -36,9 +35,9 @@ final class CupertinoTvSidebar extends StatefulWidget {
   final TvNavigationMenuItem? footer;
   final Color? backgroundColor;
   final BoxConstraints constraints;
-  final EdgeInsets drawerMargin;
-  final Duration drawerAnimationsDuration;
+  final Duration drawerExpandDuration;
   final TvNavigationMenuAlignment alignment;
+  final TvNavigationDrawerMode mode;
   final TvNavigationMenuSelectionEntry? initialEntry;
   final List<TvNavigationMenuItem> menuItems;
   final Widget Function(int index)? separatorBuilder;
@@ -50,12 +49,7 @@ final class CupertinoTvSidebar extends StatefulWidget {
   final ScrollGroupDpadEventCallback? onDown;
   final ScrollGroupDpadEventCallback? onLeft;
   final ScrollGroupDpadEventCallback? onRight;
-  final Widget Function(
-    BuildContext context,
-    TvNavigationMenuSelectionEntry? entry,
-  )?
-  collapsedHeaderBuilder;
-  final Widget Function(BuildContext context, Widget child) sidebarBuilder;
+  final Widget Function(BuildContext context, Widget child) drawerBuilder;
   final Widget Function(
     BuildContext context,
     TvNavigationMenuSelectionEntry? entry,
@@ -63,10 +57,10 @@ final class CupertinoTvSidebar extends StatefulWidget {
   builder;
 
   @override
-  State<StatefulWidget> createState() => _CupertinoTvSidebarState();
+  State<StatefulWidget> createState() => _TvNavigationDrawerState();
 }
 
-final class _CupertinoTvSidebarState extends State<CupertinoTvSidebar> {
+final class _TvNavigationDrawerState extends State<TvNavigationDrawer> {
   late final TvNavigationMenuController _controller;
   var _ownsController = false;
 
@@ -117,7 +111,7 @@ final class _CupertinoTvSidebarState extends State<CupertinoTvSidebar> {
   }
 
   @override
-  void didUpdateWidget(covariant CupertinoTvSidebar oldWidget) {
+  void didUpdateWidget(covariant TvNavigationDrawer oldWidget) {
     final passedController = widget.controller;
 
     if (passedController != null && oldWidget.controller != passedController) {
@@ -158,55 +152,56 @@ final class _CupertinoTvSidebarState extends State<CupertinoTvSidebar> {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
+    return Material(
       key: widget.key,
-      decoration: BoxDecoration(color: widget.backgroundColor),
-      child: switch (widget.alignment) {
-        TvNavigationMenuAlignment.start => Stack(
-          children: [
-            const SizedBox.expand(),
-
-            Positioned.fill(
-              left: widget.constraints.minWidth,
-              child: widget.builder(context, _controller.selectedEntry),
-            ),
-
-            Positioned(
-              top: widget.drawerMargin.top,
-              bottom: widget.drawerMargin.bottom,
-              left: widget.drawerMargin.left,
-              child: _buildContent(),
-            ),
-          ],
-        ),
-
-        TvNavigationMenuAlignment.end => Stack(
-          children: [
-            const SizedBox.expand(),
-
-            Positioned.fill(
-              right: widget.constraints.minWidth,
-              child: widget.builder(context, _controller.selectedEntry),
-            ),
-
-            Positioned(
-              top: widget.drawerMargin.top,
-              bottom: widget.drawerMargin.bottom,
-              right: widget.drawerMargin.right,
-              child: _buildContent(),
-            ),
-          ],
-        ),
+      color: widget.backgroundColor,
+      child: switch (widget.mode) {
+        TvNavigationDrawerMode.standard => _buildStandard(),
+        TvNavigationDrawerMode.modal => _buildModal(),
       },
     );
   }
 
-  Widget _buildContent() {
-    final height =
-        MediaQuery.of(context).size.height -
-        widget.drawerMargin.top -
-        widget.drawerMargin.bottom;
+  Widget _buildStandard() {
+    return Row(
+      children: [
+        if (widget.alignment == TvNavigationMenuAlignment.start)
+          _buildContent(),
 
+        Expanded(child: widget.builder(context, _controller.selectedEntry)),
+
+        if (widget.alignment == TvNavigationMenuAlignment.end) _buildContent(),
+      ],
+    );
+  }
+
+  Widget _buildModal() {
+    return switch (widget.alignment) {
+      TvNavigationMenuAlignment.start => Stack(
+        children: [
+          Positioned.fill(
+            left: widget.constraints.minWidth,
+            child: widget.builder(context, _controller.selectedEntry),
+          ),
+
+          Align(alignment: Alignment.centerLeft, child: _buildContent()),
+        ],
+      ),
+
+      TvNavigationMenuAlignment.end => Stack(
+        children: [
+          Positioned.fill(
+            right: widget.constraints.minWidth,
+            child: widget.builder(context, _controller.selectedEntry),
+          ),
+
+          Align(alignment: Alignment.centerRight, child: _buildContent()),
+        ],
+      ),
+    };
+  }
+
+  Widget _buildContent() {
     return DpadFocus(
       focusNode: _controller.mediatorFocusNode,
       onFocusChanged: (node) {
@@ -217,56 +212,26 @@ final class _CupertinoTvSidebarState extends State<CupertinoTvSidebar> {
         }
       },
       builder: (_) {
-        return AnimatedCrossFade(
-          duration: widget.drawerAnimationsDuration,
-          crossFadeState: _controller.hasFocus
-              ? CrossFadeState.showFirst
-              : CrossFadeState.showSecond,
-          firstChild: ConstrainedBox(
+        return widget.drawerBuilder(
+          context,
+          TvNavigationMenuContent(
+            controller: widget.controller,
+            header: widget.header,
+            footer: widget.footer,
             constraints: widget.constraints,
-            child: SizedBox(
-              height: height,
-              child: widget.sidebarBuilder(
-                context,
-                TvNavigationMenuContent(
-                  controller: widget.controller,
-                  header: widget.header,
-                  footer: widget.footer,
-                  constraints: widget.constraints,
-                  itemsAlignment: MainAxisAlignment.start,
-                  animateDrawerExpansion: false,
-                  drawerAnimationsDuration: widget.drawerAnimationsDuration,
-                  menuItems: widget.menuItems,
-                  separatorBuilder: widget.separatorBuilder,
-                  policy: widget.policy,
-                  descendantsAreFocusable: widget.descendantsAreFocusable,
-                  descendantsAreTraversable: widget.descendantsAreTraversable,
-                  autofocus: widget.autofocus,
-                  onUp: widget.onUp,
-                  onDown: widget.onDown,
-                  onLeft: widget.onLeft,
-                  onRight: widget.onRight,
-                ),
-              ),
-            ),
+            animateDrawerExpansion: true,
+            drawerAnimationsDuration: widget.drawerExpandDuration,
+            menuItems: widget.menuItems,
+            separatorBuilder: widget.separatorBuilder,
+            policy: widget.policy,
+            descendantsAreFocusable: widget.descendantsAreFocusable,
+            descendantsAreTraversable: widget.descendantsAreTraversable,
+            autofocus: widget.autofocus,
+            onUp: widget.onUp,
+            onDown: widget.onDown,
+            onLeft: widget.onLeft,
+            onRight: widget.onRight,
           ),
-          secondChild:
-              widget.collapsedHeaderBuilder?.call(
-                context,
-                _controller.selectedEntry,
-              ) ??
-              CupertinoTvSidebarFloatingHeader(
-                controller: _controller,
-                selectedItem: switch (_controller.selectedEntry) {
-                  HeaderEntry() => widget.header!,
-
-                  ItemEntry(key: final key) => widget.menuItems.firstWhere(
-                    (it) => it.key == key,
-                  ),
-
-                  FooterEntry() => widget.footer!,
-                },
-              ),
         );
       },
     );

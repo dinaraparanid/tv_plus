@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
 
 @immutable
-final class TvNavigationItem {
-  const TvNavigationItem({
+final class TvNavigationMenuItem {
+  const TvNavigationMenuItem({
     required this.key,
     required this.icon,
     this.iconSpacing = 12,

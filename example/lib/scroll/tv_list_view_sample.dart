@@ -60,8 +60,11 @@ final class _TvListViewSampleState extends State<TvListViewSample> {
                   scrollDirection: Axis.horizontal,
                   itemCount: TvListViewSample.itemCount,
                   focusScopeNode: _horizontalListFocusScopeNode,
-                  onOutOfScopeDown: (_, _) {
-                    _requestFocusOnVerticalListItem();
+                  onDown: (_, _, isOutOfScope) {
+                    if (isOutOfScope) {
+                      _requestFocusOnVerticalListItem();
+                    }
+
                     return KeyEventResult.handled;
                   },
                   itemBuilder: (context, index) {
@@ -80,8 +83,11 @@ final class _TvListViewSampleState extends State<TvListViewSample> {
                 child: TvListView.separated(
                   itemCount: TvListViewSample.itemCount,
                   focusScopeNode: _verticalListFocusScopeNode,
-                  onOutOfScopeUp: (_, _) {
-                    _requestFocusOnHorizontalListItem();
+                  onUp: (_, _, isOutOfScope) {
+                    if (isOutOfScope) {
+                      _requestFocusOnHorizontalListItem();
+                    }
+
                     return KeyEventResult.handled;
                   },
                   itemBuilder: (context, index) {
