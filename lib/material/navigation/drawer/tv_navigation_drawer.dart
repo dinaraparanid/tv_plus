@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../foundation/foundation.dart';
+import '../../../foundation/foundation.dart';
 import 'tv_navigation_drawer_mode.dart';
 
 final class TvNavigationDrawer extends StatefulWidget {

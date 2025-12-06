@@ -63,12 +63,18 @@ final class _SliverTvListSampleState extends State<SliverTvListSample> {
 
               SliverTVScrollAdapter(
                 focusScopeNode: _listFocusScopeNode,
-                onOutOfScopeUp: (_, _) {
-                  _upButtonFocusNode.requestFocus();
+                onUp: (_, _, isOutOfScope) {
+                  if (isOutOfScope) {
+                    _upButtonFocusNode.requestFocus();
+                  }
+
                   return KeyEventResult.handled;
                 },
-                onOutOfScopeDown: (_, _) {
-                  _downButtonFocusNode.requestFocus();
+                onDown: (_, _, isOutOfScope) {
+                  if (isOutOfScope) {
+                    _downButtonFocusNode.requestFocus();
+                  }
+
                   return KeyEventResult.handled;
                 },
                 sliver: SliverTvList.separated(

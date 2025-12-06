@@ -3,6 +3,13 @@ import 'package:flutter/services.dart';
 
 import '../dpad/dpad_focus.dart';
 
+typedef ScrollGroupDpadEventCallback =
+    KeyEventResult Function(
+      FocusNode node,
+      KeyDownEvent event,
+      bool isOutOfScope,
+    );
+
 final class ScrollGroupDpadFocus extends StatefulWidget {
   const ScrollGroupDpadFocus({
     super.key,

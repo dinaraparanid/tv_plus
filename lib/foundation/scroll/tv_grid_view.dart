@@ -26,10 +26,10 @@ final class TvGridView extends BoxScrollView with DpadEvents {
     this.descendantsAreFocusable = true,
     this.descendantsAreTraversable = true,
     this.autofocus = false,
-    this.onOutOfScopeUp,
-    this.onOutOfScopeDown,
-    this.onOutOfScopeLeft,
-    this.onOutOfScopeRight,
+    this.onUp,
+    this.onDown,
+    this.onLeft,
+    this.onRight,
     super.dragStartBehavior,
     super.keyboardDismissBehavior,
     super.restorationId,
@@ -62,10 +62,10 @@ final class TvGridView extends BoxScrollView with DpadEvents {
     this.descendantsAreFocusable = true,
     this.descendantsAreTraversable = true,
     this.autofocus = false,
-    this.onOutOfScopeUp,
-    this.onOutOfScopeDown,
-    this.onOutOfScopeLeft,
-    this.onOutOfScopeRight,
+    this.onUp,
+    this.onDown,
+    this.onLeft,
+    this.onRight,
     bool addAutomaticKeepAlives = true,
     bool addRepaintBoundaries = true,
     bool addSemanticIndexes = true,
@@ -94,45 +94,45 @@ final class TvGridView extends BoxScrollView with DpadEvents {
   final bool descendantsAreFocusable;
   final bool descendantsAreTraversable;
   final bool autofocus;
-  final DpadEventCallback? onOutOfScopeUp;
-  final DpadEventCallback? onOutOfScopeDown;
-  final DpadEventCallback? onOutOfScopeLeft;
-  final DpadEventCallback? onOutOfScopeRight;
+  final ScrollGroupDpadEventCallback? onUp;
+  final ScrollGroupDpadEventCallback? onDown;
+  final ScrollGroupDpadEventCallback? onLeft;
+  final ScrollGroupDpadEventCallback? onRight;
 
   @override
   KeyEventResult onUpEvent(FocusNode node, KeyDownEvent event) {
     if (policy.inDirection(node, TraversalDirection.up)) {
-      return KeyEventResult.handled;
+      return onUp?.call(node, event, false) ?? KeyEventResult.handled;
     }
 
-    return onOutOfScopeUp?.call(node, event) ?? KeyEventResult.ignored;
+    return onUp?.call(node, event, true) ?? KeyEventResult.ignored;
   }
 
   @override
   KeyEventResult onDownEvent(FocusNode node, KeyDownEvent event) {
     if (policy.inDirection(node, TraversalDirection.down)) {
-      return KeyEventResult.handled;
+      return onDown?.call(node, event, false) ?? KeyEventResult.handled;
     }
 
-    return onOutOfScopeDown?.call(node, event) ?? KeyEventResult.ignored;
+    return onDown?.call(node, event, true) ?? KeyEventResult.ignored;
   }
 
   @override
   KeyEventResult onLeftEvent(FocusNode node, KeyDownEvent event) {
     if (policy.inDirection(node, TraversalDirection.left)) {
-      return KeyEventResult.handled;
+      return onLeft?.call(node, event, false) ?? KeyEventResult.handled;
     }
 
-    return onOutOfScopeLeft?.call(node, event) ?? KeyEventResult.ignored;
+    return onLeft?.call(node, event, true) ?? KeyEventResult.ignored;
   }
 
   @override
   KeyEventResult onRightEvent(FocusNode node, KeyDownEvent event) {
     if (policy.inDirection(node, TraversalDirection.right)) {
-      return KeyEventResult.handled;
+      return onRight?.call(node, event, false) ?? KeyEventResult.handled;
     }
 
-    return onOutOfScopeRight?.call(node, event) ?? KeyEventResult.ignored;
+    return onRight?.call(node, event, true) ?? KeyEventResult.ignored;
   }
 
   @override
