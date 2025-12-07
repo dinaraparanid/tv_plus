@@ -2,8 +2,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
 import 'package:tv_plus/foundation/foundation.dart';
 
-final class TvTabBar extends StatefulWidget {
-  TvTabBar({
+final class TvTabBarFoundation extends StatefulWidget {
+  TvTabBarFoundation({
     super.key,
     required this.tabs,
     this.controller,
@@ -49,10 +49,11 @@ final class TvTabBar extends StatefulWidget {
   final void Function()? onFocusDisabledWhenWasFocused;
 
   @override
-  State<StatefulWidget> createState() => _TvTabBarState();
+  State<StatefulWidget> createState() => _TvTabBarFoundationState();
 }
 
-final class _TvTabBarState extends State<TvTabBar> with DpadEvents {
+final class _TvTabBarFoundationState extends State<TvTabBarFoundation>
+    with DpadEvents {
   late final TvTabBarController _controller;
   var _ownsController = false;
 
@@ -79,7 +80,7 @@ final class _TvTabBarState extends State<TvTabBar> with DpadEvents {
   }
 
   @override
-  void didUpdateWidget(covariant TvTabBar oldWidget) {
+  void didUpdateWidget(covariant TvTabBarFoundation oldWidget) {
     final passedController = widget.controller;
 
     if (oldWidget.controller != passedController && passedController != null) {

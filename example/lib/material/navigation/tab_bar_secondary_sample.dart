@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:tv_plus/tv_plus.dart';
 
-final class TabBarSample extends StatefulWidget {
-  const TabBarSample({super.key});
+final class TabBarSecondarySample extends StatefulWidget {
+  const TabBarSecondarySample({super.key});
 
   static const backgroundColor = Color(0xFF131314);
   static const focusedColor = Colors.indigoAccent;
   static const selectedColor = Colors.green;
   static const contentColor = Colors.white;
-  static const contentSelectedColor = Colors.black;
-  static const radius = BorderRadius.all(Radius.circular(16.0));
+  static const selectionRadius = BorderRadius.all(Radius.circular(2));
   static const animationDuration = Duration(milliseconds: 300);
   static const tabBarHeight = 20.0;
+  static const unfocusedSelectionWidth = 8.0;
 
   static const items = [
     ('Search', Icons.search),
@@ -22,18 +22,11 @@ final class TabBarSample extends StatefulWidget {
   ];
 
   @override
-  State<StatefulWidget> createState() => _TabBarSampleState();
+  State<StatefulWidget> createState() => _TabBarSecondarySampleState();
 }
 
-final class _TabBarSampleState extends State<TabBarSample> {
-  static final _tabBarKey = GlobalKey();
-
+final class _TabBarSecondarySampleState extends State<TabBarSecondarySample> {
   late final _focusScopeNode = FocusScopeNode();
-
-  late final _tabsKeys = List.generate(
-    TabBarSample.items.length,
-    (_) => GlobalKey(),
-  );
 
   late final _contentFocusNode = FocusNode();
 
@@ -47,13 +40,6 @@ final class _TabBarSampleState extends State<TabBarSample> {
   void initState() {
     _tabController.addListener(_tabListener);
     _focusScopeNode.addListener(_focusListener);
-
-    // Required for _buildIndicator() in order to update
-    // selected tab's RenderBox position and constraints.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() {});
-    });
-
     super.initState();
   }
 
@@ -72,59 +58,52 @@ final class _TabBarSampleState extends State<TabBarSample> {
   @override
   void dispose() {
     _focusScopeNode.removeListener(_focusListener);
+    _tabController.removeListener(_tabListener);
 
     _focusScopeNode.dispose();
     _contentFocusNode.dispose();
-
-    _tabController.removeListener(_tabListener);
     _tabController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final (text, icon) = TabBarSample.items[_currentIndex];
+    final (text, icon) = TabBarSecondarySample.items[_currentIndex];
 
     return MaterialApp(
       home: Scaffold(
-        backgroundColor: TabBarSample.backgroundColor,
+        backgroundColor: TabBarSecondarySample.backgroundColor,
         appBar: AppBar(
-          backgroundColor: TabBarSample.backgroundColor,
+          backgroundColor: TabBarSecondarySample.backgroundColor,
           bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(TabBarSample.tabBarHeight),
-            child: Stack(
-              children: [
-                ?_buildIndicator(),
+            preferredSize: const Size.fromHeight(
+              TabBarSecondarySample.tabBarHeight,
+            ),
+            child: TvTabBar.secondary(
+              controller: _tabController,
+              animationDuration: TabBarSecondarySample.animationDuration,
+              focusScopeNode: _focusScopeNode,
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              spacing: 16,
+              onDown: (_, _, isOutOfScope) {
+                if (isOutOfScope) {
+                  _contentFocusNode.requestFocus();
+                }
 
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: TvTabBarFoundation(
-                    key: _tabBarKey,
-                    controller: _tabController,
-                    focusScopeNode: _focusScopeNode,
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    spacing: 16,
-                    onDown: (_, _, isOutOfScope) {
-                      if (isOutOfScope) {
-                        _contentFocusNode.requestFocus();
-                      }
-
-                      return KeyEventResult.handled;
-                    },
-                    tabs: [
-                      for (var i = 0; i < TabBarSample.items.length; ++i)
-                        Padding(
-                          key: _tabsKeys[i],
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: _TabItem(
-                            index: i,
-                            currentIndex: _currentIndex,
-                          ),
-                        ),
-                    ],
+                return KeyEventResult.handled;
+              },
+              indicatorBuilder: _buildIndicator,
+              tabs: [
+                for (var i = 0; i < TabBarSecondarySample.items.length; ++i)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: _TabItem(
+                      index: i,
+                      currentIndex: _currentIndex,
+                      isTabBarFocused: _tabBarHasFocus,
+                    ),
                   ),
-                ),
               ],
             ),
           ),
@@ -134,29 +113,24 @@ final class _TabBarSampleState extends State<TabBarSample> {
     );
   }
 
-  Widget? _buildIndicator() {
-    final (selectedOffset, selectedSize) = _getSelectionConstraints();
-
-    if (selectedOffset == null || selectedSize == null) {
-      return null;
-    }
-
-    return AnimatedPositioned(
-      duration: TabBarSample.animationDuration,
-      top: 0,
-      bottom: 0,
-      left: selectedOffset.dx,
-      child: AnimatedContainer(
-        duration: TabBarSample.animationDuration,
-        width: selectedSize.width,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: _tabBarHasFocus
-                ? TabBarSample.focusedColor
-                : TabBarSample.selectedColor,
-            borderRadius: TabBarSample.radius,
-          ),
-        ),
+  Widget _buildIndicator(Offset tabOffset, Size tabSize, bool tabBarHasFocus) {
+    return AnimatedContainer(
+      duration: TabBarSecondarySample.animationDuration,
+      height: 2,
+      width: tabBarHasFocus
+          ? tabSize.width
+          : TabBarSecondarySample.unfocusedSelectionWidth,
+      margin: EdgeInsets.only(
+        left: tabBarHasFocus
+            ? 0
+            : (tabSize.width - TabBarSecondarySample.unfocusedSelectionWidth) /
+                  2,
+      ),
+      decoration: BoxDecoration(
+        color: tabBarHasFocus
+            ? TabBarSecondarySample.focusedColor
+            : TabBarSecondarySample.selectedColor,
+        borderRadius: TabBarSecondarySample.selectionRadius,
       ),
     );
   }
@@ -200,7 +174,7 @@ final class _TabBarSampleState extends State<TabBarSample> {
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.all(Radius.circular(16)),
                     color: node.hasFocus
-                        ? TabBarSample.focusedColor
+                        ? TabBarSecondarySample.focusedColor
                         : Colors.transparent,
                   ),
                   padding: const EdgeInsets.symmetric(
@@ -223,44 +197,32 @@ final class _TabBarSampleState extends State<TabBarSample> {
       ],
     );
   }
-
-  (Offset?, Size?) _getSelectionConstraints() {
-    final obj = _tabsKeys[_currentIndex].currentContext?.findRenderObject();
-    final box = obj is RenderBox ? obj : null;
-
-    final parentObj = _tabBarKey.currentContext?.findRenderObject();
-    final parentBox = parentObj is RenderBox ? parentObj : null;
-
-    final hasSize = (box?.hasSize ?? false) && box?.size.width != 0;
-    final globalOffset = hasSize ? box?.localToGlobal(Offset.zero) : null;
-
-    final localOffset = globalOffset != null
-        ? parentBox?.globalToLocal(globalOffset)
-        : null;
-
-    final size = hasSize ? box?.size : null;
-
-    return (localOffset, size);
-  }
 }
 
 final class _TabItem extends StatelessWidget {
-  const _TabItem({required this.index, required this.currentIndex});
+  const _TabItem({
+    required this.index,
+    required this.currentIndex,
+    required this.isTabBarFocused,
+  });
 
   final int index;
   final int currentIndex;
+  final bool isTabBarFocused;
 
   @override
   Widget build(BuildContext context) {
     final isSelected = index == currentIndex;
 
-    final contentColor = isSelected
-        ? TabBarSample.contentSelectedColor
-        : TabBarSample.contentColor;
+    final contentColor = switch ((isSelected, isTabBarFocused)) {
+      (false, _) => TabBarSecondarySample.contentColor,
+      (true, true) => TabBarSecondarySample.focusedColor,
+      (true, false) => TabBarSecondarySample.selectedColor,
+    };
 
     return AnimatedScale(
       scale: isSelected ? 1.2 : 1.0,
-      duration: TabBarSample.animationDuration,
+      duration: TabBarSecondarySample.animationDuration,
       child: TvTab(
         autofocus: index == currentIndex,
         viewportAlignment: 0,
@@ -268,10 +230,10 @@ final class _TabItem extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           spacing: 8,
           children: [
-            Icon(TabBarSample.items[index].$2, color: contentColor),
+            Icon(TabBarSecondarySample.items[index].$2, color: contentColor),
 
             Text(
-              TabBarSample.items[index].$1,
+              TabBarSecondarySample.items[index].$1,
               style: TextStyle(color: contentColor, fontSize: 20),
             ),
           ],
