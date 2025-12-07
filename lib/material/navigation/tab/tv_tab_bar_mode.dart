@@ -1,0 +1,1 @@
+enum TvTabBarMode { primary, secondary }

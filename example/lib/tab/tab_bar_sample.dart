@@ -8,7 +8,7 @@ final class TabBarSample extends StatefulWidget {
   static const focusedColor = Colors.indigoAccent;
   static const selectedColor = Colors.green;
   static const contentColor = Colors.white;
-  static const contentHighlightedColor = Colors.black;
+  static const contentSelectedColor = Colors.black;
   static const radius = BorderRadius.all(Radius.circular(16.0));
   static const animationDuration = Duration(milliseconds: 300);
   static const tabBarHeight = 20.0;
@@ -25,16 +25,10 @@ final class TabBarSample extends StatefulWidget {
   State<StatefulWidget> createState() => _TabBarSampleState();
 }
 
-final class _TabBarSampleState extends State<TabBarSample>
-    with SingleTickerProviderStateMixin {
+final class _TabBarSampleState extends State<TabBarSample> {
   static final _tabBarKey = GlobalKey();
 
   late final _focusScopeNode = FocusScopeNode();
-
-  late final _tabsFocusNodes = List.generate(
-    TabBarSample.items.length,
-    (_) => FocusNode(),
-  );
 
   late final _tabsKeys = List.generate(
     TabBarSample.items.length,
@@ -54,6 +48,8 @@ final class _TabBarSampleState extends State<TabBarSample>
     _tabController.addListener(_tabListener);
     _focusScopeNode.addListener(_focusListener);
 
+    // Required for _buildIndicator() in order to update
+    // selected tab's RenderBox position and constraints.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {});
     });
@@ -77,10 +73,6 @@ final class _TabBarSampleState extends State<TabBarSample>
   void dispose() {
     _focusScopeNode.removeListener(_focusListener);
 
-    for (final node in _tabsFocusNodes) {
-      node.dispose();
-    }
-
     _focusScopeNode.dispose();
     _contentFocusNode.dispose();
 
@@ -102,11 +94,11 @@ final class _TabBarSampleState extends State<TabBarSample>
             preferredSize: const Size.fromHeight(TabBarSample.tabBarHeight),
             child: Stack(
               children: [
-                ?_buildSelection(),
+                ?_buildIndicator(),
 
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
-                  child: TvTabBar(
+                  child: TvTabBarFoundation(
                     key: _tabBarKey,
                     controller: _tabController,
                     focusScopeNode: _focusScopeNode,
@@ -127,7 +119,6 @@ final class _TabBarSampleState extends State<TabBarSample>
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: _TabItem(
                             index: i,
-                            focusNode: _tabsFocusNodes[i],
                             currentIndex: _currentIndex,
                           ),
                         ),
@@ -143,7 +134,7 @@ final class _TabBarSampleState extends State<TabBarSample>
     );
   }
 
-  Widget? _buildSelection() {
+  Widget? _buildIndicator() {
     final (selectedOffset, selectedSize) = _getSelectionConstraints();
 
     if (selectedOffset == null || selectedSize == null) {
@@ -199,6 +190,12 @@ final class _TabBarSampleState extends State<TabBarSample>
                   _focusScopeNode.requestFocus();
                   return KeyEventResult.handled;
                 },
+                onUp: (_, _) {
+                  _focusScopeNode.requestFocus();
+                  return KeyEventResult.handled;
+                },
+                onLeft: (_, _) => KeyEventResult.handled,
+                onRight: (_, _) => KeyEventResult.handled,
                 builder: (node) => Container(
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.all(Radius.circular(16)),
@@ -248,29 +245,23 @@ final class _TabBarSampleState extends State<TabBarSample>
 }
 
 final class _TabItem extends StatelessWidget {
-  const _TabItem({
-    required this.index,
-    required this.focusNode,
-    required this.currentIndex,
-  });
+  const _TabItem({required this.index, required this.currentIndex});
 
   final int index;
-  final FocusNode focusNode;
   final int currentIndex;
 
   @override
   Widget build(BuildContext context) {
-    final isHighlighted = index == currentIndex;
+    final isSelected = index == currentIndex;
 
-    final contentColor = isHighlighted
-        ? TabBarSample.contentHighlightedColor
+    final contentColor = isSelected
+        ? TabBarSample.contentSelectedColor
         : TabBarSample.contentColor;
 
     return AnimatedScale(
-      scale: isHighlighted ? 1.2 : 1.0,
+      scale: isSelected ? 1.2 : 1.0,
       duration: TabBarSample.animationDuration,
       child: TvTab(
-        focusNode: focusNode,
         autofocus: index == currentIndex,
         viewportAlignment: 0,
         child: Row(
