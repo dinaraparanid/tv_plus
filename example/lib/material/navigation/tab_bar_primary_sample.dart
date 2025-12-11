@@ -113,7 +113,12 @@ final class _TabBarPrimarySampleState extends State<TabBarPrimarySample> {
     );
   }
 
-  Widget _buildIndicator(Offset tabOffset, Size tabSize, bool tabBarHasFocus) {
+  Widget _buildIndicator(
+    BuildContext context,
+    Offset tabOffset,
+    Size tabSize,
+    bool tabBarHasFocus,
+  ) {
     return AnimatedContainer(
       duration: TabBarPrimarySample.animationDuration,
       height: tabSize.height,
