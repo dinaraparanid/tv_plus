@@ -64,7 +64,7 @@ final class TvTabBar extends StatefulWidget {
 
   final List<Widget> tabs;
   final Duration animationDuration;
-  final Widget Function(Offset, Size, bool) indicatorBuilder;
+  final Widget Function(BuildContext, Offset, Size, bool) indicatorBuilder;
   final EdgeInsets indicatorMargin;
   final TvTabBarController? controller;
   final TvTabBarMode mode;
@@ -215,12 +215,10 @@ final class _TvTabBarState extends State<TvTabBar> {
 
     return Stack(
       children: [
-        ?_buildIndicator(),
+        ?_buildIndicator(context),
 
-        Padding(
-          padding:
-              widget.indicatorMargin +
-              EdgeInsets.only(bottom: indicatorSize?.height ?? 0),
+        ConstrainedBox(
+          constraints: BoxConstraints(minHeight: indicatorSize?.height ?? 0),
           child: widget.isScrollable
               ? SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
@@ -263,13 +261,13 @@ final class _TvTabBarState extends State<TvTabBar> {
     );
   }
 
-  Widget? _buildIndicator() {
+  Widget? _buildIndicator(BuildContext context) {
     return _mode == TvTabBarMode.primary
-        ? _buildPrimaryIndicator()
-        : _buildSecondaryIndicator();
+        ? _buildPrimaryIndicator(context)
+        : _buildSecondaryIndicator(context);
   }
 
-  Widget? _buildPrimaryIndicator() {
+  Widget? _buildPrimaryIndicator(BuildContext context) {
     final (selectedOffset, selectedSize) = _getSelectionConstraints();
 
     if (selectedOffset == null || selectedSize == null) {
@@ -289,9 +287,11 @@ final class _TvTabBarState extends State<TvTabBar> {
     return AnimatedPositioned(
       key: _indicatorKey,
       duration: widget.animationDuration,
-      top: -widget.indicatorMargin.top,
+      top: widget.indicatorMargin.top,
+      bottom: widget.indicatorMargin.bottom,
       left: selectedOffset.dx + widget.indicatorMargin.left,
       child: widget.indicatorBuilder(
+        context,
         selectedOffset,
         selectedSize,
         _tabBarHasFocus,
@@ -299,7 +299,7 @@ final class _TvTabBarState extends State<TvTabBar> {
     );
   }
 
-  Widget? _buildSecondaryIndicator() {
+  Widget? _buildSecondaryIndicator(BuildContext context) {
     final (selectedOffset, selectedSize) = _getSelectionConstraints();
 
     if (selectedOffset == null || selectedSize == null) {
@@ -322,6 +322,7 @@ final class _TvTabBarState extends State<TvTabBar> {
       top: selectedSize.height + widget.indicatorMargin.top,
       left: selectedOffset.dx + widget.indicatorMargin.left,
       child: widget.indicatorBuilder(
+        context,
         selectedOffset,
         selectedSize,
         _tabBarHasFocus,
