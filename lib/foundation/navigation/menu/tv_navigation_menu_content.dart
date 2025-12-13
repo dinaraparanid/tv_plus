@@ -29,6 +29,8 @@ final class TvNavigationMenuContent extends StatefulWidget {
     this.onDown,
     this.onLeft,
     this.onRight,
+    this.onFocusChanged,
+    this.onFocusDisabledWhenWasFocused,
   }) : policy = policy ?? ReadingOrderTraversalPolicy();
 
   final TvNavigationMenuSelectionEntry? initialEntry;
@@ -49,6 +51,8 @@ final class TvNavigationMenuContent extends StatefulWidget {
   final ScrollGroupDpadEventCallback? onDown;
   final ScrollGroupDpadEventCallback? onLeft;
   final ScrollGroupDpadEventCallback? onRight;
+  final void Function(FocusScopeNode)? onFocusChanged;
+  final void Function(FocusScopeNode)? onFocusDisabledWhenWasFocused;
 
   @override
   State<StatefulWidget> createState() => _TvNavigationMenuContentState();
@@ -178,6 +182,8 @@ final class _TvNavigationMenuContentState extends State<TvNavigationMenuContent>
       onDown: onDownEvent,
       onLeft: onLeftEvent,
       onRight: onRightEvent,
+      onFocusChanged: widget.onFocusChanged,
+      onFocusDisabledWhenWasFocused: widget.onFocusDisabledWhenWasFocused,
       builder: (_) {
         return AnimatedContainer(
           duration: widget.drawerAnimationsDuration,

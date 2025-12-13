@@ -76,237 +76,240 @@ final class _DpadNavigationSampleState extends State<DpadNavigationSample> {
   Widget build(BuildContext context) {
     return MaterialApp(
       builder: (context, _) {
-        return Stack(
-          children: [
-            Align(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // ( only from center )
-                  //
-                  //    | * | $ | * |
-                  //    | $ | * | $ |
-                  //    | * | $ | * |
-                  //
-                  // ( reverse buttons )
-                  SizedBox(
-                    width: 400,
-                    child: SampleDpadFocus(
-                      key: DpadNavigationSample.keyOnlyFromCenterButton,
-                      focusNode: onlyFromCenterFn,
-                      onDown: (_, _) {
-                        fn5.requestFocus();
-                        return KeyEventResult.handled;
-                      },
-                      onSelect: (_, _) {
-                        fn5.requestFocus();
-                        return KeyEventResult.handled;
-                      },
-                      child: const Text('Focusable only from center (fn5)'),
-                    ),
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  SizedBox.square(
-                    dimension: 400,
-                    child: GridView.count(
-                      crossAxisCount: 3,
-                      mainAxisSpacing: 12,
-                      crossAxisSpacing: 12,
-                      children: [
-                        // ----- row 1 -----
-                        SampleDpadFocus(
-                          key: DpadNavigationSample.keyF1,
-                          isEnabled: isOddFocusable,
-                          autofocus: true,
-                          focusNode: fn1,
-                          onUp: (_, _) => KeyEventResult.handled,
-                          onDown: (_, _) {
-                            fn7.requestFocus();
-                            return KeyEventResult.handled;
-                          },
-                          onLeft: (_, _) => KeyEventResult.handled,
-                          onRight: (_, _) {
-                            fn3.requestFocus();
-                            return KeyEventResult.handled;
-                          },
-                          onFocusDisabledWhenWasFocused: () {
-                            reverseFn.requestFocus();
-                          },
-                        ),
-                        SampleDpadFocus(
-                          key: DpadNavigationSample.keyF2,
-                          isEnabled: !isOddFocusable,
-                          focusNode: fn2,
-                          onUp: (_, _) => KeyEventResult.handled,
-                          onDown: (_, _) {
-                            fn8.requestFocus();
-                            return KeyEventResult.handled;
-                          },
-                          onLeft: (_, _) => KeyEventResult.handled,
-                          onRight: (_, _) => KeyEventResult.handled,
-                          onFocusDisabledWhenWasFocused: () {
-                            reverseFn.requestFocus();
-                          },
-                        ),
-                        SampleDpadFocus(
-                          key: DpadNavigationSample.keyF3,
-                          isEnabled: isOddFocusable,
-                          focusNode: fn3,
-                          onUp: (_, _) => KeyEventResult.handled,
-                          onDown: (_, _) {
-                            fn9.requestFocus();
-                            return KeyEventResult.handled;
-                          },
-                          onLeft: (_, _) {
-                            fn1.requestFocus();
-                            return KeyEventResult.handled;
-                          },
-                          onRight: (_, _) => KeyEventResult.handled,
-                          onFocusDisabledWhenWasFocused: () {
-                            reverseFn.requestFocus();
-                          },
-                        ),
-
-                        // ----- row 2 -----
-                        SampleDpadFocus(
-                          key: DpadNavigationSample.keyF4,
-                          isEnabled: !isOddFocusable,
-                          focusNode: fn4,
-                          onUp: (_, _) => KeyEventResult.handled,
-                          onDown: (_, _) => KeyEventResult.handled,
-                          onLeft: (_, _) => KeyEventResult.handled,
-                          onRight: (_, _) {
-                            fn6.requestFocus();
-                            return KeyEventResult.handled;
-                          },
-                          onFocusDisabledWhenWasFocused: () {
-                            reverseFn.requestFocus();
-                          },
-                        ),
-                        SampleDpadFocus(
-                          key: DpadNavigationSample.keyF5,
-                          isEnabled: isOddFocusable,
-                          focusNode: fn5,
-                          onUp: (_, _) {
-                            onlyFromCenterFn.requestFocus();
-                            return KeyEventResult.handled;
-                          },
-                          onDown: (_, _) {
-                            reverseFn.requestFocus();
-                            return KeyEventResult.handled;
-                          },
-                          onLeft: (_, _) => KeyEventResult.handled,
-                          onRight: (_, _) => KeyEventResult.handled,
-                          onFocusDisabledWhenWasFocused: () {
-                            reverseFn.requestFocus();
-                          },
-                        ),
-                        SampleDpadFocus(
-                          key: DpadNavigationSample.keyF6,
-                          isEnabled: !isOddFocusable,
-                          focusNode: fn6,
-                          onUp: (_, _) => KeyEventResult.handled,
-                          onDown: (_, _) => KeyEventResult.handled,
-                          onLeft: (_, _) {
-                            fn4.requestFocus();
-                            return KeyEventResult.handled;
-                          },
-                          onRight: (_, _) => KeyEventResult.handled,
-                          onFocusDisabledWhenWasFocused: () {
-                            reverseFn.requestFocus();
-                          },
-                        ),
-
-                        // ----- row 3 -----
-                        SampleDpadFocus(
-                          key: DpadNavigationSample.keyF7,
-                          isEnabled: isOddFocusable,
-                          focusNode: fn7,
-                          onUp: (_, _) {
-                            fn1.requestFocus();
-                            return KeyEventResult.handled;
-                          },
-                          onDown: (_, _) {
-                            reverseFn.requestFocus();
-                            return KeyEventResult.handled;
-                          },
-                          onLeft: (_, _) => KeyEventResult.handled,
-                          onRight: (_, _) {
-                            fn9.requestFocus();
-                            return KeyEventResult.handled;
-                          },
-                          onFocusDisabledWhenWasFocused: () {
-                            reverseFn.requestFocus();
-                          },
-                        ),
-                        SampleDpadFocus(
-                          key: DpadNavigationSample.keyF8,
-                          isEnabled: !isOddFocusable,
-                          focusNode: fn8,
-                          onUp: (_, _) {
-                            fn2.requestFocus();
-                            return KeyEventResult.handled;
-                          },
-                          onDown: (_, _) {
-                            reverseFn.requestFocus();
-                            return KeyEventResult.handled;
-                          },
-                          onLeft: (_, _) => KeyEventResult.handled,
-                          onRight: (_, _) => KeyEventResult.handled,
-                          onFocusDisabledWhenWasFocused: () {
-                            reverseFn.requestFocus();
-                          },
-                        ),
-                        SampleDpadFocus(
-                          key: DpadNavigationSample.keyF9,
-                          isEnabled: isOddFocusable,
-                          focusNode: fn9,
-                          onUp: (_, _) {
-                            fn3.requestFocus();
-                            return KeyEventResult.handled;
-                          },
-                          onDown: (_, _) {
-                            reverseFn.requestFocus();
-                            return KeyEventResult.handled;
-                          },
-                          onLeft: (_, _) {
-                            fn7.requestFocus();
-                            return KeyEventResult.handled;
-                          },
-                          onRight: (_, _) => KeyEventResult.handled,
-                          onFocusDisabledWhenWasFocused: () {
-                            reverseFn.requestFocus();
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  SizedBox(
-                    width: 400,
-                    child: SampleDpadFocus(
-                      key: DpadNavigationSample.keyReverseButton,
-                      focusNode: reverseFn,
-                      onSelect: (_, _) {
-                        setState(() => isOddFocusable = !isOddFocusable);
-
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
+        return Scaffold(
+          backgroundColor: Colors.black,
+          body: Stack(
+            children: [
+              Align(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // ( only from center )
+                    //
+                    //    | * | $ | * |
+                    //    | $ | * | $ |
+                    //    | * | $ | * |
+                    //
+                    // ( reverse buttons )
+                    SizedBox(
+                      width: 400,
+                      child: SampleDpadFocus(
+                        key: DpadNavigationSample.keyOnlyFromCenterButton,
+                        focusNode: onlyFromCenterFn,
+                        onDown: (_, _) {
                           fn5.requestFocus();
-                        });
-
-                        return KeyEventResult.handled;
-                      },
-                      child: const Text('Reverse grid'),
+                          return KeyEventResult.handled;
+                        },
+                        onSelect: (_, _) {
+                          fn5.requestFocus();
+                          return KeyEventResult.handled;
+                        },
+                        child: const Text('Focusable only from center (fn5)'),
+                      ),
                     ),
-                  ),
-                ],
+
+                    const SizedBox(height: 12),
+
+                    SizedBox.square(
+                      dimension: 400,
+                      child: GridView.count(
+                        crossAxisCount: 3,
+                        mainAxisSpacing: 12,
+                        crossAxisSpacing: 12,
+                        children: [
+                          // ----- row 1 -----
+                          SampleDpadFocus(
+                            key: DpadNavigationSample.keyF1,
+                            isEnabled: isOddFocusable,
+                            autofocus: true,
+                            focusNode: fn1,
+                            onUp: (_, _) => KeyEventResult.handled,
+                            onDown: (_, _) {
+                              fn7.requestFocus();
+                              return KeyEventResult.handled;
+                            },
+                            onLeft: (_, _) => KeyEventResult.handled,
+                            onRight: (_, _) {
+                              fn3.requestFocus();
+                              return KeyEventResult.handled;
+                            },
+                            onFocusDisabledWhenWasFocused: () {
+                              reverseFn.requestFocus();
+                            },
+                          ),
+                          SampleDpadFocus(
+                            key: DpadNavigationSample.keyF2,
+                            isEnabled: !isOddFocusable,
+                            focusNode: fn2,
+                            onUp: (_, _) => KeyEventResult.handled,
+                            onDown: (_, _) {
+                              fn8.requestFocus();
+                              return KeyEventResult.handled;
+                            },
+                            onLeft: (_, _) => KeyEventResult.handled,
+                            onRight: (_, _) => KeyEventResult.handled,
+                            onFocusDisabledWhenWasFocused: () {
+                              reverseFn.requestFocus();
+                            },
+                          ),
+                          SampleDpadFocus(
+                            key: DpadNavigationSample.keyF3,
+                            isEnabled: isOddFocusable,
+                            focusNode: fn3,
+                            onUp: (_, _) => KeyEventResult.handled,
+                            onDown: (_, _) {
+                              fn9.requestFocus();
+                              return KeyEventResult.handled;
+                            },
+                            onLeft: (_, _) {
+                              fn1.requestFocus();
+                              return KeyEventResult.handled;
+                            },
+                            onRight: (_, _) => KeyEventResult.handled,
+                            onFocusDisabledWhenWasFocused: () {
+                              reverseFn.requestFocus();
+                            },
+                          ),
+
+                          // ----- row 2 -----
+                          SampleDpadFocus(
+                            key: DpadNavigationSample.keyF4,
+                            isEnabled: !isOddFocusable,
+                            focusNode: fn4,
+                            onUp: (_, _) => KeyEventResult.handled,
+                            onDown: (_, _) => KeyEventResult.handled,
+                            onLeft: (_, _) => KeyEventResult.handled,
+                            onRight: (_, _) {
+                              fn6.requestFocus();
+                              return KeyEventResult.handled;
+                            },
+                            onFocusDisabledWhenWasFocused: () {
+                              reverseFn.requestFocus();
+                            },
+                          ),
+                          SampleDpadFocus(
+                            key: DpadNavigationSample.keyF5,
+                            isEnabled: isOddFocusable,
+                            focusNode: fn5,
+                            onUp: (_, _) {
+                              onlyFromCenterFn.requestFocus();
+                              return KeyEventResult.handled;
+                            },
+                            onDown: (_, _) {
+                              reverseFn.requestFocus();
+                              return KeyEventResult.handled;
+                            },
+                            onLeft: (_, _) => KeyEventResult.handled,
+                            onRight: (_, _) => KeyEventResult.handled,
+                            onFocusDisabledWhenWasFocused: () {
+                              reverseFn.requestFocus();
+                            },
+                          ),
+                          SampleDpadFocus(
+                            key: DpadNavigationSample.keyF6,
+                            isEnabled: !isOddFocusable,
+                            focusNode: fn6,
+                            onUp: (_, _) => KeyEventResult.handled,
+                            onDown: (_, _) => KeyEventResult.handled,
+                            onLeft: (_, _) {
+                              fn4.requestFocus();
+                              return KeyEventResult.handled;
+                            },
+                            onRight: (_, _) => KeyEventResult.handled,
+                            onFocusDisabledWhenWasFocused: () {
+                              reverseFn.requestFocus();
+                            },
+                          ),
+
+                          // ----- row 3 -----
+                          SampleDpadFocus(
+                            key: DpadNavigationSample.keyF7,
+                            isEnabled: isOddFocusable,
+                            focusNode: fn7,
+                            onUp: (_, _) {
+                              fn1.requestFocus();
+                              return KeyEventResult.handled;
+                            },
+                            onDown: (_, _) {
+                              reverseFn.requestFocus();
+                              return KeyEventResult.handled;
+                            },
+                            onLeft: (_, _) => KeyEventResult.handled,
+                            onRight: (_, _) {
+                              fn9.requestFocus();
+                              return KeyEventResult.handled;
+                            },
+                            onFocusDisabledWhenWasFocused: () {
+                              reverseFn.requestFocus();
+                            },
+                          ),
+                          SampleDpadFocus(
+                            key: DpadNavigationSample.keyF8,
+                            isEnabled: !isOddFocusable,
+                            focusNode: fn8,
+                            onUp: (_, _) {
+                              fn2.requestFocus();
+                              return KeyEventResult.handled;
+                            },
+                            onDown: (_, _) {
+                              reverseFn.requestFocus();
+                              return KeyEventResult.handled;
+                            },
+                            onLeft: (_, _) => KeyEventResult.handled,
+                            onRight: (_, _) => KeyEventResult.handled,
+                            onFocusDisabledWhenWasFocused: () {
+                              reverseFn.requestFocus();
+                            },
+                          ),
+                          SampleDpadFocus(
+                            key: DpadNavigationSample.keyF9,
+                            isEnabled: isOddFocusable,
+                            focusNode: fn9,
+                            onUp: (_, _) {
+                              fn3.requestFocus();
+                              return KeyEventResult.handled;
+                            },
+                            onDown: (_, _) {
+                              reverseFn.requestFocus();
+                              return KeyEventResult.handled;
+                            },
+                            onLeft: (_, _) {
+                              fn7.requestFocus();
+                              return KeyEventResult.handled;
+                            },
+                            onRight: (_, _) => KeyEventResult.handled,
+                            onFocusDisabledWhenWasFocused: () {
+                              reverseFn.requestFocus();
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    SizedBox(
+                      width: 400,
+                      child: SampleDpadFocus(
+                        key: DpadNavigationSample.keyReverseButton,
+                        focusNode: reverseFn,
+                        onSelect: (_, _) {
+                          setState(() => isOddFocusable = !isOddFocusable);
+
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            fn5.requestFocus();
+                          });
+
+                          return KeyEventResult.handled;
+                        },
+                        child: const Text('Reverse grid'),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );

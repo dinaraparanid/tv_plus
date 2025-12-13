@@ -51,7 +51,7 @@ final class ScrollGroupDpadFocus extends StatefulWidget {
 }
 
 final class _ScrollGroupDpadFocusState extends State<ScrollGroupDpadFocus> {
-  late final FocusNode _focusNode;
+  late FocusNode _focusNode;
 
   bool ownsFocusNode = false;
 
