@@ -25,6 +25,8 @@ final class TvNavigationDrawer extends StatefulWidget {
     this.onDown,
     this.onLeft,
     this.onRight,
+    this.onFocusChanged,
+    this.onFocusDisabledWhenWasFocused,
     required this.drawerBuilder,
     required this.builder,
   }) : assert(menuItems.isNotEmpty),
@@ -49,6 +51,8 @@ final class TvNavigationDrawer extends StatefulWidget {
   final ScrollGroupDpadEventCallback? onDown;
   final ScrollGroupDpadEventCallback? onLeft;
   final ScrollGroupDpadEventCallback? onRight;
+  final void Function(FocusScopeNode)? onFocusChanged;
+  final void Function(FocusScopeNode)? onFocusDisabledWhenWasFocused;
   final Widget Function(BuildContext context, Widget child) drawerBuilder;
   final Widget Function(
     BuildContext context,
@@ -61,7 +65,7 @@ final class TvNavigationDrawer extends StatefulWidget {
 }
 
 final class _TvNavigationDrawerState extends State<TvNavigationDrawer> {
-  late final TvNavigationMenuController _controller;
+  late TvNavigationMenuController _controller;
   var _ownsController = false;
 
   void _validateController(TvNavigationMenuController controller) {
@@ -130,7 +134,7 @@ final class _TvNavigationDrawerState extends State<TvNavigationDrawer> {
         _controller.itemsNodes.length != widget.menuItems.length) {
       throw ArgumentError(
         'Updated menu items count does not match focus nodes count. '
-        'Recreate the controller with valid `itemsNodes` count.',
+        'Use controller.invalidateItemsNodes() to update items.',
       );
     }
 
@@ -207,7 +211,7 @@ final class _TvNavigationDrawerState extends State<TvNavigationDrawer> {
       onFocusChanged: (node) {
         if (node.hasFocus) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            _controller.selectedFocusNode.requestFocus();
+            _controller.selectedFocusNodeOrNull?.requestFocus();
           });
         }
       },
@@ -231,6 +235,8 @@ final class _TvNavigationDrawerState extends State<TvNavigationDrawer> {
             onDown: widget.onDown,
             onLeft: widget.onLeft,
             onRight: widget.onRight,
+            onFocusChanged: widget.onFocusChanged,
+            onFocusDisabledWhenWasFocused: widget.onFocusDisabledWhenWasFocused,
           ),
         );
       },

@@ -28,14 +28,7 @@ void main() {
   group('Dpad navigation tests', () {
     testWidgets('...', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          builder: (context, _) {
-            return const Scaffold(
-              backgroundColor: Colors.black,
-              body: DpadNavigationSample(isReverseTimerEnabled: false),
-            );
-          },
-        ),
+        const DpadNavigationSample(isReverseTimerEnabled: false),
       );
 
       void testDpadFocus({

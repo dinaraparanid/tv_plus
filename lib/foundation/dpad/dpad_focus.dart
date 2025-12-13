@@ -72,7 +72,7 @@ final class DpadFocus extends StatefulWidget with DpadEvents {
 }
 
 final class _DpadFocusState extends State<DpadFocus> {
-  late final FocusNode _focusNode;
+  late FocusNode _focusNode;
 
   bool ownsFocusNode = false;
 

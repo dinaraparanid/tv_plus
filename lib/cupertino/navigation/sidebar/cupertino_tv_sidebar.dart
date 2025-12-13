@@ -67,7 +67,7 @@ final class CupertinoTvSidebar extends StatefulWidget {
 }
 
 final class _CupertinoTvSidebarState extends State<CupertinoTvSidebar> {
-  late final TvNavigationMenuController _controller;
+  late TvNavigationMenuController _controller;
   var _ownsController = false;
 
   void _validateController(TvNavigationMenuController controller) {

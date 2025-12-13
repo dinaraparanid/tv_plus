@@ -85,8 +85,8 @@ final class TvTabBar extends StatefulWidget {
   final ScrollGroupDpadEventCallback? onLeft;
   final ScrollGroupDpadEventCallback? onRight;
   final DpadEventCallback? onBack;
-  final void Function(FocusNode)? onFocusChanged;
-  final void Function()? onFocusDisabledWhenWasFocused;
+  final void Function(FocusScopeNode)? onFocusChanged;
+  final void Function(FocusScopeNode)? onFocusDisabledWhenWasFocused;
 
   @override
   State<StatefulWidget> createState() => _TvTabBarState();
@@ -96,10 +96,10 @@ final class _TvTabBarState extends State<TvTabBar> {
   static final _tabBarKey = GlobalKey();
   static final _indicatorKey = GlobalKey();
 
-  late final TvTabBarController _controller;
+  late TvTabBarController _controller;
   var _ownsController = false;
 
-  late final FocusScopeNode _focusScopeNode;
+  late FocusScopeNode _focusScopeNode;
   var _ownsNode = false;
 
   late final TvTabBarMode _mode = widget.mode;

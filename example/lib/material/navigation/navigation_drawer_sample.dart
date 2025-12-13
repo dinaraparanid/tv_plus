@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:tv_plus/tv_plus.dart';
 
 final class NavigationDrawerSample extends StatefulWidget {
-  const NavigationDrawerSample({super.key});
+  const NavigationDrawerSample({super.key, required this.isTimerEnabled});
+
+  final bool isTimerEnabled;
 
   static const backgroundColor = Color(0xFF131314);
 
@@ -14,6 +18,8 @@ final class NavigationDrawerSample extends StatefulWidget {
     ('Library', Icons.video_library),
   ];
 
+  static const contentKey = ValueKey('content');
+
   @override
   State<StatefulWidget> createState() => _NavigationDrawerSampleState();
 }
@@ -23,36 +29,67 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
 
   final _items = NavigationDrawerSample.items.toList();
 
-  // late final Timer timer;
+  late final Timer timer;
 
   late final _controller = TvNavigationMenuController(
     initialEntry: ItemEntry(key: ValueKey(NavigationDrawerSample.items[0].$1)),
     focusScopeNode: FocusScopeNode(),
     headerNode: FocusNode(),
     footerNode: FocusNode(),
-    itemsNodes: {
-      for (final item in NavigationDrawerSample.items)
-        ValueKey(item.$1): FocusNode(),
-    },
+    itemsNodes: {for (final item in _items) ValueKey(item.$1): FocusNode()},
   );
 
   late final _contentFocusNode = FocusNode();
 
+  var _isHeaderPresent = true;
+  var _isFooterPresent = true;
+
   @override
   void initState() {
-    // Testing
-    // timer = Timer.periodic(Duration(seconds: 3), (_) {
-    //   if (items.length > 1) {
-    //     setState(() => items.removeLast());
-    //   }
-    // });
+    if (widget.isTimerEnabled) {
+      timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+        if (_items.length > 1) {
+          setState(() {
+            _items.removeLast();
+            _invalidateItems();
+          });
+        } else if (_isHeaderPresent) {
+          if (_controller.selectedEntry is HeaderEntry) {
+            _controller.select(_selectedEntryFallback());
+          }
+
+          setState(() => _isHeaderPresent = false);
+        } else if (_isFooterPresent) {
+          if (_controller.selectedEntry is FooterEntry) {
+            _controller.select(_selectedEntryFallback());
+          }
+
+          setState(() => _isFooterPresent = false);
+        } else {
+          timer.cancel();
+        }
+      });
+    }
 
     super.initState();
   }
 
+  void _invalidateItems() {
+    _controller.invalidateItemsNodes(
+      newItems: {for (final item in _items) ValueKey(item.$1): FocusNode()},
+      onSelectedItemRemoved: _selectedEntryFallback,
+    );
+  }
+
+  TvNavigationMenuSelectionEntry _selectedEntryFallback() =>
+      ItemEntry(key: ValueKey(_items.first.$1));
+
   @override
   void dispose() {
-    // timer.cancel();
+    if (widget.isTimerEnabled) {
+      timer.cancel();
+    }
+
     _controller.dispose();
     _contentFocusNode.dispose();
     super.dispose();
@@ -67,8 +104,8 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
           backgroundColor: NavigationDrawerSample.backgroundColor,
           drawerExpandDuration: _animationDuration,
           mode: TvNavigationDrawerMode.modal,
-          header: _buildHeader(),
-          footer: _buildFooter(),
+          header: _isHeaderPresent ? _buildHeader() : null,
+          footer: _isFooterPresent ? _buildFooter() : null,
           separatorBuilder: (i) {
             if (i == 2) {
               return Column(
@@ -116,6 +153,7 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
                 Align(
                   child: DpadFocus(
                     focusNode: _contentFocusNode,
+                    key: NavigationDrawerSample.contentKey,
                     autofocus: true,
                     onLeft: (_, _) {
                       _controller.requestFocusOnMenu();
