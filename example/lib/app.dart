@@ -7,6 +7,6 @@ final class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const NavigationDrawerSample(isTimerEnabled: false);
+    return const NavigationDrawerSample();
   }
 }
