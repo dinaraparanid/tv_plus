@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
 
-@immutable
 final class TvNavigationMenuItem {
   const TvNavigationMenuItem({
     required this.key,
@@ -26,5 +25,6 @@ final class TvNavigationMenuItem {
     BuildContext context,
     BoxConstraints itemConstraints,
     Set<WidgetState> itemStates,
-  ) builder;
+  )
+  builder;
 }

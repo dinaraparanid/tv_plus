@@ -6,6 +6,8 @@ import 'package:tv_plus/foundation/foundation.dart';
 import 'package:tv_plus_example/dpad/dpad_navigation_sample.dart';
 import 'package:tv_plus_example/dpad/sample_dpad_focus.dart';
 
+import 'utils.dart';
+
 final class SampleDpadData {
   SampleDpadData({
     required this.key,
@@ -28,14 +30,7 @@ void main() {
   group('Dpad navigation tests', () {
     testWidgets('...', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          builder: (context, _) {
-            return const Scaffold(
-              backgroundColor: Colors.black,
-              body: DpadNavigationSample(isReverseTimerEnabled: false),
-            );
-          },
-        ),
+        const DpadNavigationSample(isReverseTimerEnabled: false),
       );
 
       void testDpadFocus({
@@ -88,11 +83,6 @@ void main() {
         }
       }
 
-      Future<void> sendDpadEvent(LogicalKeyboardKey key) async {
-        await tester.sendKeyEvent(key);
-        await tester.pumpAndSettle();
-      }
-
       // ( only from center )
       //
       //    | F | $ | * |
@@ -109,7 +99,7 @@ void main() {
       //    | F | $ | * |
       //
       // ( reverse buttons )
-      await sendDpadEvent(LogicalKeyboardKey.arrowDown);
+      await tester.sendDpadEvent(LogicalKeyboardKey.arrowDown);
       testAllWidgets(_buildSampleDataList(isOddEnabled: true, focusedIndex: 7));
 
       // ( only from center )
@@ -119,7 +109,7 @@ void main() {
       //    | * | $ | F |
       //
       // ( reverse buttons )
-      await sendDpadEvent(LogicalKeyboardKey.arrowRight);
+      await tester.sendDpadEvent(LogicalKeyboardKey.arrowRight);
       testAllWidgets(_buildSampleDataList(isOddEnabled: true, focusedIndex: 9));
 
       // ( only from center )
@@ -129,7 +119,7 @@ void main() {
       //    | * | $ | * |
       //
       // ( reverse buttons )
-      await sendDpadEvent(LogicalKeyboardKey.arrowUp);
+      await tester.sendDpadEvent(LogicalKeyboardKey.arrowUp);
       testAllWidgets(_buildSampleDataList(isOddEnabled: true, focusedIndex: 3));
 
       // ( only from center )
@@ -139,7 +129,7 @@ void main() {
       //    | * | $ | * |
       //
       // ( reverse buttons )
-      await sendDpadEvent(LogicalKeyboardKey.arrowLeft);
+      await tester.sendDpadEvent(LogicalKeyboardKey.arrowLeft);
       testAllWidgets(_buildSampleDataList(isOddEnabled: true, focusedIndex: 1));
 
       // ( only from center )
@@ -149,8 +139,8 @@ void main() {
       //    | * | $ | * |
       //
       // ( F - reverse buttons )
-      await sendDpadEvent(LogicalKeyboardKey.arrowDown);
-      await sendDpadEvent(LogicalKeyboardKey.arrowDown);
+      await tester.sendDpadEvent(LogicalKeyboardKey.arrowDown);
+      await tester.sendDpadEvent(LogicalKeyboardKey.arrowDown);
       testAllWidgets(
         _buildSampleDataList(isOddEnabled: true, focusedIndex: 10),
       );
@@ -162,7 +152,7 @@ void main() {
       //    | $ | * | $ |
       //
       // ( F - reverse buttons )
-      await sendDpadEvent(LogicalKeyboardKey.select);
+      await tester.sendDpadEvent(LogicalKeyboardKey.select);
       testAllWidgets(
         _buildSampleDataList(isOddEnabled: false, focusedIndex: 10),
       );
@@ -174,7 +164,7 @@ void main() {
       //    | $ | F | $ |
       //
       // ( reverse buttons )
-      await sendDpadEvent(LogicalKeyboardKey.arrowUp);
+      await tester.sendDpadEvent(LogicalKeyboardKey.arrowUp);
       testAllWidgets(
         _buildSampleDataList(isOddEnabled: false, focusedIndex: 8),
       );
@@ -186,7 +176,7 @@ void main() {
       //    | $ | * | $ |
       //
       // ( reverse buttons )
-      await sendDpadEvent(LogicalKeyboardKey.arrowUp);
+      await tester.sendDpadEvent(LogicalKeyboardKey.arrowUp);
       testAllWidgets(
         _buildSampleDataList(isOddEnabled: false, focusedIndex: 2),
       );
@@ -198,7 +188,8 @@ void main() {
       //    | $ | * | $ |
       //
       // ( reverse buttons )
-      await sendDpadEvent(LogicalKeyboardKey.arrowUp); // nothing must change
+      // nothing must change
+      await tester.sendDpadEvent(LogicalKeyboardKey.arrowUp);
       testAllWidgets(
         _buildSampleDataList(isOddEnabled: false, focusedIndex: 2),
       );
@@ -210,8 +201,8 @@ void main() {
       //    | $ | * | $ |
       //
       // ( F - reverse buttons )
-      await sendDpadEvent(LogicalKeyboardKey.arrowDown);
-      await sendDpadEvent(LogicalKeyboardKey.arrowDown);
+      await tester.sendDpadEvent(LogicalKeyboardKey.arrowDown);
+      await tester.sendDpadEvent(LogicalKeyboardKey.arrowDown);
       testAllWidgets(
         _buildSampleDataList(isOddEnabled: false, focusedIndex: 10),
       );
@@ -223,7 +214,7 @@ void main() {
       //    | * | $ | * |
       //
       // ( reverse buttons )
-      await sendDpadEvent(LogicalKeyboardKey.select);
+      await tester.sendDpadEvent(LogicalKeyboardKey.select);
       testAllWidgets(_buildSampleDataList(isOddEnabled: true, focusedIndex: 5));
 
       // ( F - only from center )
@@ -233,7 +224,7 @@ void main() {
       //    | * | $ | * |
       //
       // ( reverse buttons )
-      await sendDpadEvent(LogicalKeyboardKey.arrowUp);
+      await tester.sendDpadEvent(LogicalKeyboardKey.arrowUp);
       testAllWidgets(_buildSampleDataList(isOddEnabled: true, focusedIndex: 0));
 
       // ( only from center )
@@ -243,7 +234,7 @@ void main() {
       //    | * | $ | * |
       //
       // ( reverse buttons )
-      await sendDpadEvent(LogicalKeyboardKey.select);
+      await tester.sendDpadEvent(LogicalKeyboardKey.select);
       testAllWidgets(_buildSampleDataList(isOddEnabled: true, focusedIndex: 5));
     });
   });

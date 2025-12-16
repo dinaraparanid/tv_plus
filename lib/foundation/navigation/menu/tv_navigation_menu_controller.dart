@@ -8,8 +8,10 @@ final class TvNavigationMenuController extends ChangeNotifier {
     required this.focusScopeNode,
     this.headerNode,
     this.footerNode,
+    FocusNode? mediatorFocusNode,
     required this.itemsNodes,
-  }) : _entry = initialEntry;
+  }) : _entry = initialEntry,
+       mediatorFocusNode = mediatorFocusNode ?? FocusNode();
 
   TvNavigationMenuSelectionEntry _entry;
   TvNavigationMenuSelectionEntry get selectedEntry => _entry;
@@ -17,18 +19,18 @@ final class TvNavigationMenuController extends ChangeNotifier {
   final FocusScopeNode focusScopeNode;
   final FocusNode? headerNode;
   final FocusNode? footerNode;
+  final FocusNode mediatorFocusNode;
   final Map<Key, FocusNode> itemsNodes;
-  final mediatorFocusNode = FocusNode();
 
   bool get hasFocus => focusScopeNode.hasFocus || mediatorFocusNode.hasFocus;
 
-  FocusNode get selectedFocusNode {
-    return switch (selectedEntry) {
-      HeaderEntry() => headerNode,
-      ItemEntry(key: final key) => itemsNodes[key],
-      FooterEntry() => footerNode,
-    }!;
-  }
+  FocusNode? get selectedFocusNodeOrNull => switch (selectedEntry) {
+    HeaderEntry() => headerNode,
+    ItemEntry(key: final key) => itemsNodes[key],
+    FooterEntry() => footerNode,
+  };
+
+  FocusNode get selectedFocusNode => selectedFocusNodeOrNull!;
 
   void select(TvNavigationMenuSelectionEntry entry) {
     _entry = entry;
@@ -37,6 +39,29 @@ final class TvNavigationMenuController extends ChangeNotifier {
 
   void requestFocusOnMenu() {
     mediatorFocusNode.requestFocus();
+  }
+
+  void invalidateItemsNodes({
+    required Map<Key, FocusNode> newItems,
+    required TvNavigationMenuSelectionEntry Function() onSelectedItemRemoved,
+  }) {
+    final selectedKey = selectedEntry.key;
+
+    itemsNodes.removeWhere((key, node) {
+      final isRemoved = !newItems.containsKey(key);
+
+      if (isRemoved) {
+        node.dispose();
+
+        if (key == selectedKey) {
+          select(onSelectedItemRemoved());
+        }
+      }
+
+      return isRemoved;
+    });
+
+    newItems.forEach((key, node) => itemsNodes.putIfAbsent(key, () => node));
   }
 
   @override

@@ -38,8 +38,8 @@ final class DpadFocusScope extends StatefulWidget with DpadEvents {
   final DpadEventCallback? onRight;
   final DpadEventCallback? onSelect;
   final DpadEventCallback? onBack;
-  final void Function(FocusNode)? onFocusChanged;
-  final void Function()? onFocusDisabledWhenWasFocused;
+  final void Function(FocusScopeNode)? onFocusChanged;
+  final void Function(FocusScopeNode)? onFocusDisabledWhenWasFocused;
   final Widget Function(FocusScopeNode) builder;
 
   @override
@@ -77,19 +77,18 @@ final class DpadFocusScope extends StatefulWidget with DpadEvents {
 }
 
 final class _DpadFocusScopeState extends State<DpadFocusScope> {
-  late final FocusScopeNode _focusNode;
-
-  bool ownsFocusNode = false;
+  late FocusScopeNode _focusScopeNode;
+  bool _ownsFocusNode = false;
 
   @override
   void initState() {
-    _focusNode =
+    _focusScopeNode =
         widget.focusScopeNode ??
         FocusScopeNode(canRequestFocus: widget.canRequestFocus);
 
-    _focusNode.addListener(onFocusChange);
+    _focusScopeNode.addListener(onFocusChange);
 
-    ownsFocusNode = widget.focusScopeNode == null;
+    _ownsFocusNode = widget.focusScopeNode == null;
 
     super.initState();
   }
@@ -97,27 +96,27 @@ final class _DpadFocusScopeState extends State<DpadFocusScope> {
   @override
   void didUpdateWidget(covariant DpadFocusScope oldWidget) {
     if (widget.canRequestFocus != oldWidget.canRequestFocus) {
-      if (_focusNode.hasFocus && widget.canRequestFocus == false) {
-        widget.onFocusDisabledWhenWasFocused?.call();
+      if (_focusScopeNode.hasFocus && widget.canRequestFocus == false) {
+        widget.onFocusDisabledWhenWasFocused?.call(_focusScopeNode);
       }
 
-      _focusNode.canRequestFocus = widget.canRequestFocus;
+      _focusScopeNode.canRequestFocus = widget.canRequestFocus;
     }
 
     final nextFocusNode = widget.focusScopeNode;
 
-    if (nextFocusNode != _focusNode && nextFocusNode != null) {
-      _focusNode.removeListener(onFocusChange);
+    if (nextFocusNode != _focusScopeNode && nextFocusNode != null) {
+      _focusScopeNode.removeListener(onFocusChange);
 
-      if (ownsFocusNode) {
-        _focusNode.dispose();
+      if (_ownsFocusNode) {
+        _focusScopeNode.dispose();
       }
 
-      _focusNode = nextFocusNode..canRequestFocus = widget.canRequestFocus;
+      _focusScopeNode = nextFocusNode..canRequestFocus = widget.canRequestFocus;
 
-      _focusNode.addListener(onFocusChange);
+      _focusScopeNode.addListener(onFocusChange);
 
-      ownsFocusNode = false;
+      _ownsFocusNode = false;
     }
 
     super.didUpdateWidget(oldWidget);
@@ -125,10 +124,10 @@ final class _DpadFocusScopeState extends State<DpadFocusScope> {
 
   @override
   void dispose() {
-    _focusNode.removeListener(onFocusChange);
+    _focusScopeNode.removeListener(onFocusChange);
 
-    if (ownsFocusNode) {
-      _focusNode.dispose();
+    if (_ownsFocusNode) {
+      _focusScopeNode.dispose();
     }
 
     super.dispose();
@@ -136,7 +135,7 @@ final class _DpadFocusScopeState extends State<DpadFocusScope> {
 
   void onFocusChange() {
     setState(() {});
-    widget.onFocusChanged?.call(_focusNode);
+    widget.onFocusChanged?.call(_focusScopeNode);
   }
 
   @override
@@ -146,7 +145,7 @@ final class _DpadFocusScopeState extends State<DpadFocusScope> {
       descendantsAreFocusable: widget.descendantsAreFocusable,
       descendantsAreTraversable: widget.descendantsAreTraversable,
       child: FocusScope(
-        node: _focusNode,
+        node: _focusScopeNode,
         parentNode: widget.parentNode,
         canRequestFocus: widget.canRequestFocus,
         autofocus: widget.autofocus,
@@ -178,7 +177,7 @@ final class _DpadFocusScopeState extends State<DpadFocusScope> {
             _ => KeyEventResult.ignored,
           };
         },
-        child: widget.builder(_focusNode),
+        child: widget.builder(_focusScopeNode),
       ),
     );
   }

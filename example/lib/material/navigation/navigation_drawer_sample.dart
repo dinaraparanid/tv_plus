@@ -1,8 +1,19 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:tv_plus/tv_plus.dart';
 
+const _animationDuration = Duration(milliseconds: 350);
+
 final class NavigationDrawerSample extends StatefulWidget {
-  const NavigationDrawerSample({super.key});
+  const NavigationDrawerSample({
+    super.key,
+    this.isTimerEnabled = false,
+    this.mode = TvNavigationDrawerMode.modal,
+  });
+
+  final bool isTimerEnabled;
+  final TvNavigationDrawerMode mode;
 
   static const backgroundColor = Color(0xFF131314);
 
@@ -14,45 +25,149 @@ final class NavigationDrawerSample extends StatefulWidget {
     ('Library', Icons.video_library),
   ];
 
+  static const contentKey = ValueKey('content');
+
+  static Color buildContentColor(Set<WidgetState> states) =>
+      states.contains(WidgetState.selected) ? Colors.black : Colors.white;
+
+  static WidgetStateProperty<Icon> buildIcon(IconData data) {
+    return WidgetStateProperty.resolveWith((states) {
+      return Icon(data, size: 32, color: buildContentColor(states));
+    });
+  }
+
+  static WidgetStateProperty<BoxDecoration> buildDecoration() {
+    return WidgetStateProperty.resolveWith((states) {
+      if (states.containsAll([WidgetState.selected, WidgetState.focused])) {
+        return const BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(24)),
+          color: Colors.deepPurpleAccent,
+        );
+      }
+
+      if (states.contains(WidgetState.selected)) {
+        return const BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(24)),
+          color: Colors.indigoAccent,
+        );
+      }
+
+      if (states.contains(WidgetState.focused)) {
+        return BoxDecoration(
+          borderRadius: const BorderRadius.all(Radius.circular(24)),
+          color: Colors.teal.withValues(alpha: 0.33),
+        );
+      }
+
+      return const BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(24)),
+      );
+    });
+  }
+
+  static TvNavigationMenuItem buildItem({
+    required String title,
+    required IconData icon,
+    required bool Function() isDrawerExpanded,
+  }) {
+    return TvNavigationMenuItem(
+      key: ValueKey(title),
+      icon: NavigationDrawerSample.buildIcon(icon),
+      decoration: NavigationDrawerSample.buildDecoration(),
+      builder: (_, constraints, states) {
+        return ConstrainedBox(
+          constraints: constraints,
+          child: Stack(
+            children: [
+              AnimatedOpacity(
+                opacity: isDrawerExpanded() ? 1 : 0,
+                duration: _animationDuration,
+                child: Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: NavigationDrawerSample.buildContentColor(states),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   State<StatefulWidget> createState() => _NavigationDrawerSampleState();
 }
 
 final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
-  static const _animationDuration = Duration(milliseconds: 350);
-
   final _items = NavigationDrawerSample.items.toList();
 
-  // late final Timer timer;
+  late final Timer timer;
 
   late final _controller = TvNavigationMenuController(
     initialEntry: ItemEntry(key: ValueKey(NavigationDrawerSample.items[0].$1)),
     focusScopeNode: FocusScopeNode(),
     headerNode: FocusNode(),
     footerNode: FocusNode(),
-    itemsNodes: {
-      for (final item in NavigationDrawerSample.items)
-        ValueKey(item.$1): FocusNode(),
-    },
+    itemsNodes: {for (final item in _items) ValueKey(item.$1): FocusNode()},
   );
 
   late final _contentFocusNode = FocusNode();
 
+  var _isHeaderPresent = true;
+  var _isFooterPresent = true;
+
   @override
   void initState() {
-    // Testing
-    // timer = Timer.periodic(Duration(seconds: 3), (_) {
-    //   if (items.length > 1) {
-    //     setState(() => items.removeLast());
-    //   }
-    // });
+    if (widget.isTimerEnabled) {
+      timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+        if (_items.length > 1) {
+          setState(() {
+            _items.removeLast();
+            _invalidateItems();
+          });
+        } else if (_isHeaderPresent) {
+          if (_controller.selectedEntry is HeaderEntry) {
+            _controller.select(_selectedEntryFallback());
+          }
+
+          setState(() => _isHeaderPresent = false);
+        } else if (_isFooterPresent) {
+          if (_controller.selectedEntry is FooterEntry) {
+            _controller.select(_selectedEntryFallback());
+          }
+
+          setState(() => _isFooterPresent = false);
+        } else {
+          timer.cancel();
+        }
+      });
+    }
 
     super.initState();
   }
 
+  void _invalidateItems() {
+    _controller.invalidateItemsNodes(
+      newItems: {for (final item in _items) ValueKey(item.$1): FocusNode()},
+      onSelectedItemRemoved: _selectedEntryFallback,
+    );
+  }
+
+  TvNavigationMenuSelectionEntry _selectedEntryFallback() =>
+      ItemEntry(key: ValueKey(_items.first.$1));
+
   @override
   void dispose() {
-    // timer.cancel();
+    if (widget.isTimerEnabled) {
+      timer.cancel();
+    }
+
     _controller.dispose();
     _contentFocusNode.dispose();
     super.dispose();
@@ -66,9 +181,9 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
           controller: _controller,
           backgroundColor: NavigationDrawerSample.backgroundColor,
           drawerExpandDuration: _animationDuration,
-          mode: TvNavigationDrawerMode.modal,
-          header: _buildHeader(),
-          footer: _buildFooter(),
+          mode: widget.mode,
+          header: _isHeaderPresent ? _buildHeader() : null,
+          footer: _isFooterPresent ? _buildFooter() : null,
           separatorBuilder: (i) {
             if (i == 2) {
               return Column(
@@ -116,6 +231,7 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
                 Align(
                   child: DpadFocus(
                     focusNode: _contentFocusNode,
+                    key: NavigationDrawerSample.contentKey,
                     autofocus: true,
                     onLeft: (_, _) {
                       _controller.requestFocusOnMenu();
@@ -143,49 +259,11 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
     );
   }
 
-  WidgetStateProperty<BoxDecoration> _buildDecoration() {
-    return WidgetStateProperty.resolveWith((states) {
-      if (states.containsAll([WidgetState.selected, WidgetState.focused])) {
-        return const BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(24)),
-          color: Colors.deepPurpleAccent,
-        );
-      }
-
-      if (states.contains(WidgetState.selected)) {
-        return const BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(24)),
-          color: Colors.indigoAccent,
-        );
-      }
-
-      if (states.contains(WidgetState.focused)) {
-        return BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(24)),
-          color: Colors.teal.withValues(alpha: 0.33),
-        );
-      }
-
-      return const BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(24)),
-      );
-    });
-  }
-
-  Color _buildContentColor(Set<WidgetState> states) =>
-      states.contains(WidgetState.selected) ? Colors.black : Colors.white;
-
-  WidgetStateProperty<Icon> _buildIcon(IconData data) {
-    return WidgetStateProperty.resolveWith((states) {
-      return Icon(data, size: 32, color: _buildContentColor(states));
-    });
-  }
-
   TvNavigationMenuItem _buildHeader() {
     return TvNavigationMenuItem(
       key: UniqueKey(),
-      icon: _buildIcon(Icons.account_circle),
-      decoration: _buildDecoration(),
+      icon: NavigationDrawerSample.buildIcon(Icons.account_circle),
+      decoration: NavigationDrawerSample.buildDecoration(),
       builder: (_, constraints, states) {
         return ConstrainedBox(
           constraints: constraints,
@@ -202,7 +280,7 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 16,
-                    color: _buildContentColor(states),
+                    color: NavigationDrawerSample.buildContentColor(states),
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -212,7 +290,7 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 12,
-                    color: _buildContentColor(states),
+                    color: NavigationDrawerSample.buildContentColor(states),
                   ),
                 ),
               ],
@@ -227,33 +305,10 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
     required String title,
     required IconData icon,
   }) {
-    return TvNavigationMenuItem(
-      key: ValueKey(title),
-      icon: _buildIcon(icon),
-      decoration: _buildDecoration(),
-      builder: (_, constraints, states) {
-        return ConstrainedBox(
-          constraints: constraints,
-          child: Stack(
-            children: [
-              AnimatedOpacity(
-                opacity: _controller.hasFocus ? 1 : 0,
-                duration: _animationDuration,
-                child: Text(
-                  title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: _buildContentColor(states),
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
+    return NavigationDrawerSample.buildItem(
+      title: title,
+      icon: icon,
+      isDrawerExpanded: () => _controller.hasFocus,
     );
   }
 
