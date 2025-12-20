@@ -18,7 +18,7 @@ void main() {
   });
 }
 
-extension NavigationDrawerTest on WidgetTester {
+extension SidebarTest on WidgetTester {
   Future<void> testScenario() async {
     testContent(focused: true, selectedIndex: 0);
     testSidebar(selectedIndex: 0, focusedIndex: 0, sidebarExpanded: false);
