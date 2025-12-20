@@ -16,6 +16,84 @@ final class SidebarSample extends StatefulWidget {
     ('Library', CupertinoIcons.play_rectangle),
   ];
 
+  static const contentKey = ValueKey('content');
+  static const collapsedHeaderKey = ValueKey('collapsed-header');
+  static const sidebarKey = ValueKey('sidebar');
+
+  static Color buildContentColor(Set<WidgetState> states) {
+    return CupertinoColors.white;
+  }
+
+  static WidgetStateProperty<Icon> buildIcon(IconData data) {
+    return WidgetStateProperty.resolveWith((states) {
+      return Icon(
+        data,
+        size: 20,
+        color: SidebarSample.buildContentColor(states),
+      );
+    });
+  }
+
+  static WidgetStateProperty<BoxDecoration> buildDecoration() {
+    const radius = BorderRadius.all(Radius.circular(16));
+
+    return WidgetStateProperty.resolveWith((states) {
+      if (states.containsAll([WidgetState.selected, WidgetState.focused])) {
+        return const BoxDecoration(
+          borderRadius: radius,
+          color: CupertinoColors.activeBlue,
+        );
+      }
+
+      if (states.contains(WidgetState.selected)) {
+        return const BoxDecoration(
+          borderRadius: radius,
+          color: CupertinoColors.systemIndigo,
+        );
+      }
+
+      if (states.contains(WidgetState.focused)) {
+        return BoxDecoration(
+          borderRadius: radius,
+          color: CupertinoColors.systemTeal.withValues(alpha: 0.33),
+        );
+      }
+
+      return const BoxDecoration(borderRadius: radius);
+    });
+  }
+
+  static TvNavigationMenuItem buildItem({
+    required String title,
+    required IconData icon,
+  }) {
+    return TvNavigationMenuItem(
+      key: ValueKey(title),
+      icon: SidebarSample.buildIcon(icon),
+      decoration: SidebarSample.buildDecoration(),
+      contentPadding: const EdgeInsets.all(12),
+      builder: (_, constraints, states) {
+        return ConstrainedBox(
+          constraints: constraints,
+          child: Stack(
+            children: [
+              Text(
+                title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: SidebarSample.buildContentColor(states),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   State<StatefulWidget> createState() => _SidebarSampleState();
 }
@@ -51,7 +129,7 @@ final class _SidebarSampleState extends State<SidebarSample> {
       builder: (context, _) {
         return CupertinoTvSidebar(
           controller: _controller,
-          header: _buildHeader(),
+          header: _buildHeader(isSidebarExpanded: _controller.hasFocus),
           footer: _buildFooter(),
           separatorBuilder: (i) {
             if (i == 2) {
@@ -86,7 +164,7 @@ final class _SidebarSampleState extends State<SidebarSample> {
             return const SizedBox(height: 6);
           },
           menuItems: _items.map((item) {
-            return _buildItem(title: item.$1, icon: item.$2);
+            return SidebarSample.buildItem(title: item.$1, icon: item.$2);
           }).toList(),
           backgroundColor: CupertinoColors.darkBackgroundGray,
           drawerAnimationsDuration: _animationDuration,
@@ -97,11 +175,19 @@ final class _SidebarSampleState extends State<SidebarSample> {
 
             return KeyEventResult.handled;
           },
+          collapsedHeaderBuilder: (context, _, selectedItem) {
+            return CupertinoTvSidebarFloatingHeader(
+              key: SidebarSample.collapsedHeaderKey,
+              controller: _controller,
+              selectedItem: selectedItem,
+            );
+          },
           sidebarBuilder: (context, child) {
             const radius = BorderRadius.all(Radius.circular(40));
             const blurSigma = 135.91;
 
             return ClipRRect(
+              key: SidebarSample.sidebarKey,
               borderRadius: radius,
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
@@ -127,6 +213,7 @@ final class _SidebarSampleState extends State<SidebarSample> {
                 Align(
                   child: DpadFocus(
                     focusNode: _contentFocusNode,
+                    key: SidebarSample.contentKey,
                     autofocus: true,
                     onLeft: (_, _) {
                       _controller.requestFocusOnMenu();
@@ -154,16 +241,16 @@ final class _SidebarSampleState extends State<SidebarSample> {
     );
   }
 
-  TvNavigationMenuItem _buildHeader() {
+  static TvNavigationMenuItem _buildHeader({required bool isSidebarExpanded}) {
     return TvNavigationMenuItem(
       key: UniqueKey(),
-      icon: _buildIcon(CupertinoIcons.profile_circled),
-      decoration: _buildDecoration(),
+      icon: SidebarSample.buildIcon(CupertinoIcons.profile_circled),
+      decoration: SidebarSample.buildDecoration(),
       builder: (_, constraints, states) {
         return ConstrainedBox(
           constraints: constraints,
           child: AnimatedOpacity(
-            opacity: _controller.hasFocus ? 1 : 0,
+            opacity: isSidebarExpanded ? 1 : 0,
             duration: _animationDuration,
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -175,7 +262,7 @@ final class _SidebarSampleState extends State<SidebarSample> {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 16,
-                    color: _buildContentColor(states),
+                    color: SidebarSample.buildContentColor(states),
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -185,7 +272,7 @@ final class _SidebarSampleState extends State<SidebarSample> {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 12,
-                    color: _buildContentColor(states),
+                    color: SidebarSample.buildContentColor(states),
                   ),
                 ),
               ],
@@ -196,75 +283,10 @@ final class _SidebarSampleState extends State<SidebarSample> {
     );
   }
 
-  TvNavigationMenuItem _buildItem({
-    required String title,
-    required IconData icon,
-  }) {
-    return TvNavigationMenuItem(
-      key: ValueKey(title),
-      icon: _buildIcon(icon),
-      decoration: _buildDecoration(),
-      contentPadding: const EdgeInsets.all(12),
-      builder: (_, constraints, states) {
-        return ConstrainedBox(
-          constraints: constraints,
-          child: Stack(
-            children: [
-              Text(
-                title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: _buildContentColor(states),
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-        );
-      },
+  static TvNavigationMenuItem _buildFooter() {
+    return SidebarSample.buildItem(
+      title: 'Settings',
+      icon: CupertinoIcons.settings,
     );
   }
-
-  TvNavigationMenuItem _buildFooter() {
-    return _buildItem(title: 'Settings', icon: CupertinoIcons.settings);
-  }
-
-  WidgetStateProperty<BoxDecoration> _buildDecoration() {
-    const radius = BorderRadius.all(Radius.circular(16));
-
-    return WidgetStateProperty.resolveWith((states) {
-      if (states.containsAll([WidgetState.selected, WidgetState.focused])) {
-        return const BoxDecoration(
-          borderRadius: radius,
-          color: CupertinoColors.activeBlue,
-        );
-      }
-
-      if (states.contains(WidgetState.selected)) {
-        return const BoxDecoration(
-          borderRadius: radius,
-          color: CupertinoColors.systemIndigo,
-        );
-      }
-
-      if (states.contains(WidgetState.focused)) {
-        return BoxDecoration(
-          borderRadius: radius,
-          color: CupertinoColors.systemTeal.withValues(alpha: 0.33),
-        );
-      }
-
-      return const BoxDecoration(borderRadius: radius);
-    });
-  }
-
-  WidgetStateProperty<Icon> _buildIcon(IconData data) {
-    return WidgetStateProperty.resolveWith((states) {
-      return Icon(data, size: 20, color: _buildContentColor(states));
-    });
-  }
-
-  Color _buildContentColor(Set<WidgetState> states) => CupertinoColors.white;
 }

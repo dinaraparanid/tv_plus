@@ -2,25 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:tv_plus/foundation/foundation.dart';
-import 'package:tv_plus/material/material.dart';
-import 'package:tv_plus_example/material/navigation/navigation_drawer_sample.dart';
+import 'package:tv_plus/tv_plus.dart';
+import 'package:tv_plus_example/cupertino/navigation/sidebar_sample.dart';
 
 import 'utils.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  group('Material navigation drawer tests', () {
-    testWidgets('Modal', (tester) async {
-      await tester.pumpWidget(const NavigationDrawerSample());
-      await tester.testScenario();
-    });
-
+  group('Cupertino Sidebar tests', () {
     testWidgets('Standard', (tester) async {
-      await tester.pumpWidget(
-        const NavigationDrawerSample(mode: TvNavigationDrawerMode.standard),
-      );
+      await tester.pumpWidget(const SidebarSample());
       await tester.testScenario();
     });
   });
@@ -29,69 +21,69 @@ void main() {
 extension NavigationDrawerTest on WidgetTester {
   Future<void> testScenario() async {
     testContent(focused: true, selectedIndex: 0);
-    testDrawer(selectedIndex: 0, focusedIndex: 0, drawerExpanded: false);
+    testSidebar(selectedIndex: 0, focusedIndex: 0, sidebarExpanded: false);
 
     await sendDpadEvent(LogicalKeyboardKey.arrowLeft);
     testContent(focused: false, selectedIndex: 0);
-    testDrawer(selectedIndex: 0, focusedIndex: 0, drawerExpanded: true);
+    testSidebar(selectedIndex: 0, focusedIndex: 0, sidebarExpanded: true);
 
     await sendDpadEvent(LogicalKeyboardKey.arrowDown);
     testContent(focused: false, selectedIndex: 0);
-    testDrawer(selectedIndex: 0, focusedIndex: 1, drawerExpanded: true);
+    testSidebar(selectedIndex: 0, focusedIndex: 1, sidebarExpanded: true);
 
     await sendDpadEvent(LogicalKeyboardKey.arrowDown);
     testContent(focused: false, selectedIndex: 0);
-    testDrawer(selectedIndex: 0, focusedIndex: 2, drawerExpanded: true);
+    testSidebar(selectedIndex: 0, focusedIndex: 2, sidebarExpanded: true);
 
     await sendDpadEvent(LogicalKeyboardKey.select);
     testContent(focused: false, selectedIndex: 2);
-    testDrawer(selectedIndex: 2, focusedIndex: 2, drawerExpanded: true);
+    testSidebar(selectedIndex: 2, focusedIndex: 2, sidebarExpanded: true);
 
     await sendDpadEvent(LogicalKeyboardKey.arrowRight);
     testContent(focused: true, selectedIndex: 2);
-    testDrawer(selectedIndex: 2, focusedIndex: 2, drawerExpanded: false);
+    testSidebar(selectedIndex: 2, focusedIndex: 2, sidebarExpanded: false);
 
     await sendDpadEvent(LogicalKeyboardKey.arrowLeft);
     testContent(focused: false, selectedIndex: 2);
-    testDrawer(selectedIndex: 2, focusedIndex: 2, drawerExpanded: true);
+    testSidebar(selectedIndex: 2, focusedIndex: 2, sidebarExpanded: true);
 
     // nothing should change
     await sendDpadEvent(LogicalKeyboardKey.select);
     testContent(focused: false, selectedIndex: 2);
-    testDrawer(selectedIndex: 2, focusedIndex: 2, drawerExpanded: true);
+    testSidebar(selectedIndex: 2, focusedIndex: 2, sidebarExpanded: true);
 
     await sendDpadEvent(LogicalKeyboardKey.arrowDown);
     testContent(focused: false, selectedIndex: 2);
-    testDrawer(selectedIndex: 2, focusedIndex: 3, drawerExpanded: true);
+    testSidebar(selectedIndex: 2, focusedIndex: 3, sidebarExpanded: true);
 
     await sendDpadEvent(LogicalKeyboardKey.select);
     testContent(focused: false, selectedIndex: 3);
-    testDrawer(selectedIndex: 3, focusedIndex: 3, drawerExpanded: true);
+    testSidebar(selectedIndex: 3, focusedIndex: 3, sidebarExpanded: true);
 
     await sendDpadEvent(LogicalKeyboardKey.arrowRight);
     testContent(focused: true, selectedIndex: 3);
-    testDrawer(selectedIndex: 3, focusedIndex: 3, drawerExpanded: false);
+    testSidebar(selectedIndex: 3, focusedIndex: 3, sidebarExpanded: false);
 
     await sendDpadEvent(LogicalKeyboardKey.arrowLeft);
     testContent(focused: false, selectedIndex: 3);
-    testDrawer(selectedIndex: 3, focusedIndex: 3, drawerExpanded: true);
+    testSidebar(selectedIndex: 3, focusedIndex: 3, sidebarExpanded: true);
 
     await sendDpadEvent(LogicalKeyboardKey.arrowUp);
     await sendDpadEvent(LogicalKeyboardKey.arrowUp);
     testContent(focused: false, selectedIndex: 3);
-    testDrawer(selectedIndex: 3, focusedIndex: 1, drawerExpanded: true);
+    testSidebar(selectedIndex: 3, focusedIndex: 1, sidebarExpanded: true);
 
     await sendDpadEvent(LogicalKeyboardKey.select);
     testContent(focused: false, selectedIndex: 1);
-    testDrawer(selectedIndex: 1, focusedIndex: 1, drawerExpanded: true);
+    testSidebar(selectedIndex: 1, focusedIndex: 1, sidebarExpanded: true);
 
     await sendDpadEvent(LogicalKeyboardKey.arrowRight);
     testContent(focused: true, selectedIndex: 1);
-    testDrawer(selectedIndex: 1, focusedIndex: 1, drawerExpanded: false);
+    testSidebar(selectedIndex: 1, focusedIndex: 1, sidebarExpanded: false);
   }
 
   void testContent({required bool focused, required int selectedIndex}) {
-    final contentFinder = find.byKey(NavigationDrawerSample.contentKey);
+    final contentFinder = find.byKey(SidebarSample.contentKey);
     final contentDpadFocus = firstWidget(contentFinder) as DpadFocus;
     expect(contentDpadFocus.autofocus, true);
     expect(contentDpadFocus.canRequestFocus, true);
@@ -106,30 +98,57 @@ extension NavigationDrawerTest on WidgetTester {
 
     expect(
       contentText.data,
-      '${ItemEntry(key: ValueKey(NavigationDrawerSample.items[selectedIndex].$1))} content',
+      '${ItemEntry(key: ValueKey(SidebarSample.items[selectedIndex].$1))} content',
     );
   }
 
-  void testDrawer({
+  void testSidebar({
     required int selectedIndex,
     required int focusedIndex,
-    required bool drawerExpanded,
+    required bool sidebarExpanded,
   }) {
-    for (int i = 0; i < NavigationDrawerSample.items.length; ++i) {
-      final (title, iconData) = NavigationDrawerSample.items[i];
+    if (!sidebarExpanded) {
+      final headerFinder = find.byKey(SidebarSample.collapsedHeaderKey);
+      expect(headerFinder, findsOneWidget);
 
-      final item = NavigationDrawerSample.buildItem(
-        title: title,
-        icon: iconData,
-        isDrawerExpanded: () => drawerExpanded,
+      final (title, iconData) = SidebarSample.items[selectedIndex];
+
+      final item = SidebarSample.buildItem(title: title, icon: iconData);
+
+      const states = {WidgetState.selected, WidgetState.focused};
+
+      // check icon
+      final realIcon = item.icon.resolve(states);
+      final expectedIcon = SidebarSample.buildIcon(iconData).resolve(states);
+
+      expect(realIcon.icon, expectedIcon.icon);
+      expect(realIcon.color, expectedIcon.color);
+      expect(realIcon.size, expectedIcon.size);
+
+      final titleFinder = find.descendant(
+        of: headerFinder,
+        matching: find.byType(Text),
       );
 
+      final titleWidget = firstWidget(titleFinder) as Text;
+
+      expect(titleWidget.data, title);
+      expect(titleWidget.maxLines, 1);
+      expect(titleWidget.style?.color, SidebarSample.buildContentColor(states));
+
+      return;
+    }
+
+    for (int i = 0; i < SidebarSample.items.length; ++i) {
+      final (title, iconData) = SidebarSample.items[i];
+
+      final item = SidebarSample.buildItem(title: title, icon: iconData);
       final itemFinder = find.byKey(ValueKey(title));
       expect(itemFinder, findsOneWidget);
 
       final states = {
         if (i == selectedIndex) WidgetState.selected,
-        if (i == focusedIndex && drawerExpanded) WidgetState.focused,
+        if (i == focusedIndex) WidgetState.focused,
       };
 
       // check decoration
@@ -142,44 +161,28 @@ extension NavigationDrawerTest on WidgetTester {
 
       expect(
         container.decoration! as BoxDecoration,
-        NavigationDrawerSample.buildDecoration().resolve(states),
+        SidebarSample.buildDecoration().resolve(states),
       );
 
       // check icon
       final realIcon = item.icon.resolve(states);
-
-      final expectedIcon = NavigationDrawerSample.buildIcon(
-        iconData,
-      ).resolve(states);
+      final expectedIcon = SidebarSample.buildIcon(iconData).resolve(states);
 
       expect(realIcon.icon, expectedIcon.icon);
       expect(realIcon.color, expectedIcon.color);
       expect(realIcon.size, expectedIcon.size);
 
       // check title
-      final titleOpacityFinder = find.descendant(
+      final titleFinder = find.descendant(
         of: itemFinder,
-        matching: find.byType(AnimatedOpacity),
+        matching: find.byType(Text),
       );
 
-      final titleOpacity = firstWidget(titleOpacityFinder) as AnimatedOpacity;
-      expect(titleOpacity.opacity, drawerExpanded ? 1.0 : 0.0);
+      final titleWidget = firstWidget(titleFinder) as Text;
 
-      if (drawerExpanded) {
-        final titleFinder = find.descendant(
-          of: titleOpacityFinder,
-          matching: find.byType(Text),
-        );
-
-        final titleWidget = firstWidget(titleFinder) as Text;
-
-        expect(titleWidget.data, title);
-        expect(titleWidget.maxLines, 1);
-        expect(
-          titleWidget.style?.color,
-          NavigationDrawerSample.buildContentColor(states),
-        );
-      }
+      expect(titleWidget.data, title);
+      expect(titleWidget.maxLines, 1);
+      expect(titleWidget.style?.color, SidebarSample.buildContentColor(states));
     }
   }
 }

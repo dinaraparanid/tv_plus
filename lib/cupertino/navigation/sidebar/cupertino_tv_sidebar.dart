@@ -52,13 +52,14 @@ final class CupertinoTvSidebar extends StatefulWidget {
   final ScrollGroupDpadEventCallback? onRight;
   final Widget Function(
     BuildContext context,
-    TvNavigationMenuSelectionEntry? entry,
+    TvNavigationMenuSelectionEntry? selectedEntry,
+    TvNavigationMenuItem selectedItem,
   )?
   collapsedHeaderBuilder;
   final Widget Function(BuildContext context, Widget child) sidebarBuilder;
   final Widget Function(
     BuildContext context,
-    TvNavigationMenuSelectionEntry? entry,
+    TvNavigationMenuSelectionEntry? selectedEntry,
   )
   builder;
 
@@ -254,21 +255,26 @@ final class _CupertinoTvSidebarState extends State<CupertinoTvSidebar> {
               widget.collapsedHeaderBuilder?.call(
                 context,
                 _controller.selectedEntry,
+                _buildSidebarMenuItem(),
               ) ??
               CupertinoTvSidebarFloatingHeader(
                 controller: _controller,
-                selectedItem: switch (_controller.selectedEntry) {
-                  HeaderEntry() => widget.header!,
-
-                  ItemEntry(key: final key) => widget.menuItems.firstWhere(
-                    (it) => it.key == key,
-                  ),
-
-                  FooterEntry() => widget.footer!,
-                },
+                selectedItem: _buildSidebarMenuItem(),
               ),
         );
       },
     );
+  }
+
+  TvNavigationMenuItem _buildSidebarMenuItem() {
+    return switch (_controller.selectedEntry) {
+      HeaderEntry() => widget.header!,
+
+      ItemEntry(key: final key) => widget.menuItems.firstWhere(
+        (it) => it.key == key,
+      ),
+
+      FooterEntry() => widget.footer!,
+    };
   }
 }
