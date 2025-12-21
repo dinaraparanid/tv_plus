@@ -4,10 +4,15 @@ import 'package:tv_plus/tv_plus.dart';
 final class TvListViewSample extends StatefulWidget {
   const TvListViewSample({super.key});
 
-  static const backgroundColor = Color(0xFF131314);
-
   static const itemCount = 50;
+  static const backgroundColor = Color(0xFF131314);
   static const focusedColor = Colors.indigoAccent;
+  static const scrollDuration = Duration(milliseconds: 300);
+
+  static final horizontalListKey = GlobalKey();
+  static final verticalListKey = GlobalKey();
+
+  static String buildItemName({required int index}) => 'Item $index';
 
   @override
   State<StatefulWidget> createState() => _TvListViewSampleState();
@@ -57,6 +62,7 @@ final class _TvListViewSampleState extends State<TvListViewSample> {
               SizedBox(
                 height: 80,
                 child: TvListView.separated(
+                  key: TvListViewSample.horizontalListKey,
                   scrollDirection: Axis.horizontal,
                   itemCount: TvListViewSample.itemCount,
                   focusScopeNode: _horizontalListFocusScopeNode,
@@ -69,10 +75,14 @@ final class _TvListViewSampleState extends State<TvListViewSample> {
                   },
                   itemBuilder: (context, index) {
                     return ScrollGroupDpadFocus(
+                      key: ValueKey(
+                        TvListViewSample.buildItemName(index: index),
+                      ),
                       focusNode: _horizontalListFocusNodes[index],
                       autofocus: index == 0,
                       viewportAlignment: 0,
-                      builder: (node) => _itemBuilder(node: node, index: index),
+                      scrollToNextNodeDuration: TvListViewSample.scrollDuration,
+                      builder: (node) => TvListItem(index: index, node: node),
                     );
                   },
                   separatorBuilder: (_, _) => const SizedBox(width: 12),
@@ -81,6 +91,7 @@ final class _TvListViewSampleState extends State<TvListViewSample> {
 
               Expanded(
                 child: TvListView.separated(
+                  key: TvListViewSample.verticalListKey,
                   itemCount: TvListViewSample.itemCount,
                   focusScopeNode: _verticalListFocusScopeNode,
                   onUp: (_, _, isOutOfScope) {
@@ -92,8 +103,12 @@ final class _TvListViewSampleState extends State<TvListViewSample> {
                   },
                   itemBuilder: (context, index) {
                     return ScrollGroupDpadFocus(
+                      key: ValueKey(
+                        TvListViewSample.buildItemName(index: index),
+                      ),
                       focusNode: _verticalListFocusNodes[index],
-                      builder: (node) => _itemBuilder(node: node, index: index),
+                      scrollToNextNodeDuration: TvListViewSample.scrollDuration,
+                      builder: (node) => TvListItem(index: index, node: node),
                     );
                   },
                   separatorBuilder: (_, _) => const SizedBox(height: 12),
@@ -127,8 +142,16 @@ final class _TvListViewSampleState extends State<TvListViewSample> {
 
     _verticalListFocusNodes[0].requestFocus();
   }
+}
 
-  static Widget _itemBuilder({required FocusNode node, required int index}) {
+final class TvListItem extends StatelessWidget {
+  const TvListItem({super.key, required this.index, required this.node});
+
+  final int index;
+  final FocusNode node;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(16)),
@@ -138,7 +161,7 @@ final class _TvListViewSampleState extends State<TvListViewSample> {
       ),
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       child: Text(
-        'Item $index',
+        TvListViewSample.buildItemName(index: index),
         style: const TextStyle(
           fontSize: 16,
           color: Colors.white,

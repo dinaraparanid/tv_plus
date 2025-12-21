@@ -41,14 +41,14 @@ void main() {
         required Color expectedColor,
       }) {
         final focusFinder = find.byKey(key);
-        final _ = tester.firstWidget(focusFinder) as SampleDpadFocus;
+        final _ = tester.firstWidget<SampleDpadFocus>(focusFinder);
 
         final focusTextFinder = find.descendant(
           of: focusFinder,
           matching: find.byType(Text),
         );
 
-        final focusText = tester.firstWidget(focusTextFinder) as Text;
+        final focusText = tester.firstWidget<Text>(focusTextFinder);
         expect(focusText.data, expectedText);
 
         final focusDpadFinder = find.descendant(
@@ -56,7 +56,7 @@ void main() {
           matching: find.byType(DpadFocus),
         );
 
-        final focusDpad = tester.firstWidget(focusDpadFinder) as DpadFocus;
+        final focusDpad = tester.firstWidget<DpadFocus>(focusDpadFinder);
         expect(focusDpad.autofocus, expectedAutofocus);
         expect(focusDpad.canRequestFocus, expectedCanRequestFocus);
 
@@ -64,7 +64,7 @@ void main() {
           of: focusDpadFinder,
           matching: find.byType(DecoratedBox),
         );
-        final focusBox = tester.firstWidget(focusBoxFinder) as DecoratedBox;
+        final focusBox = tester.firstWidget<DecoratedBox>(focusBoxFinder);
         final f1BoxDecoration = focusBox.decoration as BoxDecoration;
         expect(f1BoxDecoration.color, expectedColor);
       }
@@ -99,7 +99,7 @@ void main() {
       //    | F | $ | * |
       //
       // ( reverse buttons )
-      await tester.sendDpadEvent(LogicalKeyboardKey.arrowDown);
+      await tester.sendDpadEventAndSettle(LogicalKeyboardKey.arrowDown);
       testAllWidgets(_buildSampleDataList(isOddEnabled: true, focusedIndex: 7));
 
       // ( only from center )
@@ -109,7 +109,7 @@ void main() {
       //    | * | $ | F |
       //
       // ( reverse buttons )
-      await tester.sendDpadEvent(LogicalKeyboardKey.arrowRight);
+      await tester.sendDpadEventAndSettle(LogicalKeyboardKey.arrowRight);
       testAllWidgets(_buildSampleDataList(isOddEnabled: true, focusedIndex: 9));
 
       // ( only from center )
@@ -119,7 +119,7 @@ void main() {
       //    | * | $ | * |
       //
       // ( reverse buttons )
-      await tester.sendDpadEvent(LogicalKeyboardKey.arrowUp);
+      await tester.sendDpadEventAndSettle(LogicalKeyboardKey.arrowUp);
       testAllWidgets(_buildSampleDataList(isOddEnabled: true, focusedIndex: 3));
 
       // ( only from center )
@@ -129,7 +129,7 @@ void main() {
       //    | * | $ | * |
       //
       // ( reverse buttons )
-      await tester.sendDpadEvent(LogicalKeyboardKey.arrowLeft);
+      await tester.sendDpadEventAndSettle(LogicalKeyboardKey.arrowLeft);
       testAllWidgets(_buildSampleDataList(isOddEnabled: true, focusedIndex: 1));
 
       // ( only from center )
@@ -139,8 +139,8 @@ void main() {
       //    | * | $ | * |
       //
       // ( F - reverse buttons )
-      await tester.sendDpadEvent(LogicalKeyboardKey.arrowDown);
-      await tester.sendDpadEvent(LogicalKeyboardKey.arrowDown);
+      await tester.sendDpadEventAndSettle(LogicalKeyboardKey.arrowDown);
+      await tester.sendDpadEventAndSettle(LogicalKeyboardKey.arrowDown);
       testAllWidgets(
         _buildSampleDataList(isOddEnabled: true, focusedIndex: 10),
       );
@@ -152,7 +152,7 @@ void main() {
       //    | $ | * | $ |
       //
       // ( F - reverse buttons )
-      await tester.sendDpadEvent(LogicalKeyboardKey.select);
+      await tester.sendDpadEventAndSettle(LogicalKeyboardKey.select);
       testAllWidgets(
         _buildSampleDataList(isOddEnabled: false, focusedIndex: 10),
       );
@@ -164,7 +164,7 @@ void main() {
       //    | $ | F | $ |
       //
       // ( reverse buttons )
-      await tester.sendDpadEvent(LogicalKeyboardKey.arrowUp);
+      await tester.sendDpadEventAndSettle(LogicalKeyboardKey.arrowUp);
       testAllWidgets(
         _buildSampleDataList(isOddEnabled: false, focusedIndex: 8),
       );
@@ -176,7 +176,7 @@ void main() {
       //    | $ | * | $ |
       //
       // ( reverse buttons )
-      await tester.sendDpadEvent(LogicalKeyboardKey.arrowUp);
+      await tester.sendDpadEventAndSettle(LogicalKeyboardKey.arrowUp);
       testAllWidgets(
         _buildSampleDataList(isOddEnabled: false, focusedIndex: 2),
       );
@@ -189,7 +189,7 @@ void main() {
       //
       // ( reverse buttons )
       // nothing must change
-      await tester.sendDpadEvent(LogicalKeyboardKey.arrowUp);
+      await tester.sendDpadEventAndSettle(LogicalKeyboardKey.arrowUp);
       testAllWidgets(
         _buildSampleDataList(isOddEnabled: false, focusedIndex: 2),
       );
@@ -201,8 +201,8 @@ void main() {
       //    | $ | * | $ |
       //
       // ( F - reverse buttons )
-      await tester.sendDpadEvent(LogicalKeyboardKey.arrowDown);
-      await tester.sendDpadEvent(LogicalKeyboardKey.arrowDown);
+      await tester.sendDpadEventAndSettle(LogicalKeyboardKey.arrowDown);
+      await tester.sendDpadEventAndSettle(LogicalKeyboardKey.arrowDown);
       testAllWidgets(
         _buildSampleDataList(isOddEnabled: false, focusedIndex: 10),
       );
@@ -214,7 +214,7 @@ void main() {
       //    | * | $ | * |
       //
       // ( reverse buttons )
-      await tester.sendDpadEvent(LogicalKeyboardKey.select);
+      await tester.sendDpadEventAndSettle(LogicalKeyboardKey.select);
       testAllWidgets(_buildSampleDataList(isOddEnabled: true, focusedIndex: 5));
 
       // ( F - only from center )
@@ -224,7 +224,7 @@ void main() {
       //    | * | $ | * |
       //
       // ( reverse buttons )
-      await tester.sendDpadEvent(LogicalKeyboardKey.arrowUp);
+      await tester.sendDpadEventAndSettle(LogicalKeyboardKey.arrowUp);
       testAllWidgets(_buildSampleDataList(isOddEnabled: true, focusedIndex: 0));
 
       // ( only from center )
@@ -234,7 +234,7 @@ void main() {
       //    | * | $ | * |
       //
       // ( reverse buttons )
-      await tester.sendDpadEvent(LogicalKeyboardKey.select);
+      await tester.sendDpadEventAndSettle(LogicalKeyboardKey.select);
       testAllWidgets(_buildSampleDataList(isOddEnabled: true, focusedIndex: 5));
     });
   });
