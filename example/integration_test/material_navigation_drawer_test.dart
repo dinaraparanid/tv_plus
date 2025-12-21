@@ -31,68 +31,68 @@ extension NavigationDrawerTest on WidgetTester {
     testContent(focused: true, selectedIndex: 0);
     testDrawer(selectedIndex: 0, focusedIndex: 0, drawerExpanded: false);
 
-    await sendDpadEvent(LogicalKeyboardKey.arrowLeft);
+    await sendDpadEventAndSettle(LogicalKeyboardKey.arrowLeft);
     testContent(focused: false, selectedIndex: 0);
     testDrawer(selectedIndex: 0, focusedIndex: 0, drawerExpanded: true);
 
-    await sendDpadEvent(LogicalKeyboardKey.arrowDown);
+    await sendDpadEventAndSettle(LogicalKeyboardKey.arrowDown);
     testContent(focused: false, selectedIndex: 0);
     testDrawer(selectedIndex: 0, focusedIndex: 1, drawerExpanded: true);
 
-    await sendDpadEvent(LogicalKeyboardKey.arrowDown);
+    await sendDpadEventAndSettle(LogicalKeyboardKey.arrowDown);
     testContent(focused: false, selectedIndex: 0);
     testDrawer(selectedIndex: 0, focusedIndex: 2, drawerExpanded: true);
 
-    await sendDpadEvent(LogicalKeyboardKey.select);
+    await sendDpadEventAndSettle(LogicalKeyboardKey.select);
     testContent(focused: false, selectedIndex: 2);
     testDrawer(selectedIndex: 2, focusedIndex: 2, drawerExpanded: true);
 
-    await sendDpadEvent(LogicalKeyboardKey.arrowRight);
+    await sendDpadEventAndSettle(LogicalKeyboardKey.arrowRight);
     testContent(focused: true, selectedIndex: 2);
     testDrawer(selectedIndex: 2, focusedIndex: 2, drawerExpanded: false);
 
-    await sendDpadEvent(LogicalKeyboardKey.arrowLeft);
+    await sendDpadEventAndSettle(LogicalKeyboardKey.arrowLeft);
     testContent(focused: false, selectedIndex: 2);
     testDrawer(selectedIndex: 2, focusedIndex: 2, drawerExpanded: true);
 
     // nothing should change
-    await sendDpadEvent(LogicalKeyboardKey.select);
+    await sendDpadEventAndSettle(LogicalKeyboardKey.select);
     testContent(focused: false, selectedIndex: 2);
     testDrawer(selectedIndex: 2, focusedIndex: 2, drawerExpanded: true);
 
-    await sendDpadEvent(LogicalKeyboardKey.arrowDown);
+    await sendDpadEventAndSettle(LogicalKeyboardKey.arrowDown);
     testContent(focused: false, selectedIndex: 2);
     testDrawer(selectedIndex: 2, focusedIndex: 3, drawerExpanded: true);
 
-    await sendDpadEvent(LogicalKeyboardKey.select);
+    await sendDpadEventAndSettle(LogicalKeyboardKey.select);
     testContent(focused: false, selectedIndex: 3);
     testDrawer(selectedIndex: 3, focusedIndex: 3, drawerExpanded: true);
 
-    await sendDpadEvent(LogicalKeyboardKey.arrowRight);
+    await sendDpadEventAndSettle(LogicalKeyboardKey.arrowRight);
     testContent(focused: true, selectedIndex: 3);
     testDrawer(selectedIndex: 3, focusedIndex: 3, drawerExpanded: false);
 
-    await sendDpadEvent(LogicalKeyboardKey.arrowLeft);
+    await sendDpadEventAndSettle(LogicalKeyboardKey.arrowLeft);
     testContent(focused: false, selectedIndex: 3);
     testDrawer(selectedIndex: 3, focusedIndex: 3, drawerExpanded: true);
 
-    await sendDpadEvent(LogicalKeyboardKey.arrowUp);
-    await sendDpadEvent(LogicalKeyboardKey.arrowUp);
+    await sendDpadEventAndSettle(LogicalKeyboardKey.arrowUp);
+    await sendDpadEventAndSettle(LogicalKeyboardKey.arrowUp);
     testContent(focused: false, selectedIndex: 3);
     testDrawer(selectedIndex: 3, focusedIndex: 1, drawerExpanded: true);
 
-    await sendDpadEvent(LogicalKeyboardKey.select);
+    await sendDpadEventAndSettle(LogicalKeyboardKey.select);
     testContent(focused: false, selectedIndex: 1);
     testDrawer(selectedIndex: 1, focusedIndex: 1, drawerExpanded: true);
 
-    await sendDpadEvent(LogicalKeyboardKey.arrowRight);
+    await sendDpadEventAndSettle(LogicalKeyboardKey.arrowRight);
     testContent(focused: true, selectedIndex: 1);
     testDrawer(selectedIndex: 1, focusedIndex: 1, drawerExpanded: false);
   }
 
   void testContent({required bool focused, required int selectedIndex}) {
     final contentFinder = find.byKey(NavigationDrawerSample.contentKey);
-    final contentDpadFocus = firstWidget(contentFinder) as DpadFocus;
+    final contentDpadFocus = firstWidget<DpadFocus>(contentFinder);
     expect(contentDpadFocus.autofocus, true);
     expect(contentDpadFocus.canRequestFocus, true);
     expect(contentDpadFocus.focusNode?.hasFocus, focused);
@@ -102,7 +102,7 @@ extension NavigationDrawerTest on WidgetTester {
       matching: find.byType(Text),
     );
 
-    final contentText = firstWidget(contentTextFinder) as Text;
+    final contentText = firstWidget<Text>(contentTextFinder);
 
     expect(
       contentText.data,
@@ -138,7 +138,7 @@ extension NavigationDrawerTest on WidgetTester {
         matching: find.byType(AnimatedContainer),
       );
 
-      final container = firstWidget(containerFinder) as AnimatedContainer;
+      final container = firstWidget<AnimatedContainer>(containerFinder);
 
       expect(
         container.decoration! as BoxDecoration,
@@ -162,7 +162,7 @@ extension NavigationDrawerTest on WidgetTester {
         matching: find.byType(AnimatedOpacity),
       );
 
-      final titleOpacity = firstWidget(titleOpacityFinder) as AnimatedOpacity;
+      final titleOpacity = firstWidget<AnimatedOpacity>(titleOpacityFinder);
       expect(titleOpacity.opacity, drawerExpanded ? 1.0 : 0.0);
 
       if (drawerExpanded) {
@@ -171,7 +171,7 @@ extension NavigationDrawerTest on WidgetTester {
           matching: find.byType(Text),
         );
 
-        final titleWidget = firstWidget(titleFinder) as Text;
+        final titleWidget = firstWidget<Text>(titleFinder);
 
         expect(titleWidget.data, title);
         expect(titleWidget.maxLines, 1);
