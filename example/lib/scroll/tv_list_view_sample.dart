@@ -144,6 +144,7 @@ final class _TvListViewSampleState extends State<TvListViewSample> {
   }
 }
 
+@visibleForTesting
 final class TvListItem extends StatelessWidget {
   const TvListItem({super.key, required this.index, required this.node});
 

@@ -6,8 +6,14 @@ final class SliverTvListSample extends StatefulWidget {
 
   static const backgroundColor = Color(0xFF131314);
 
-  static const itemCount = 50;
+  static const itemCount = 20;
   static const focusedColor = Colors.indigoAccent;
+
+  static final listKey = GlobalKey();
+  static final goToLastButtonKey = GlobalKey();
+  static final goToFirstButtonKey = GlobalKey();
+
+  static String buildItemName({required int index}) => 'Item $index';
 
   @override
   State<StatefulWidget> createState() => _SliverTvListSampleState();
@@ -23,6 +29,7 @@ final class _SliverTvListSampleState extends State<SliverTvListSample> {
 
   late final _upButtonFocusNode = FocusNode();
   late final _downButtonFocusNode = FocusNode();
+  late final _scrollController = ScrollController();
 
   @override
   void dispose() {
@@ -34,6 +41,7 @@ final class _SliverTvListSampleState extends State<SliverTvListSample> {
 
     _upButtonFocusNode.dispose();
     _downButtonFocusNode.dispose();
+    _scrollController.dispose();
 
     super.dispose();
   }
@@ -45,17 +53,33 @@ final class _SliverTvListSampleState extends State<SliverTvListSample> {
         return Scaffold(
           backgroundColor: SliverTvListSample.backgroundColor,
           body: CustomScrollView(
+            controller: _scrollController,
             slivers: [
               SliverToBoxAdapter(
                 child: DpadFocus(
                   focusNode: _upButtonFocusNode,
-                  autofocus: true,
                   onDown: (_, _) {
-                    _requestFocusOnHorizontalListItem();
+                    _requestFocusOnListItem(fallbackIndex: 0);
                     return KeyEventResult.handled;
                   },
-                  builder: (node) =>
-                      _buttonBuilder(node: node, text: 'Up Button'),
+                  onSelect: (_, _) {
+                    _scrollController
+                        .animateTo(
+                          _scrollController.position.maxScrollExtent,
+                          duration: const Duration(seconds: 1),
+                          curve: Curves.linear,
+                        )
+                        .then((_) {
+                          _listFocusNodes.last.requestFocus();
+                        });
+
+                    return KeyEventResult.handled;
+                  },
+                  builder: (node) => TvListButtonItem(
+                    key: SliverTvListSample.goToLastButtonKey,
+                    node: node,
+                    text: 'Go to last',
+                  ),
                 ),
               ),
 
@@ -78,11 +102,18 @@ final class _SliverTvListSampleState extends State<SliverTvListSample> {
                   return KeyEventResult.handled;
                 },
                 sliver: SliverTvList.separated(
+                  key: SliverTvListSample.listKey,
                   itemCount: SliverTvListSample.itemCount,
                   itemBuilder: (context, index) {
                     return ScrollGroupDpadFocus(
+                      key: ValueKey(
+                        SliverTvListSample.buildItemName(index: index),
+                      ),
                       focusNode: _listFocusNodes[index],
-                      builder: (node) => _itemBuilder(node: node, index: index),
+                      autofocus: index == 0,
+                      builder: (node) {
+                        return TvListItem(node: node, index: index);
+                      },
                     );
                   },
                   separatorBuilder: (_, _) => const SizedBox(width: 12),
@@ -95,11 +126,29 @@ final class _SliverTvListSampleState extends State<SliverTvListSample> {
                 child: DpadFocus(
                   focusNode: _downButtonFocusNode,
                   onUp: (_, _) {
-                    _requestFocusOnHorizontalListItem();
+                    _requestFocusOnListItem(
+                      fallbackIndex: SliverTvListSample.itemCount - 1,
+                    );
                     return KeyEventResult.handled;
                   },
-                  builder: (node) =>
-                      _buttonBuilder(node: node, text: 'Down Button'),
+                  onSelect: (_, _) {
+                    _scrollController
+                        .animateTo(
+                          0,
+                          duration: const Duration(seconds: 1),
+                          curve: Curves.linear,
+                        )
+                        .then((_) {
+                          _listFocusNodes.first.requestFocus();
+                        });
+
+                    return KeyEventResult.handled;
+                  },
+                  builder: (node) => TvListButtonItem(
+                    key: SliverTvListSample.goToFirstButtonKey,
+                    node: node,
+                    text: 'Go to first',
+                  ),
                 ),
               ),
             ],
@@ -109,7 +158,7 @@ final class _SliverTvListSampleState extends State<SliverTvListSample> {
     );
   }
 
-  void _requestFocusOnHorizontalListItem() {
+  void _requestFocusOnListItem({required int fallbackIndex}) {
     final nextNode = _listFocusScopeNode.focusedChild;
 
     if (nextNode != null) {
@@ -117,33 +166,33 @@ final class _SliverTvListSampleState extends State<SliverTvListSample> {
       return;
     }
 
-    _listFocusNodes[0].requestFocus();
+    _listFocusNodes[fallbackIndex].requestFocus();
   }
+}
 
-  static Widget _itemBuilder({required FocusNode node, required int index}) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(16)),
-        color: node.hasFocus
-            ? SliverTvListSample.focusedColor
-            : Colors.transparent,
-      ),
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-      child: Text(
-        'Item $index',
-        style: const TextStyle(
-          fontSize: 16,
-          color: Colors.white,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
+@visibleForTesting
+final class TvListItem extends StatelessWidget {
+  const TvListItem({super.key, required this.node, required this.index});
+  final FocusNode node;
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    return TvListButtonItem(
+      node: node,
+      text: SliverTvListSample.buildItemName(index: index),
     );
   }
+}
 
-  static Widget _buttonBuilder({
-    required FocusNode node,
-    required String text,
-  }) {
+@visibleForTesting
+final class TvListButtonItem extends StatelessWidget {
+  const TvListButtonItem({super.key, required this.node, required this.text});
+  final FocusNode node;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(16)),
