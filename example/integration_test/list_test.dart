@@ -24,8 +24,8 @@ extension ListTest on WidgetTester {
     await pumpAndSettle();
 
     for (int i = 0; i < TvListViewSample.itemCount; ++i) {
-      await checkHorizontalList(focusedIndex: i);
-      await checkVerticalList();
+      await testHorizontalList(focusedIndex: i);
+      await testVerticalList();
       await sendDpadEventAndSettle(LogicalKeyboardKey.arrowRight);
     }
 
@@ -33,10 +33,10 @@ extension ListTest on WidgetTester {
     await pumpAndSettle();
 
     for (int i = 0; i < TvListViewSample.itemCount ~/ 2; ++i) {
-      await checkHorizontalList(
+      await testHorizontalList(
         focusedIndex: TvListViewSample.itemCount - i - 1,
       );
-      await checkVerticalList();
+      await testVerticalList();
       await sendDpadEventAndSettle(LogicalKeyboardKey.arrowLeft);
     }
 
@@ -44,8 +44,8 @@ extension ListTest on WidgetTester {
     await sendDpadEventAndSettle(LogicalKeyboardKey.arrowDown);
 
     for (int i = 0; i < TvListViewSample.itemCount; ++i) {
-      await checkHorizontalList();
-      await checkVerticalList(focusedIndex: i);
+      await testHorizontalList();
+      await testVerticalList(focusedIndex: i);
       await sendDpadEventAndSettle(LogicalKeyboardKey.arrowDown);
     }
 
@@ -53,13 +53,13 @@ extension ListTest on WidgetTester {
     await pumpAndSettle();
 
     for (int i = 0; i < TvListViewSample.itemCount; ++i) {
-      await checkHorizontalList();
-      await checkVerticalList(focusedIndex: TvListViewSample.itemCount - i - 1);
+      await testHorizontalList();
+      await testVerticalList(focusedIndex: TvListViewSample.itemCount - i - 1);
       await sendDpadEventAndSettle(LogicalKeyboardKey.arrowUp);
     }
   }
 
-  Future<void> checkHorizontalList({int? focusedIndex}) async {
+  Future<void> testHorizontalList({int? focusedIndex}) async {
     final horizontalListFinder = find.byKey(TvListViewSample.horizontalListKey);
     expect(horizontalListFinder, findsOneWidget);
 
@@ -119,7 +119,7 @@ extension ListTest on WidgetTester {
     }
   }
 
-  Future<void> checkVerticalList({int? focusedIndex}) async {
+  Future<void> testVerticalList({int? focusedIndex}) async {
     final verticalListFinder = find.byKey(TvListViewSample.verticalListKey);
     expect(verticalListFinder, findsOneWidget);
 
