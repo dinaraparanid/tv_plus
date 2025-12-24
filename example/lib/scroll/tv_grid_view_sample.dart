@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:tv_plus/tv_plus.dart';
 
 final class TvGridViewSample extends StatefulWidget {
-  const TvGridViewSample({super.key});
+  const TvGridViewSample({super.key, this.fallbackIndex = 0});
+
+  final int fallbackIndex;
 
   static const backgroundColor = Color(0xFF131314);
 
@@ -212,7 +214,7 @@ final class _TvGridViewSampleState extends State<TvGridViewSample> {
       return;
     }
 
-    _gridFocusNodes[0].requestFocus();
+    _gridFocusNodes[widget.fallbackIndex].requestFocus();
   }
 }
 
