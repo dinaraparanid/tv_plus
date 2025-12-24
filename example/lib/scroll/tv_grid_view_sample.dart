@@ -9,6 +9,14 @@ final class TvGridViewSample extends StatefulWidget {
   static const itemCount = 50;
   static const focusedColor = Colors.indigoAccent;
 
+  static final gridKey = GlobalKey();
+  static final upButtonKey = GlobalKey();
+  static final downButtonKey = GlobalKey();
+  static final leftButtonKey = GlobalKey();
+  static final rightButtonKey = GlobalKey();
+
+  static String buildItemName({required int index}) => 'Item $index';
+
   @override
   State<StatefulWidget> createState() => _TvGridViewSampleState();
 }
@@ -29,10 +37,6 @@ final class _TvGridViewSampleState extends State<TvGridViewSample> {
   @override
   void dispose() {
     _gridFocusScopeNode.dispose();
-
-    for (final node in _gridFocusNodes) {
-      node.dispose();
-    }
 
     for (final node in _gridFocusNodes) {
       node.dispose();
@@ -63,9 +67,17 @@ final class _TvGridViewSampleState extends State<TvGridViewSample> {
                 },
                 onLeft: (_, _) => KeyEventResult.handled,
                 onRight: (_, _) => KeyEventResult.handled,
-                builder: (node) =>
-                    _buttonBuilder(node: node, text: 'Up Button'),
+                builder: (node) => Wrap(
+                  children: [
+                    TvGridButtonItem(
+                      key: TvGridViewSample.upButtonKey,
+                      node: node,
+                      text: 'Up Button',
+                    ),
+                  ],
+                ),
               ),
+
               Expanded(
                 child: Row(
                   spacing: 12,
@@ -80,12 +92,20 @@ final class _TvGridViewSampleState extends State<TvGridViewSample> {
                         _requestFocusOnGridItem();
                         return KeyEventResult.handled;
                       },
-                      builder: (node) =>
-                          _buttonBuilder(node: node, text: 'Left Button'),
+                      builder: (node) => Wrap(
+                        children: [
+                          TvGridButtonItem(
+                            key: TvGridViewSample.leftButtonKey,
+                            node: node,
+                            text: 'Left Button',
+                          ),
+                        ],
+                      ),
                     ),
 
                     Expanded(
                       child: TvGridView.builder(
+                        key: TvGridViewSample.gridKey,
                         itemCount: TvGridViewSample.itemCount,
                         focusScopeNode: _gridFocusScopeNode,
                         onUp: (_, _, isOutOfScope) {
@@ -117,17 +137,20 @@ final class _TvGridViewSampleState extends State<TvGridViewSample> {
                           return KeyEventResult.handled;
                         },
                         gridDelegate:
-                            const SliverGridDelegateWithMaxCrossAxisExtent(
-                              maxCrossAxisExtent: 250,
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
                               mainAxisSpacing: 12,
                               crossAxisSpacing: 12,
                               mainAxisExtent: 80,
                             ),
                         itemBuilder: (context, index) {
                           return ScrollGroupDpadFocus(
+                            key: ValueKey(
+                              TvGridViewSample.buildItemName(index: index),
+                            ),
                             focusNode: _gridFocusNodes[index],
                             builder: (node) =>
-                                _itemBuilder(node: node, index: index),
+                                TvGridItem(node: node, index: index),
                           );
                         },
                       ),
@@ -142,12 +165,20 @@ final class _TvGridViewSampleState extends State<TvGridViewSample> {
                         return KeyEventResult.handled;
                       },
                       onRight: (_, _) => KeyEventResult.handled,
-                      builder: (node) =>
-                          _buttonBuilder(node: node, text: 'Right Button'),
+                      builder: (node) => Wrap(
+                        children: [
+                          TvGridButtonItem(
+                            key: TvGridViewSample.rightButtonKey,
+                            node: node,
+                            text: 'Right Button',
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
               ),
+
               DpadFocus(
                 focusNode: _downButtonFocusNode,
                 onUp: (_, _) {
@@ -156,8 +187,15 @@ final class _TvGridViewSampleState extends State<TvGridViewSample> {
                 },
                 onLeft: (_, _) => KeyEventResult.handled,
                 onRight: (_, _) => KeyEventResult.handled,
-                builder: (node) =>
-                    _buttonBuilder(node: node, text: 'Down Button'),
+                builder: (node) => Wrap(
+                  children: [
+                    TvGridButtonItem(
+                      key: TvGridViewSample.downButtonKey,
+                      node: node,
+                      text: 'Down Button',
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -176,31 +214,33 @@ final class _TvGridViewSampleState extends State<TvGridViewSample> {
 
     _gridFocusNodes[0].requestFocus();
   }
+}
 
-  static Widget _itemBuilder({required FocusNode node, required int index}) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(16)),
-        color: node.hasFocus
-            ? TvGridViewSample.focusedColor
-            : Colors.transparent,
-      ),
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-      child: Text(
-        'Item $index',
-        style: const TextStyle(
-          fontSize: 16,
-          color: Colors.white,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
+@visibleForTesting
+final class TvGridItem extends StatelessWidget {
+  const TvGridItem({super.key, required this.node, required this.index});
+
+  final FocusNode node;
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    return TvGridButtonItem(
+      node: node,
+      text: TvGridViewSample.buildItemName(index: index),
     );
   }
+}
 
-  static Widget _buttonBuilder({
-    required FocusNode node,
-    required String text,
-  }) {
+@visibleForTesting
+final class TvGridButtonItem extends StatelessWidget {
+  const TvGridButtonItem({super.key, required this.node, required this.text});
+
+  final FocusNode node;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(16)),
@@ -209,6 +249,7 @@ final class _TvGridViewSampleState extends State<TvGridViewSample> {
             : Colors.transparent,
       ),
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      alignment: Alignment.center,
       child: Text(
         text,
         style: const TextStyle(
