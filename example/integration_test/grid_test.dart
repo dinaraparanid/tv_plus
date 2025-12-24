@@ -7,12 +7,17 @@ import 'package:tv_plus_example/scroll/tv_grid_view_sample.dart';
 
 import 'utils.dart';
 
+const _fallbackIndex = 0;
+
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('Grid tests', () {
     testWidgets('...', (tester) async {
-      await tester.pumpWidget(const TvGridViewSample());
+      await tester.pumpWidget(
+        // ignore: avoid_redundant_argument_values
+        const TvGridViewSample(fallbackIndex: _fallbackIndex),
+      );
       await tester.testScenario();
     });
   });
@@ -30,7 +35,7 @@ extension GridTest on WidgetTester {
     await testButton(key: TvGridViewSample.rightButtonKey, isFocused: false);
 
     await sendDpadEventAndSettle(LogicalKeyboardKey.arrowRight);
-    await testGrid(focusedIndex: 0);
+    await testGrid(focusedIndex: _fallbackIndex);
     await testButton(key: TvGridViewSample.upButtonKey, isFocused: false);
     await testButton(key: TvGridViewSample.downButtonKey, isFocused: false);
     await testButton(key: TvGridViewSample.leftButtonKey, isFocused: false);

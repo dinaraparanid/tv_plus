@@ -2,12 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:tv_plus/tv_plus.dart';
 
 final class SliverTvGridSample extends StatefulWidget {
-  const SliverTvGridSample({super.key});
+  const SliverTvGridSample({super.key, this.fallbackIndex = 0});
+
+  final int fallbackIndex;
 
   static const backgroundColor = Color(0xFF131314);
 
   static const itemCount = 50;
   static const focusedColor = Colors.indigoAccent;
+
+  static final gridKey = GlobalKey();
+  static final upButtonKey = GlobalKey();
+  static final downButtonKey = GlobalKey();
+  static final leftButtonKey = GlobalKey();
+  static final rightButtonKey = GlobalKey();
+
+  static String buildItemName({required int index}) => 'Item $index';
 
   @override
   State<StatefulWidget> createState() => _SliverTvGridSampleState();
@@ -34,10 +44,6 @@ final class _SliverTvGridSampleState extends State<SliverTvGridSample> {
       node.dispose();
     }
 
-    for (final node in _gridFocusNodes) {
-      node.dispose();
-    }
-
     _upButtonFocusNode.dispose();
     _downButtonFocusNode.dispose();
     _leftButtonFocusNode.dispose();
@@ -57,6 +63,7 @@ final class _SliverTvGridSampleState extends State<SliverTvGridSample> {
             children: [
               DpadFocus(
                 focusNode: _leftButtonFocusNode,
+                autofocus: true,
                 onUp: (_, _) => KeyEventResult.handled,
                 onDown: (_, _) => KeyEventResult.handled,
                 onLeft: (_, _) => KeyEventResult.handled,
@@ -64,8 +71,15 @@ final class _SliverTvGridSampleState extends State<SliverTvGridSample> {
                   _requestFocusOnGridItem();
                   return KeyEventResult.handled;
                 },
-                builder: (node) =>
-                    _buttonBuilder(node: node, text: 'Left Button'),
+                builder: (node) => Wrap(
+                  children: [
+                    TvGridButtonItem(
+                      key: SliverTvGridSample.leftButtonKey,
+                      node: node,
+                      text: 'Left Button',
+                    ),
+                  ],
+                ),
               ),
 
               Expanded(
@@ -77,15 +91,17 @@ final class _SliverTvGridSampleState extends State<SliverTvGridSample> {
                         children: [
                           DpadFocus(
                             focusNode: _upButtonFocusNode,
-                            autofocus: true,
                             onDown: (_, _) {
                               _requestFocusOnGridItem();
                               return KeyEventResult.handled;
                             },
                             onLeft: (_, _) => KeyEventResult.handled,
                             onRight: (_, _) => KeyEventResult.handled,
-                            builder: (node) =>
-                                _buttonBuilder(node: node, text: 'Up Button'),
+                            builder: (node) => TvGridButtonItem(
+                              key: SliverTvGridSample.upButtonKey,
+                              node: node,
+                              text: 'Up Button',
+                            ),
                           ),
                         ],
                       ),
@@ -124,6 +140,7 @@ final class _SliverTvGridSampleState extends State<SliverTvGridSample> {
                         return KeyEventResult.handled;
                       },
                       sliver: SliverTvGrid(
+                        key: SliverTvGridSample.gridKey,
                         itemCount: SliverTvGridSample.itemCount,
                         gridDelegate:
                             const SliverGridDelegateWithMaxCrossAxisExtent(
@@ -134,9 +151,12 @@ final class _SliverTvGridSampleState extends State<SliverTvGridSample> {
                             ),
                         itemBuilder: (context, index) {
                           return ScrollGroupDpadFocus(
+                            key: ValueKey(
+                              SliverTvGridSample.buildItemName(index: index),
+                            ),
                             focusNode: _gridFocusNodes[index],
                             builder: (node) =>
-                                _itemBuilder(node: node, index: index),
+                                TvGridItem(node: node, index: index),
                           );
                         },
                       ),
@@ -156,8 +176,11 @@ final class _SliverTvGridSampleState extends State<SliverTvGridSample> {
                             },
                             onLeft: (_, _) => KeyEventResult.handled,
                             onRight: (_, _) => KeyEventResult.handled,
-                            builder: (node) =>
-                                _buttonBuilder(node: node, text: 'Down Button'),
+                            builder: (node) => TvGridButtonItem(
+                              key: SliverTvGridSample.downButtonKey,
+                              node: node,
+                              text: 'Down Button',
+                            ),
                           ),
                         ],
                       ),
@@ -175,8 +198,15 @@ final class _SliverTvGridSampleState extends State<SliverTvGridSample> {
                   return KeyEventResult.handled;
                 },
                 onRight: (_, _) => KeyEventResult.handled,
-                builder: (node) =>
-                    _buttonBuilder(node: node, text: 'Right Button'),
+                builder: (node) => Wrap(
+                  children: [
+                    TvGridButtonItem(
+                      key: SliverTvGridSample.rightButtonKey,
+                      node: node,
+                      text: 'Right Button',
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -193,34 +223,35 @@ final class _SliverTvGridSampleState extends State<SliverTvGridSample> {
       return;
     }
 
-    _gridFocusNodes[0].requestFocus();
+    _gridFocusNodes[widget.fallbackIndex].requestFocus();
   }
+}
 
-  static Widget _itemBuilder({required FocusNode node, required int index}) {
-    return Container(
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(16)),
-        color: node.hasFocus
-            ? SliverTvGridSample.focusedColor
-            : Colors.transparent,
-      ),
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-      child: Text(
-        'Item $index',
-        style: const TextStyle(
-          fontSize: 16,
-          color: Colors.white,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
+@visibleForTesting
+final class TvGridItem extends StatelessWidget {
+  const TvGridItem({super.key, required this.node, required this.index});
+
+  final FocusNode node;
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    return TvGridButtonItem(
+      node: node,
+      text: SliverTvGridSample.buildItemName(index: index),
     );
   }
+}
 
-  static Widget _buttonBuilder({
-    required FocusNode node,
-    required String text,
-  }) {
+@visibleForTesting
+final class TvGridButtonItem extends StatelessWidget {
+  const TvGridButtonItem({super.key, required this.node, required this.text});
+
+  final FocusNode node;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(16)),
@@ -229,6 +260,7 @@ final class _SliverTvGridSampleState extends State<SliverTvGridSample> {
             : Colors.transparent,
       ),
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      alignment: Alignment.center,
       child: Text(
         text,
         style: const TextStyle(
