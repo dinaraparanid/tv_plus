@@ -18,7 +18,7 @@ void main() {
   });
 }
 
-extension ListTest on WidgetTester {
+extension SliverListTest on WidgetTester {
   Future<void> testScenario() async {
     // Wait for selection decoration to appear
     await pumpAndSettle();
