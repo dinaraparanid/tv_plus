@@ -7,12 +7,17 @@ import 'package:tv_plus_example/scroll/sliver_tv_grid_sample.dart';
 
 import 'utils.dart';
 
+const _fallbackIndex = 0;
+
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('Sliver Grid tests', () {
     testWidgets('...', (tester) async {
-      await tester.pumpWidget(const SliverTvGridSample());
+      await tester.pumpWidget(
+        // ignore: avoid_redundant_argument_values
+        const SliverTvGridSample(fallbackIndex: _fallbackIndex),
+      );
       await tester.testScenario();
     });
   });
@@ -30,7 +35,7 @@ extension SliverGridTest on WidgetTester {
     await testButton(key: SliverTvGridSample.rightButtonKey, isFocused: false);
 
     await sendDpadEventAndSettle(LogicalKeyboardKey.arrowRight);
-    await testGrid(focusedIndex: 0);
+    await testGrid(focusedIndex: _fallbackIndex);
     await testButton(key: SliverTvGridSample.upButtonKey, isFocused: false);
     await testButton(key: SliverTvGridSample.downButtonKey, isVisible: false);
     await testButton(key: SliverTvGridSample.leftButtonKey, isFocused: false);
