@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tv_plus/tv_plus.dart';
 
-final class TabBarSample extends StatefulWidget {
-  const TabBarSample({super.key});
+final class TvTabBarFoundationSample extends StatefulWidget {
+  const TvTabBarFoundationSample({super.key});
 
   static const backgroundColor = Color(0xFF131314);
   static const focusedColor = Colors.indigoAccent;
@@ -12,36 +12,55 @@ final class TabBarSample extends StatefulWidget {
   static const radius = BorderRadius.all(Radius.circular(16.0));
   static const animationDuration = Duration(milliseconds: 300);
   static const tabBarHeight = 20.0;
+  static const initialIndex = 1;
+
+  static final tabBarKey = GlobalKey();
+  static final indicatorKey = GlobalKey();
+  static final contentKey = GlobalKey();
+  static final contentIconKey = GlobalKey();
+  static final contentTitleKey = GlobalKey();
+  static final contentJumpKey = GlobalKey();
+  static final tabsKeys = List.generate(
+    TvTabBarFoundationSample.items.length,
+    (_) => GlobalKey(),
+  );
 
   static const items = [
     ('Search', Icons.search),
     ('Home', Icons.home),
     ('Movies', Icons.movie),
     ('Shows', Icons.tv),
-    ('Library', Icons.video_library),
+    ('Cartoons', Icons.child_care),
+    ('Library', Icons.live_tv),
+    ('Music', Icons.music_note),
+    ('Podcasts', Icons.multitrack_audio_sharp),
+    ('Settings', Icons.settings),
+    ('Profile', Icons.person),
   ];
 
   @override
-  State<StatefulWidget> createState() => _TabBarSampleState();
+  State<StatefulWidget> createState() => _TvTabBarFoundationSampleState();
 }
 
-final class _TabBarSampleState extends State<TabBarSample> {
-  static final _tabBarKey = GlobalKey();
+final class _TvTabBarFoundationSampleState
+    extends State<TvTabBarFoundationSample> {
 
   late final _focusScopeNode = FocusScopeNode();
 
-  late final _tabsKeys = List.generate(
-    TabBarSample.items.length,
-    (_) => GlobalKey(),
-  );
+  late final _scrollController = ScrollController();
 
   late final _contentFocusNode = FocusNode();
 
-  late final _tabController = TvTabBarController(initialIndex: 1);
+  late final _tabController = TvTabBarController(
+    initialIndex: TvTabBarFoundationSample.initialIndex,
+  );
 
   late var _currentIndex = _tabController.selectedIndex;
 
   var _tabBarHasFocus = false;
+
+  Offset? _selectedOffset;
+  Size? _selectedSize;
 
   @override
   void initState() {
@@ -51,7 +70,7 @@ final class _TabBarSampleState extends State<TabBarSample> {
     // Required for _buildIndicator() in order to update
     // selected tab's RenderBox position and constraints.
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() {});
+      _updateSelectionConstraints();
     });
 
     super.initState();
@@ -72,34 +91,37 @@ final class _TabBarSampleState extends State<TabBarSample> {
   @override
   void dispose() {
     _focusScopeNode.removeListener(_focusListener);
+    _tabController.removeListener(_tabListener);
 
     _focusScopeNode.dispose();
     _contentFocusNode.dispose();
-
-    _tabController.removeListener(_tabListener);
     _tabController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final (text, icon) = TabBarSample.items[_currentIndex];
+    final (text, icon) = TvTabBarFoundationSample.items[_currentIndex];
 
     return MaterialApp(
       home: Scaffold(
-        backgroundColor: TabBarSample.backgroundColor,
+        backgroundColor: TvTabBarFoundationSample.backgroundColor,
         appBar: AppBar(
-          backgroundColor: TabBarSample.backgroundColor,
+          backgroundColor: TvTabBarFoundationSample.backgroundColor,
           bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(TabBarSample.tabBarHeight),
+            preferredSize: const Size.fromHeight(
+              TvTabBarFoundationSample.tabBarHeight,
+            ),
             child: Stack(
               children: [
                 ?_buildIndicator(),
 
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
+                  controller: _scrollController,
                   child: TvTabBarFoundation(
-                    key: _tabBarKey,
+                    key: TvTabBarFoundationSample.tabBarKey,
                     controller: _tabController,
                     focusScopeNode: _focusScopeNode,
                     mainAxisSize: MainAxisSize.min,
@@ -113,14 +135,16 @@ final class _TabBarSampleState extends State<TabBarSample> {
                       return KeyEventResult.handled;
                     },
                     tabs: [
-                      for (var i = 0; i < TabBarSample.items.length; ++i)
-                        Padding(
-                          key: _tabsKeys[i],
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: _TabItem(
-                            index: i,
-                            currentIndex: _currentIndex,
-                          ),
+                      for (var i = 0; i < TvTabBarFoundationSample.items.length; ++i)
+                        TabItem(
+                          key: TvTabBarFoundationSample.tabsKeys[i],
+                          index: i,
+                          currentIndex: _currentIndex,
+                          onFocusChanged: (node) {
+                            if (node.hasFocus) {
+                              _updateSelectionConstraints();
+                            }
+                          },
                         ),
                     ],
                   ),
@@ -135,27 +159,27 @@ final class _TabBarSampleState extends State<TabBarSample> {
   }
 
   Widget? _buildIndicator() {
-    final (selectedOffset, selectedSize) = _getSelectionConstraints();
+    final offset = _selectedOffset?.dx;
+    final width = _selectedSize?.width;
 
-    if (selectedOffset == null || selectedSize == null) {
+    if (offset == null || width == null) {
       return null;
     }
 
     return AnimatedPositioned(
-      duration: TabBarSample.animationDuration,
+      key: TvTabBarFoundationSample.indicatorKey,
+      duration: TvTabBarFoundationSample.animationDuration,
       top: 0,
       bottom: 0,
-      left: selectedOffset.dx,
+      left: offset,
       child: AnimatedContainer(
-        duration: TabBarSample.animationDuration,
-        width: selectedSize.width,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: _tabBarHasFocus
-                ? TabBarSample.focusedColor
-                : TabBarSample.selectedColor,
-            borderRadius: TabBarSample.radius,
-          ),
+        duration: TvTabBarFoundationSample.animationDuration,
+        width: width,
+        decoration: BoxDecoration(
+          color: _tabBarHasFocus
+              ? TvTabBarFoundationSample.focusedColor
+              : TvTabBarFoundationSample.selectedColor,
+          borderRadius: TvTabBarFoundationSample.radius,
         ),
       ),
     );
@@ -163,6 +187,7 @@ final class _TabBarSampleState extends State<TabBarSample> {
 
   Widget _buildContent({required String text, required IconData icon}) {
     return Stack(
+      key: TvTabBarFoundationSample.contentKey,
       children: [
         Align(
           child: Column(
@@ -173,11 +198,17 @@ final class _TabBarSampleState extends State<TabBarSample> {
                 mainAxisSize: MainAxisSize.min,
                 spacing: 8,
                 children: [
-                  Icon(icon, size: 48, color: Colors.white),
+                  Icon(
+                    icon,
+                    key: TvTabBarFoundationSample.contentIconKey,
+                    size: 48,
+                    color: Colors.white,
+                  ),
 
                   Flexible(
                     child: Text(
                       text,
+                      key: TvTabBarFoundationSample.contentTitleKey,
                       style: const TextStyle(color: Colors.white, fontSize: 20),
                     ),
                   ),
@@ -186,6 +217,7 @@ final class _TabBarSampleState extends State<TabBarSample> {
 
               DpadFocus(
                 focusNode: _contentFocusNode,
+                key: TvTabBarFoundationSample.contentJumpKey,
                 onSelect: (_, _) {
                   _focusScopeNode.requestFocus();
                   return KeyEventResult.handled;
@@ -200,7 +232,7 @@ final class _TabBarSampleState extends State<TabBarSample> {
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.all(Radius.circular(16)),
                     color: node.hasFocus
-                        ? TabBarSample.focusedColor
+                        ? TvTabBarFoundationSample.focusedColor
                         : Colors.transparent,
                   ),
                   padding: const EdgeInsets.symmetric(
@@ -224,11 +256,30 @@ final class _TabBarSampleState extends State<TabBarSample> {
     );
   }
 
+  void _updateSelectionConstraints() {
+    final (offset, size) = _getSelectionConstraints();
+
+    if (offset != null && size != null) {
+      setState(() {
+        _selectedOffset = offset;
+        _selectedSize = size;
+      });
+    }
+  }
+
   (Offset?, Size?) _getSelectionConstraints() {
-    final obj = _tabsKeys[_currentIndex].currentContext?.findRenderObject();
+    final obj = TvTabBarFoundationSample
+        .tabsKeys[_currentIndex]
+        .currentContext
+        ?.findRenderObject();
+
     final box = obj is RenderBox ? obj : null;
 
-    final parentObj = _tabBarKey.currentContext?.findRenderObject();
+    final parentObj = TvTabBarFoundationSample
+        .tabBarKey
+        .currentContext
+        ?.findRenderObject();
+
     final parentBox = parentObj is RenderBox ? parentObj : null;
 
     final hasSize = (box?.hasSize ?? false) && box?.size.width != 0;
@@ -238,43 +289,64 @@ final class _TabBarSampleState extends State<TabBarSample> {
         ? parentBox?.globalToLocal(globalOffset)
         : null;
 
+    final scrollOffset = _scrollController.hasClients
+        ? _scrollController.offset : 0;
+
+    final visibleOffset = localOffset == null ? null : Offset(
+      localOffset.dx - scrollOffset,
+      localOffset.dy,
+    );
+
     final size = hasSize ? box?.size : null;
 
-    return (localOffset, size);
+    return (visibleOffset, size);
   }
 }
 
-final class _TabItem extends StatelessWidget {
-  const _TabItem({required this.index, required this.currentIndex});
+@visibleForTesting
+final class TabItem extends StatelessWidget {
+  const TabItem({
+    super.key,
+    required this.index,
+    required this.currentIndex,
+    required this.onFocusChanged,
+  });
 
   final int index;
   final int currentIndex;
+  final void Function(FocusNode)? onFocusChanged;
 
   @override
   Widget build(BuildContext context) {
     final isSelected = index == currentIndex;
 
     final contentColor = isSelected
-        ? TabBarSample.contentSelectedColor
-        : TabBarSample.contentColor;
+        ? TvTabBarFoundationSample.contentSelectedColor
+        : TvTabBarFoundationSample.contentColor;
 
     return AnimatedScale(
       scale: isSelected ? 1.2 : 1.0,
-      duration: TabBarSample.animationDuration,
+      duration: TvTabBarFoundationSample.animationDuration,
       child: TvTab(
         autofocus: index == currentIndex,
-        viewportAlignment: 0,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          spacing: 8,
-          children: [
-            Icon(TabBarSample.items[index].$2, color: contentColor),
+        onFocusChanged: onFocusChanged,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            spacing: 8,
+            children: [
+              Icon(
+                TvTabBarFoundationSample.items[index].$2,
+                color: contentColor,
+              ),
 
-            Text(
-              TabBarSample.items[index].$1,
-              style: TextStyle(color: contentColor, fontSize: 20),
-            ),
-          ],
+              Text(
+                TvTabBarFoundationSample.items[index].$1,
+                style: TextStyle(color: contentColor, fontSize: 20),
+              ),
+            ],
+          ),
         ),
       ),
     );

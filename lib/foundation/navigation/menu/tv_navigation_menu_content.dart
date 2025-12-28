@@ -25,6 +25,7 @@ final class TvNavigationMenuContent extends StatefulWidget {
     this.descendantsAreFocusable = true,
     this.descendantsAreTraversable = true,
     this.autofocus = false,
+    this.viewportAlignment = 0.5,
     this.onUp,
     this.onDown,
     this.onLeft,
@@ -47,6 +48,7 @@ final class TvNavigationMenuContent extends StatefulWidget {
   final bool descendantsAreFocusable;
   final bool descendantsAreTraversable;
   final bool autofocus;
+  final double? viewportAlignment;
   final ScrollGroupDpadEventCallback? onUp;
   final ScrollGroupDpadEventCallback? onDown;
   final ScrollGroupDpadEventCallback? onLeft;
@@ -204,6 +206,7 @@ final class _TvNavigationMenuContentState extends State<TvNavigationMenuContent>
                   drawerExpandDuration: widget.drawerAnimationsDuration,
                   isDrawerExpanded: _controller.hasFocus,
                   item: header,
+                  viewportAlignment: widget.viewportAlignment,
                 ),
 
               Expanded(
@@ -224,6 +227,7 @@ final class _TvNavigationMenuContentState extends State<TvNavigationMenuContent>
                           drawerAutofocus: widget.autofocus,
                           isDrawerExpanded: _controller.hasFocus,
                           drawerExpandDuration: widget.drawerAnimationsDuration,
+                          viewportAlignment: widget.viewportAlignment,
                         ),
                       ],
                     ],
@@ -238,6 +242,7 @@ final class _TvNavigationMenuContentState extends State<TvNavigationMenuContent>
                   drawerAutofocus: widget.autofocus,
                   isDrawerExpanded: _controller.hasFocus,
                   drawerExpandDuration: widget.drawerAnimationsDuration,
+                  viewportAlignment: widget.viewportAlignment,
                 ),
             ],
           ),
@@ -253,6 +258,7 @@ final class _Header extends StatelessWidget {
     required this.drawerAutofocus,
     required this.drawerExpandDuration,
     required this.isDrawerExpanded,
+    required this.viewportAlignment,
     required this.item,
   });
 
@@ -260,6 +266,7 @@ final class _Header extends StatelessWidget {
   final bool drawerAutofocus;
   final Duration drawerExpandDuration;
   final bool isDrawerExpanded;
+  final double? viewportAlignment;
   final TvNavigationMenuItem item;
 
   @override
@@ -275,6 +282,7 @@ final class _Header extends StatelessWidget {
       isDrawerExpanded: isDrawerExpanded,
       drawerAnimationsDuration: drawerExpandDuration,
       autofocus: drawerAutofocus && isSelected,
+      viewportAlignment: viewportAlignment,
       onSelect: (_, _) {
         controller.select(entry);
         item.onSelect?.call();
@@ -292,6 +300,7 @@ final class _Item extends StatelessWidget {
     required this.drawerAutofocus,
     required this.isDrawerExpanded,
     required this.drawerExpandDuration,
+    required this.viewportAlignment,
   });
 
   final int index;
@@ -300,6 +309,7 @@ final class _Item extends StatelessWidget {
   final bool drawerAutofocus;
   final bool isDrawerExpanded;
   final Duration drawerExpandDuration;
+  final double? viewportAlignment;
 
   @override
   Widget build(BuildContext context) {
@@ -314,6 +324,7 @@ final class _Item extends StatelessWidget {
       isDrawerExpanded: isDrawerExpanded,
       drawerAnimationsDuration: drawerExpandDuration,
       autofocus: drawerAutofocus && isSelected,
+      viewportAlignment: viewportAlignment,
       onSelect: (_, _) {
         controller.select(entry);
         item.onSelect?.call();
@@ -330,6 +341,7 @@ final class _Footer extends StatelessWidget {
     required this.drawerAutofocus,
     required this.isDrawerExpanded,
     required this.drawerExpandDuration,
+    required this.viewportAlignment,
   });
 
   final TvNavigationMenuItem item;
@@ -337,6 +349,7 @@ final class _Footer extends StatelessWidget {
   final bool drawerAutofocus;
   final bool isDrawerExpanded;
   final Duration drawerExpandDuration;
+  final double? viewportAlignment;
 
   @override
   Widget build(BuildContext context) {
@@ -351,6 +364,7 @@ final class _Footer extends StatelessWidget {
       isDrawerExpanded: isDrawerExpanded,
       drawerAnimationsDuration: drawerExpandDuration,
       autofocus: drawerAutofocus && isSelected,
+      viewportAlignment: viewportAlignment,
       onSelect: (_, _) {
         controller.select(entry);
         item.onSelect?.call();
@@ -368,6 +382,7 @@ final class _TvNavigationDrawerItem extends StatelessWidget {
     required this.isDrawerExpanded,
     required this.drawerAnimationsDuration,
     this.autofocus = false,
+    required this.viewportAlignment,
     this.onSelect,
   });
 
@@ -377,6 +392,7 @@ final class _TvNavigationDrawerItem extends StatelessWidget {
   final bool isDrawerExpanded;
   final Duration drawerAnimationsDuration;
   final bool autofocus;
+  final double? viewportAlignment;
   final KeyEventResult Function(FocusNode, KeyDownEvent)? onSelect;
 
   @override
@@ -386,6 +402,7 @@ final class _TvNavigationDrawerItem extends StatelessWidget {
       autofocus: autofocus,
       onSelect: onSelect,
       key: item.key,
+      viewportAlignment: viewportAlignment,
       builder: (node) {
         final Set<WidgetState> focusedState = node.hasFocus
             ? {WidgetState.focused}

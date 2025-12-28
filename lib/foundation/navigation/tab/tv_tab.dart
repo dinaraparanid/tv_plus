@@ -35,7 +35,7 @@ final class TvTab extends StatelessWidget implements PreferredSizeWidget {
   final FocusNode? parentNode;
   final bool autofocus;
   final bool canRequestFocus;
-  final double viewportAlignment;
+  final double? viewportAlignment;
   final ScrollGroupDpadEventHandler? leftHandler;
   final ScrollGroupDpadEventHandler? rightHandler;
   final DpadEventCallback? onSelect;
