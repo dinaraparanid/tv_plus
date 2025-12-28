@@ -34,7 +34,7 @@ final class ScrollGroupDpadFocus extends StatefulWidget {
   final FocusNode? parentNode;
   final bool autofocus;
   final bool canRequestFocus;
-  final double viewportAlignment;
+  final double? viewportAlignment;
   final ScrollGroupDpadEventHandler? upHandler;
   final ScrollGroupDpadEventHandler? downHandler;
   final ScrollGroupDpadEventHandler? leftHandler;
@@ -117,19 +117,23 @@ final class _ScrollGroupDpadFocusState extends State<ScrollGroupDpadFocus> {
       onSelect: widget.onSelect,
       onBack: widget.onBack,
       onFocusChanged: (node) async {
-        final context = node.context;
-        final obj = context?.findRenderObject();
-        final box = obj is RenderBox ? obj : null;
-        final hasSize = box?.hasSize ?? true;
+        final viewportAlignment = widget.viewportAlignment;
 
-        if (context != null && hasSize && node.hasFocus) {
-          await Scrollable.ensureVisible(
-            node.context!,
-            alignment: widget.viewportAlignment,
-            duration:
-                widget.scrollToNextNodeDuration ??
-                const Duration(milliseconds: 100),
-          );
+        if (viewportAlignment != null) {
+          final context = node.context;
+          final obj = context?.findRenderObject();
+          final box = obj is RenderBox ? obj : null;
+          final hasSize = box?.hasSize ?? true;
+
+          if (context != null && hasSize && node.hasFocus) {
+            await Scrollable.ensureVisible(
+              node.context!,
+              alignment: viewportAlignment,
+              duration:
+                  widget.scrollToNextNodeDuration ??
+                  const Duration(milliseconds: 100),
+            );
+          }
         }
 
         widget.onFocusChanged?.call(node);
