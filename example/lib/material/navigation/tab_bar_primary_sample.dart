@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tv_plus/tv_plus.dart';
 
+import 'tab_item_sample.dart';
+
 final class TvTabBarPrimarySample extends StatefulWidget {
   const TvTabBarPrimarySample({super.key});
 
@@ -12,6 +14,18 @@ final class TvTabBarPrimarySample extends StatefulWidget {
   static const selectionRadius = BorderRadius.all(Radius.circular(16));
   static const animationDuration = Duration(milliseconds: 300);
   static const tabBarHeight = 48.0;
+  static const initialIndex = 1;
+
+  static final tabBarKey = GlobalKey();
+  static final indicatorKey = GlobalKey();
+  static final contentKey = GlobalKey();
+  static final contentIconKey = GlobalKey();
+  static final contentTitleKey = GlobalKey();
+  static final contentJumpKey = GlobalKey();
+  static final tabsKeys = List.generate(
+    TvTabBarPrimarySample.items.length,
+    (_) => GlobalKey(),
+  );
 
   static const items = [
     ('Search', Icons.search),
@@ -35,7 +49,9 @@ final class _TvTabBarPrimarySampleState extends State<TvTabBarPrimarySample> {
 
   late final _contentFocusNode = FocusNode();
 
-  late final _tabController = TvTabBarController(initialIndex: 1);
+  late final _tabController = TvTabBarController(
+    initialIndex: TvTabBarPrimarySample.initialIndex,
+  );
 
   late var _currentIndex = _tabController.selectedIndex;
 
@@ -85,6 +101,7 @@ final class _TvTabBarPrimarySampleState extends State<TvTabBarPrimarySample> {
               TvTabBarPrimarySample.tabBarHeight,
             ),
             child: TvTabBar(
+              key: TvTabBarPrimarySample.tabBarKey,
               controller: _tabController,
               isScrollable: true,
               animationDuration: TvTabBarPrimarySample.animationDuration,
@@ -104,7 +121,7 @@ final class _TvTabBarPrimarySampleState extends State<TvTabBarPrimarySample> {
                 for (var i = 0; i < TvTabBarPrimarySample.items.length; ++i)
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: TabItem(
+                    child: _TabItem(
                       index: i,
                       currentIndex: _currentIndex,
                       isTabBarFocused: _tabBarHasFocus,
@@ -126,6 +143,7 @@ final class _TvTabBarPrimarySampleState extends State<TvTabBarPrimarySample> {
     bool tabBarHasFocus,
   ) {
     return AnimatedContainer(
+      key: TvTabBarPrimarySample.indicatorKey,
       duration: TvTabBarPrimarySample.animationDuration,
       height: tabSize.height,
       width: tabSize.width,
@@ -140,6 +158,7 @@ final class _TvTabBarPrimarySampleState extends State<TvTabBarPrimarySample> {
 
   Widget _buildContent({required String text, required IconData icon}) {
     return Stack(
+      key: TvTabBarPrimarySample.contentKey,
       children: [
         Align(
           child: Column(
@@ -150,11 +169,17 @@ final class _TvTabBarPrimarySampleState extends State<TvTabBarPrimarySample> {
                 mainAxisSize: MainAxisSize.min,
                 spacing: 8,
                 children: [
-                  Icon(icon, size: 48, color: Colors.white),
+                  Icon(
+                    icon,
+                    key: TvTabBarPrimarySample.contentIconKey,
+                    size: 48,
+                    color: Colors.white,
+                  ),
 
                   Flexible(
                     child: Text(
                       text,
+                      key: TvTabBarPrimarySample.contentTitleKey,
                       style: const TextStyle(color: Colors.white, fontSize: 20),
                     ),
                   ),
@@ -163,6 +188,7 @@ final class _TvTabBarPrimarySampleState extends State<TvTabBarPrimarySample> {
 
               DpadFocus(
                 focusNode: _contentFocusNode,
+                key: TvTabBarPrimarySample.contentJumpKey,
                 onSelect: (_, _) {
                   _focusScopeNode.requestFocus();
                   return KeyEventResult.handled;
@@ -202,10 +228,8 @@ final class _TvTabBarPrimarySampleState extends State<TvTabBarPrimarySample> {
   }
 }
 
-@visibleForTesting
-final class TabItem extends StatelessWidget {
-  const TabItem({
-    super.key,
+final class _TabItem extends StatelessWidget {
+  const _TabItem({
     required this.index,
     required this.currentIndex,
     required this.isTabBarFocused,
@@ -219,28 +243,16 @@ final class TabItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final isSelected = index == currentIndex;
 
-    final contentColor = isSelected
-        ? TvTabBarPrimarySample.contentSelectedColor
-        : TvTabBarPrimarySample.contentColor;
-
-    return AnimatedScale(
-      scale: isSelected ? 1.2 : 1.0,
-      duration: TvTabBarPrimarySample.animationDuration,
-      child: TvTab(
-        autofocus: index == currentIndex,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          spacing: 8,
-          children: [
-            Icon(TvTabBarPrimarySample.items[index].$2, color: contentColor),
-
-            Text(
-              TvTabBarPrimarySample.items[index].$1,
-              style: TextStyle(color: contentColor, fontSize: 20),
-            ),
-          ],
-        ),
-      ),
+    return TvTabItemSample(
+      index: index,
+      key: TvTabBarPrimarySample.tabsKeys[index],
+      icon: TvTabBarPrimarySample.items[index].$2,
+      text: TvTabBarPrimarySample.items[index].$1,
+      color: isSelected
+          ? TvTabBarPrimarySample.contentSelectedColor
+          : TvTabBarPrimarySample.contentColor,
+      isSelected: isSelected,
+      isTabBarFocused: isTabBarFocused,
     );
   }
 }
