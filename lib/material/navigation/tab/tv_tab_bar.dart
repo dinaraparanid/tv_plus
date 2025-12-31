@@ -11,6 +11,7 @@ final class TvTabBar extends StatefulWidget {
     required this.indicatorBuilder,
     this.indicatorMargin = EdgeInsets.zero,
     this.controller,
+    this.scrollController,
     this.isScrollable = false,
     this.mainAxisSize = MainAxisSize.max,
     this.mainAxisAlignment = MainAxisAlignment.spaceAround,
@@ -40,6 +41,7 @@ final class TvTabBar extends StatefulWidget {
     required this.indicatorBuilder,
     this.indicatorMargin = EdgeInsets.zero,
     this.controller,
+    this.scrollController,
     this.isScrollable = false,
     this.mainAxisSize = MainAxisSize.max,
     this.mainAxisAlignment = MainAxisAlignment.spaceAround,
@@ -67,6 +69,7 @@ final class TvTabBar extends StatefulWidget {
   final Widget Function(BuildContext, Offset, Size, bool) indicatorBuilder;
   final EdgeInsets indicatorMargin;
   final TvTabBarController? controller;
+  final ScrollController? scrollController;
   final TvTabBarMode mode;
   final bool isScrollable;
   final MainAxisSize mainAxisSize;
@@ -99,6 +102,9 @@ final class _TvTabBarState extends State<TvTabBar> {
   late TvTabBarController _controller;
   var _ownsController = false;
 
+  late ScrollController _scrollController;
+  var _ownsScrollController = false;
+
   late FocusScopeNode _focusScopeNode;
   var _ownsNode = false;
 
@@ -107,6 +113,10 @@ final class _TvTabBarState extends State<TvTabBar> {
   late var _currentIndex = _controller.selectedIndex;
 
   var _tabBarHasFocus = false;
+
+  Offset? _selectedOffset;
+  Size? _selectedSize;
+  double? _scrollOffset;
 
   late var _tabsKeys = _buildTabKeys();
 
@@ -118,11 +128,21 @@ final class _TvTabBarState extends State<TvTabBar> {
     _controller = widget.controller ?? TvTabBarController();
     _ownsController = widget.controller == null;
 
+    _scrollController = widget.scrollController ?? ScrollController();
+    _ownsScrollController = widget.scrollController == null;
+
     _focusScopeNode = widget.focusScopeNode ?? FocusScopeNode();
     _ownsNode = widget.focusScopeNode == null;
 
     _controller.addListener(_tabListener);
     _focusScopeNode.addListener(_focusListener);
+    _scrollController.addListener(_scrollListener);
+
+    // Required for _buildIndicator() in order to update
+    // selected tab's RenderBox position and constraints.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updateSelectionConstraints();
+    });
 
     super.initState();
   }
@@ -155,6 +175,20 @@ final class _TvTabBarState extends State<TvTabBar> {
       _ownsNode = false;
     }
 
+    final passedScrollController = widget.scrollController;
+
+    if (passedScrollController != null &&
+        oldWidget.scrollController != passedScrollController) {
+      passedScrollController.removeListener(_scrollListener);
+
+      if (_ownsScrollController) {
+        _scrollController.dispose();
+      }
+
+      _scrollController = passedScrollController;
+      _ownsScrollController = false;
+    }
+
     final passedTabs = widget.tabs;
 
     if (passedTabs.length != _tabsKeys.length) {
@@ -179,18 +213,30 @@ final class _TvTabBarState extends State<TvTabBar> {
     }
   }
 
+  void _scrollListener() {
+    if (_scrollController.hasClients &&
+        _scrollOffset != _scrollController.offset) {
+      _scrollOffset = _scrollController.offset;
+      _updateSelectionConstraints();
+    }
+  }
+
   @override
   void dispose() {
     _focusScopeNode.removeListener(_focusListener);
+    _controller.removeListener(_tabListener);
+    _scrollController.removeListener(_scrollListener);
 
     if (_ownsNode) {
       _focusScopeNode.dispose();
     }
 
-    _controller.removeListener(_tabListener);
-
     if (_ownsController) {
       _controller.dispose();
+    }
+
+    if (_ownsScrollController) {
+      _scrollController.dispose();
     }
 
     super.dispose();
@@ -222,6 +268,7 @@ final class _TvTabBarState extends State<TvTabBar> {
           child: widget.isScrollable
               ? SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
+                  controller: _scrollController,
                   child: _buildTabBar(),
                 )
               : _buildTabBar(),
@@ -249,8 +296,22 @@ final class _TvTabBarState extends State<TvTabBar> {
       descendantsAreTraversable: widget.descendantsAreTraversable,
       onUp: widget.onUp,
       onDown: widget.onDown,
-      onLeft: widget.onLeft,
-      onRight: widget.onRight,
+      onLeft: (node, event, isOutOfScope) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _updateSelectionConstraints();
+        });
+
+        return widget.onLeft?.call(node, event, isOutOfScope) ??
+            KeyEventResult.handled;
+      },
+      onRight: (node, event, isOutOfScope) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _updateSelectionConstraints();
+        });
+
+        return widget.onRight?.call(node, event, isOutOfScope) ??
+            KeyEventResult.handled;
+      },
       onBack: widget.onBack,
       onFocusChanged: widget.onFocusChanged,
       onFocusDisabledWhenWasFocused: widget.onFocusDisabledWhenWasFocused,
@@ -268,9 +329,10 @@ final class _TvTabBarState extends State<TvTabBar> {
   }
 
   Widget? _buildPrimaryIndicator(BuildContext context) {
-    final (selectedOffset, selectedSize) = _getSelectionConstraints();
+    final offset = _selectedOffset;
+    final sz = _selectedSize;
 
-    if (selectedOffset == null || selectedSize == null) {
+    if (offset == null || sz == null) {
       if (!_isTabKeyAttached) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           setState(() {});
@@ -289,20 +351,16 @@ final class _TvTabBarState extends State<TvTabBar> {
       duration: widget.animationDuration,
       top: widget.indicatorMargin.top,
       bottom: widget.indicatorMargin.bottom,
-      left: selectedOffset.dx + widget.indicatorMargin.left,
-      child: widget.indicatorBuilder(
-        context,
-        selectedOffset,
-        selectedSize,
-        _tabBarHasFocus,
-      ),
+      left: offset.dx + widget.indicatorMargin.left,
+      child: widget.indicatorBuilder(context, offset, sz, _tabBarHasFocus),
     );
   }
 
   Widget? _buildSecondaryIndicator(BuildContext context) {
-    final (selectedOffset, selectedSize) = _getSelectionConstraints();
+    final offset = _selectedOffset;
+    final sz = _selectedSize;
 
-    if (selectedOffset == null || selectedSize == null) {
+    if (offset == null || sz == null) {
       if (!_isTabKeyAttached) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           setState(() {});
@@ -319,15 +377,21 @@ final class _TvTabBarState extends State<TvTabBar> {
     return AnimatedPositioned(
       key: _indicatorKey,
       duration: widget.animationDuration,
-      top: selectedSize.height + widget.indicatorMargin.top,
-      left: selectedOffset.dx + widget.indicatorMargin.left,
-      child: widget.indicatorBuilder(
-        context,
-        selectedOffset,
-        selectedSize,
-        _tabBarHasFocus,
-      ),
+      bottom: widget.indicatorMargin.bottom,
+      left: offset.dx + widget.indicatorMargin.left,
+      child: widget.indicatorBuilder(context, offset, sz, _tabBarHasFocus),
     );
+  }
+
+  void _updateSelectionConstraints() {
+    final (offset, size) = _getSelectionConstraints();
+
+    if (offset != null && size != null) {
+      setState(() {
+        _selectedOffset = offset;
+        _selectedSize = size;
+      });
+    }
   }
 
   (Offset?, Size?) _getSelectionConstraints() {
@@ -344,8 +408,16 @@ final class _TvTabBarState extends State<TvTabBar> {
         ? parentBox?.globalToLocal(globalOffset)
         : null;
 
+    final scrollOffset = _scrollController.hasClients
+        ? _scrollController.offset
+        : 0;
+
+    final visibleOffset = localOffset == null
+        ? null
+        : Offset(localOffset.dx - scrollOffset, localOffset.dy);
+
     final size = hasSize ? box?.size : null;
 
-    return (localOffset, size);
+    return (visibleOffset, size);
   }
 }

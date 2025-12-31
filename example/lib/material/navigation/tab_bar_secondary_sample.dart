@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tv_plus/tv_plus.dart';
 
-final class TabBarSecondarySample extends StatefulWidget {
-  const TabBarSecondarySample({super.key});
+final class TvTabBarSecondarySample extends StatefulWidget {
+  const TvTabBarSecondarySample({super.key});
 
   static const backgroundColor = Color(0xFF131314);
   static const focusedColor = Colors.indigoAccent;
@@ -18,14 +18,20 @@ final class TabBarSecondarySample extends StatefulWidget {
     ('Home', Icons.home),
     ('Movies', Icons.movie),
     ('Shows', Icons.tv),
-    ('Library', Icons.video_library),
+    ('Cartoons', Icons.child_care),
+    ('Library', Icons.live_tv),
+    ('Music', Icons.music_note),
+    ('Podcasts', Icons.multitrack_audio_sharp),
+    ('Settings', Icons.settings),
+    ('Profile', Icons.person),
   ];
 
   @override
-  State<StatefulWidget> createState() => _TabBarSecondarySampleState();
+  State<StatefulWidget> createState() => _TvTabBarSecondarySampleState();
 }
 
-final class _TabBarSecondarySampleState extends State<TabBarSecondarySample> {
+final class _TvTabBarSecondarySampleState
+    extends State<TvTabBarSecondarySample> {
   late final _focusScopeNode = FocusScopeNode();
 
   late final _contentFocusNode = FocusNode();
@@ -68,20 +74,21 @@ final class _TabBarSecondarySampleState extends State<TabBarSecondarySample> {
 
   @override
   Widget build(BuildContext context) {
-    final (text, icon) = TabBarSecondarySample.items[_currentIndex];
+    final (text, icon) = TvTabBarSecondarySample.items[_currentIndex];
 
     return MaterialApp(
       home: Scaffold(
-        backgroundColor: TabBarSecondarySample.backgroundColor,
+        backgroundColor: TvTabBarSecondarySample.backgroundColor,
         appBar: AppBar(
-          backgroundColor: TabBarSecondarySample.backgroundColor,
+          backgroundColor: TvTabBarSecondarySample.backgroundColor,
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(
-              TabBarSecondarySample.tabBarHeight,
+              TvTabBarSecondarySample.tabBarHeight,
             ),
             child: TvTabBar.secondary(
               controller: _tabController,
-              animationDuration: TabBarSecondarySample.animationDuration,
+              isScrollable: true,
+              animationDuration: TvTabBarSecondarySample.animationDuration,
               focusScopeNode: _focusScopeNode,
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.start,
@@ -95,10 +102,10 @@ final class _TabBarSecondarySampleState extends State<TabBarSecondarySample> {
               },
               indicatorBuilder: _buildIndicator,
               tabs: [
-                for (var i = 0; i < TabBarSecondarySample.items.length; ++i)
+                for (var i = 0; i < TvTabBarSecondarySample.items.length; ++i)
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: _TabItem(
+                    child: TabItem(
                       index: i,
                       currentIndex: _currentIndex,
                       isTabBarFocused: _tabBarHasFocus,
@@ -119,23 +126,21 @@ final class _TabBarSecondarySampleState extends State<TabBarSecondarySample> {
     Size tabSize,
     bool tabBarHasFocus,
   ) {
+    final margin =
+        (tabSize.width - TvTabBarSecondarySample.unfocusedSelectionWidth) / 2;
+
     return AnimatedContainer(
-      duration: TabBarSecondarySample.animationDuration,
+      duration: TvTabBarSecondarySample.animationDuration,
       height: 2,
       width: tabBarHasFocus
           ? tabSize.width
-          : TabBarSecondarySample.unfocusedSelectionWidth,
-      margin: EdgeInsets.only(
-        left: tabBarHasFocus
-            ? 0
-            : (tabSize.width - TabBarSecondarySample.unfocusedSelectionWidth) /
-                  2,
-      ),
+          : TvTabBarSecondarySample.unfocusedSelectionWidth,
+      margin: EdgeInsets.only(left: tabBarHasFocus ? 0 : margin),
       decoration: BoxDecoration(
         color: tabBarHasFocus
-            ? TabBarSecondarySample.focusedColor
-            : TabBarSecondarySample.selectedColor,
-        borderRadius: TabBarSecondarySample.selectionRadius,
+            ? TvTabBarSecondarySample.focusedColor
+            : TvTabBarSecondarySample.selectedColor,
+        borderRadius: TvTabBarSecondarySample.selectionRadius,
       ),
     );
   }
@@ -179,7 +184,7 @@ final class _TabBarSecondarySampleState extends State<TabBarSecondarySample> {
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.all(Radius.circular(16)),
                     color: node.hasFocus
-                        ? TabBarSecondarySample.focusedColor
+                        ? TvTabBarSecondarySample.focusedColor
                         : Colors.transparent,
                   ),
                   padding: const EdgeInsets.symmetric(
@@ -204,8 +209,10 @@ final class _TabBarSecondarySampleState extends State<TabBarSecondarySample> {
   }
 }
 
-final class _TabItem extends StatelessWidget {
-  const _TabItem({
+@visibleForTesting
+final class TabItem extends StatelessWidget {
+  const TabItem({
+    super.key,
     required this.index,
     required this.currentIndex,
     required this.isTabBarFocused,
@@ -220,25 +227,24 @@ final class _TabItem extends StatelessWidget {
     final isSelected = index == currentIndex;
 
     final contentColor = switch ((isSelected, isTabBarFocused)) {
-      (false, _) => TabBarSecondarySample.contentColor,
-      (true, true) => TabBarSecondarySample.focusedColor,
-      (true, false) => TabBarSecondarySample.selectedColor,
+      (false, _) => TvTabBarSecondarySample.contentColor,
+      (true, true) => TvTabBarSecondarySample.focusedColor,
+      (true, false) => TvTabBarSecondarySample.selectedColor,
     };
 
     return AnimatedScale(
       scale: isSelected ? 1.2 : 1.0,
-      duration: TabBarSecondarySample.animationDuration,
+      duration: TvTabBarSecondarySample.animationDuration,
       child: TvTab(
         autofocus: index == currentIndex,
-        viewportAlignment: 0,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           spacing: 8,
           children: [
-            Icon(TabBarSecondarySample.items[index].$2, color: contentColor),
+            Icon(TvTabBarSecondarySample.items[index].$2, color: contentColor),
 
             Text(
-              TabBarSecondarySample.items[index].$1,
+              TvTabBarSecondarySample.items[index].$1,
               style: TextStyle(color: contentColor, fontSize: 20),
             ),
           ],

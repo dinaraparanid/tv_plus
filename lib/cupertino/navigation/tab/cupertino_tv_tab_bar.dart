@@ -19,6 +19,7 @@ final class CupertinoTvTabBar extends StatefulWidget {
     this.indicatorMargin = const EdgeInsets.symmetric(vertical: 4),
     this.indicatorPadding = const EdgeInsets.symmetric(horizontal: 12),
     this.controller,
+    this.scrollController,
     this.isScrollable = false,
     this.mainAxisSize = MainAxisSize.max,
     this.mainAxisAlignment = MainAxisAlignment.spaceAround,
@@ -48,6 +49,7 @@ final class CupertinoTvTabBar extends StatefulWidget {
   final EdgeInsets indicatorMargin;
   final EdgeInsets indicatorPadding;
   final TvTabBarController? controller;
+  final ScrollController? scrollController;
   final bool isScrollable;
   final MainAxisSize mainAxisSize;
   final MainAxisAlignment mainAxisAlignment;
@@ -81,12 +83,19 @@ final class _CupertinoTvTabBarState extends State<CupertinoTvTabBar> {
   late TvTabBarController _controller;
   var _ownsController = false;
 
+  late ScrollController _scrollController;
+  var _ownsScrollController = false;
+
   late FocusScopeNode _focusScopeNode;
   var _ownsNode = false;
 
   late var _currentIndex = _controller.selectedIndex;
 
   var _tabBarHasFocus = false;
+
+  Offset? _selectedOffset;
+  Size? _selectedSize;
+  double? _scrollOffset;
 
   late var _tabsKeys = _buildTabKeys();
 
@@ -98,11 +107,21 @@ final class _CupertinoTvTabBarState extends State<CupertinoTvTabBar> {
     _controller = widget.controller ?? TvTabBarController();
     _ownsController = widget.controller == null;
 
+    _scrollController = widget.scrollController ?? ScrollController();
+    _ownsScrollController = widget.scrollController == null;
+
     _focusScopeNode = widget.focusScopeNode ?? FocusScopeNode();
     _ownsNode = widget.focusScopeNode == null;
 
     _controller.addListener(_tabListener);
     _focusScopeNode.addListener(_focusListener);
+    _scrollController.addListener(_scrollListener);
+
+    // Required for _buildIndicator() in order to update
+    // selected tab's RenderBox position and constraints.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updateSelectionConstraints();
+    });
 
     super.initState();
   }
@@ -135,6 +154,20 @@ final class _CupertinoTvTabBarState extends State<CupertinoTvTabBar> {
       _ownsNode = false;
     }
 
+    final passedScrollController = widget.scrollController;
+
+    if (passedScrollController != null &&
+        oldWidget.scrollController != passedScrollController) {
+      passedScrollController.removeListener(_scrollListener);
+
+      if (_ownsScrollController) {
+        _scrollController.dispose();
+      }
+
+      _scrollController = passedScrollController;
+      _ownsScrollController = false;
+    }
+
     final passedTabs = widget.tabs;
 
     if (passedTabs.length != _tabsKeys.length) {
@@ -159,18 +192,30 @@ final class _CupertinoTvTabBarState extends State<CupertinoTvTabBar> {
     }
   }
 
+  void _scrollListener() {
+    if (_scrollController.hasClients &&
+        _scrollOffset != _scrollController.offset) {
+      _scrollOffset = _scrollController.offset;
+      _updateSelectionConstraints();
+    }
+  }
+
   @override
   void dispose() {
     _focusScopeNode.removeListener(_focusListener);
+    _controller.removeListener(_tabListener);
+    _scrollController.removeListener(_scrollListener);
 
     if (_ownsNode) {
       _focusScopeNode.dispose();
     }
 
-    _controller.removeListener(_tabListener);
-
     if (_ownsController) {
       _controller.dispose();
+    }
+
+    if (_ownsScrollController) {
+      _scrollController.dispose();
     }
 
     super.dispose();
@@ -206,6 +251,7 @@ final class _CupertinoTvTabBarState extends State<CupertinoTvTabBar> {
             child: widget.isScrollable
                 ? SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
+                    controller: _scrollController,
                     child: _buildTabBar(context),
                   )
                 : _buildTabBar(context),
@@ -238,8 +284,22 @@ final class _CupertinoTvTabBarState extends State<CupertinoTvTabBar> {
           descendantsAreTraversable: widget.descendantsAreTraversable,
           onUp: widget.onUp,
           onDown: widget.onDown,
-          onLeft: widget.onLeft,
-          onRight: widget.onRight,
+          onLeft: (node, event, isOutOfScope) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _updateSelectionConstraints();
+            });
+
+            return widget.onLeft?.call(node, event, isOutOfScope) ??
+                KeyEventResult.handled;
+          },
+          onRight: (node, event, isOutOfScope) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _updateSelectionConstraints();
+            });
+
+            return widget.onRight?.call(node, event, isOutOfScope) ??
+                KeyEventResult.handled;
+          },
           onBack: widget.onBack,
           onFocusChanged: widget.onFocusChanged,
           onFocusDisabledWhenWasFocused: widget.onFocusDisabledWhenWasFocused,
@@ -254,9 +314,10 @@ final class _CupertinoTvTabBarState extends State<CupertinoTvTabBar> {
   }
 
   Widget? _buildIndicator(BuildContext context) {
-    final (selectedOffset, selectedSize) = _getSelectionConstraints();
+    final offset = _selectedOffset;
+    final sz = _selectedSize;
 
-    if (selectedOffset == null || selectedSize == null) {
+    if (offset == null || sz == null) {
       if (!_isTabKeyAttached) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           setState(() {});
@@ -278,16 +339,13 @@ final class _CupertinoTvTabBarState extends State<CupertinoTvTabBar> {
       duration: widget.animationDuration,
       top: widget.indicatorMargin.top,
       bottom: widget.indicatorMargin.bottom,
-      left:
-          selectedOffset.dx -
-          widget.indicatorPadding.left +
-          widget.padding.left,
+      left: offset.dx - widget.indicatorPadding.left + widget.padding.left,
       child: indicBuilder(
         context,
-        selectedOffset,
+        offset,
         Size(
-          selectedSize.width + indicatorPadding.left + indicatorPadding.right,
-          selectedSize.height + indicatorPadding.top + indicatorPadding.bottom,
+          sz.width + indicatorPadding.left + indicatorPadding.right,
+          sz.height + indicatorPadding.top + indicatorPadding.bottom,
         ),
         _tabBarHasFocus,
       ),
@@ -359,6 +417,17 @@ final class _CupertinoTvTabBarState extends State<CupertinoTvTabBar> {
     );
   }
 
+  void _updateSelectionConstraints() {
+    final (offset, size) = _getSelectionConstraints();
+
+    if (offset != null && size != null) {
+      setState(() {
+        _selectedOffset = offset;
+        _selectedSize = size;
+      });
+    }
+  }
+
   (Offset?, Size?) _getSelectionConstraints() {
     final obj = _tabsKeys[_currentIndex].currentContext?.findRenderObject();
     final box = obj is RenderBox ? obj : null;
@@ -373,8 +442,16 @@ final class _CupertinoTvTabBarState extends State<CupertinoTvTabBar> {
         ? parentBox?.globalToLocal(globalOffset)
         : null;
 
+    final scrollOffset = _scrollController.hasClients
+        ? _scrollController.offset
+        : 0;
+
+    final visibleOffset = localOffset == null
+        ? null
+        : Offset(localOffset.dx - scrollOffset, localOffset.dy);
+
     final size = hasSize ? box?.size : null;
 
-    return (localOffset, size);
+    return (visibleOffset, size);
   }
 }
