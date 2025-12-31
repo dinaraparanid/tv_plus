@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:tv_plus/tv_plus.dart';
 
-final class TabBarSample extends StatefulWidget {
-  const TabBarSample({super.key});
+final class CupertinoTvTabBarSample extends StatefulWidget {
+  const CupertinoTvTabBarSample({super.key});
 
   static const backgroundColor = Color(0xFF131314);
   static const focusedColor = CupertinoColors.systemIndigo;
@@ -14,18 +14,25 @@ final class TabBarSample extends StatefulWidget {
   static const tabBarHeight = 48.0;
 
   static const items = [
+    // name, icon, isTabTextVisible
     ('Home', CupertinoIcons.home, true),
     ('Movies', CupertinoIcons.video_camera, true),
     ('Shows', CupertinoIcons.tv, true),
     ('Library', CupertinoIcons.play_rectangle, true),
+    ('Cartoons', CupertinoIcons.flag, true),
+    ('Music', CupertinoIcons.music_note, true),
+    ('Podcasts', CupertinoIcons.conversation_bubble, true),
+    ('Settings', CupertinoIcons.settings, true),
+    ('Profile', CupertinoIcons.profile_circled, true),
     ('Search', CupertinoIcons.search, false),
   ];
 
   @override
-  State<StatefulWidget> createState() => _TabBarSampleState();
+  State<StatefulWidget> createState() => _CupertinoTvTabBarSampleState();
 }
 
-final class _TabBarSampleState extends State<TabBarSample> {
+final class _CupertinoTvTabBarSampleState
+    extends State<CupertinoTvTabBarSample> {
   late final _focusScopeNode = FocusScopeNode();
 
   late final _contentFocusNode = FocusNode();
@@ -68,18 +75,21 @@ final class _TabBarSampleState extends State<TabBarSample> {
 
   @override
   Widget build(BuildContext context) {
-    final (text, icon, _) = TabBarSample.items[_currentIndex];
+    final (text, icon, _) = CupertinoTvTabBarSample.items[_currentIndex];
 
     return CupertinoApp(
       home: CupertinoPageScaffold(
-        backgroundColor: TabBarSample.backgroundColor,
+        backgroundColor: CupertinoTvTabBarSample.backgroundColor,
         navigationBar: CupertinoNavigationBar(
-          backgroundColor: TabBarSample.backgroundColor,
+          backgroundColor: CupertinoTvTabBarSample.backgroundColor,
           bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(TabBarSample.tabBarHeight),
+            preferredSize: const Size.fromHeight(
+              CupertinoTvTabBarSample.tabBarHeight,
+            ),
             child: CupertinoTvTabBar(
               controller: _tabController,
-              animationDuration: TabBarSample.animationDuration,
+              isScrollable: true,
+              animationDuration: CupertinoTvTabBarSample.animationDuration,
               focusScopeNode: _focusScopeNode,
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.start,
@@ -93,8 +103,8 @@ final class _TabBarSampleState extends State<TabBarSample> {
                 return KeyEventResult.handled;
               },
               tabs: [
-                for (var i = 0; i < TabBarSample.items.length; ++i)
-                  _TabItem(
+                for (var i = 0; i < CupertinoTvTabBarSample.items.length; ++i)
+                  TabItem(
                     index: i,
                     currentIndex: _currentIndex,
                     isTabBarFocused: _tabBarHasFocus,
@@ -150,7 +160,7 @@ final class _TabBarSampleState extends State<TabBarSample> {
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.all(Radius.circular(16)),
                     color: node.hasFocus
-                        ? TabBarSample.focusedColor
+                        ? CupertinoTvTabBarSample.focusedColor
                         : CupertinoColors.transparent,
                   ),
                   padding: const EdgeInsets.symmetric(
@@ -175,8 +185,10 @@ final class _TabBarSampleState extends State<TabBarSample> {
   }
 }
 
-final class _TabItem extends StatelessWidget {
-  const _TabItem({
+@visibleForTesting
+final class TabItem extends StatelessWidget {
+  const TabItem({
+    super.key,
     required this.index,
     required this.currentIndex,
     required this.isTabBarFocused,
@@ -191,14 +203,13 @@ final class _TabItem extends StatelessWidget {
     final isSelected = index == currentIndex;
 
     final contentColor = isSelected
-        ? TabBarSample.contentSelectedColor
-        : TabBarSample.contentColor;
+        ? CupertinoTvTabBarSample.contentSelectedColor
+        : CupertinoTvTabBarSample.contentColor;
 
-    final (text, icon, isTabTextVisible) = TabBarSample.items[index];
+    final (text, icon, isTabTextVisible) = CupertinoTvTabBarSample.items[index];
 
     return TvTab(
       autofocus: index == currentIndex,
-      viewportAlignment: 0,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         spacing: 8,

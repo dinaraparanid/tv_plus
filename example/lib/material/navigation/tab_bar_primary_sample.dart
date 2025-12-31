@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tv_plus/tv_plus.dart';
 
-final class TabBarPrimarySample extends StatefulWidget {
-  const TabBarPrimarySample({super.key});
+final class TvTabBarPrimarySample extends StatefulWidget {
+  const TvTabBarPrimarySample({super.key});
 
   static const backgroundColor = Color(0xFF131314);
   static const focusedColor = Colors.indigoAccent;
@@ -18,14 +18,19 @@ final class TabBarPrimarySample extends StatefulWidget {
     ('Home', Icons.home),
     ('Movies', Icons.movie),
     ('Shows', Icons.tv),
-    ('Library', Icons.video_library),
+    ('Cartoons', Icons.child_care),
+    ('Library', Icons.live_tv),
+    ('Music', Icons.music_note),
+    ('Podcasts', Icons.multitrack_audio_sharp),
+    ('Settings', Icons.settings),
+    ('Profile', Icons.person),
   ];
 
   @override
-  State<StatefulWidget> createState() => _TabBarPrimarySampleState();
+  State<StatefulWidget> createState() => _TvTabBarPrimarySampleState();
 }
 
-final class _TabBarPrimarySampleState extends State<TabBarPrimarySample> {
+final class _TvTabBarPrimarySampleState extends State<TvTabBarPrimarySample> {
   late final _focusScopeNode = FocusScopeNode();
 
   late final _contentFocusNode = FocusNode();
@@ -68,20 +73,21 @@ final class _TabBarPrimarySampleState extends State<TabBarPrimarySample> {
 
   @override
   Widget build(BuildContext context) {
-    final (text, icon) = TabBarPrimarySample.items[_currentIndex];
+    final (text, icon) = TvTabBarPrimarySample.items[_currentIndex];
 
     return MaterialApp(
       home: Scaffold(
-        backgroundColor: TabBarPrimarySample.backgroundColor,
+        backgroundColor: TvTabBarPrimarySample.backgroundColor,
         appBar: AppBar(
-          backgroundColor: TabBarPrimarySample.backgroundColor,
+          backgroundColor: TvTabBarPrimarySample.backgroundColor,
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(
-              TabBarPrimarySample.tabBarHeight,
+              TvTabBarPrimarySample.tabBarHeight,
             ),
             child: TvTabBar(
               controller: _tabController,
-              animationDuration: TabBarPrimarySample.animationDuration,
+              isScrollable: true,
+              animationDuration: TvTabBarPrimarySample.animationDuration,
               focusScopeNode: _focusScopeNode,
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.start,
@@ -95,10 +101,10 @@ final class _TabBarPrimarySampleState extends State<TabBarPrimarySample> {
               },
               indicatorBuilder: _buildIndicator,
               tabs: [
-                for (var i = 0; i < TabBarPrimarySample.items.length; ++i)
+                for (var i = 0; i < TvTabBarPrimarySample.items.length; ++i)
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: _TabItem(
+                    child: TabItem(
                       index: i,
                       currentIndex: _currentIndex,
                       isTabBarFocused: _tabBarHasFocus,
@@ -120,14 +126,14 @@ final class _TabBarPrimarySampleState extends State<TabBarPrimarySample> {
     bool tabBarHasFocus,
   ) {
     return AnimatedContainer(
-      duration: TabBarPrimarySample.animationDuration,
+      duration: TvTabBarPrimarySample.animationDuration,
       height: tabSize.height,
       width: tabSize.width,
       decoration: BoxDecoration(
         color: tabBarHasFocus
-            ? TabBarPrimarySample.focusedColor
-            : TabBarPrimarySample.selectedColor,
-        borderRadius: TabBarPrimarySample.selectionRadius,
+            ? TvTabBarPrimarySample.focusedColor
+            : TvTabBarPrimarySample.selectedColor,
+        borderRadius: TvTabBarPrimarySample.selectionRadius,
       ),
     );
   }
@@ -171,7 +177,7 @@ final class _TabBarPrimarySampleState extends State<TabBarPrimarySample> {
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.all(Radius.circular(16)),
                     color: node.hasFocus
-                        ? TabBarPrimarySample.focusedColor
+                        ? TvTabBarPrimarySample.focusedColor
                         : Colors.transparent,
                   ),
                   padding: const EdgeInsets.symmetric(
@@ -196,8 +202,10 @@ final class _TabBarPrimarySampleState extends State<TabBarPrimarySample> {
   }
 }
 
-final class _TabItem extends StatelessWidget {
-  const _TabItem({
+@visibleForTesting
+final class TabItem extends StatelessWidget {
+  const TabItem({
+    super.key,
     required this.index,
     required this.currentIndex,
     required this.isTabBarFocused,
@@ -212,23 +220,22 @@ final class _TabItem extends StatelessWidget {
     final isSelected = index == currentIndex;
 
     final contentColor = isSelected
-        ? TabBarPrimarySample.contentSelectedColor
-        : TabBarPrimarySample.contentColor;
+        ? TvTabBarPrimarySample.contentSelectedColor
+        : TvTabBarPrimarySample.contentColor;
 
     return AnimatedScale(
       scale: isSelected ? 1.2 : 1.0,
-      duration: TabBarPrimarySample.animationDuration,
+      duration: TvTabBarPrimarySample.animationDuration,
       child: TvTab(
         autofocus: index == currentIndex,
-        viewportAlignment: 0,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           spacing: 8,
           children: [
-            Icon(TabBarPrimarySample.items[index].$2, color: contentColor),
+            Icon(TvTabBarPrimarySample.items[index].$2, color: contentColor),
 
             Text(
-              TabBarPrimarySample.items[index].$1,
+              TvTabBarPrimarySample.items[index].$1,
               style: TextStyle(color: contentColor, fontSize: 20),
             ),
           ],

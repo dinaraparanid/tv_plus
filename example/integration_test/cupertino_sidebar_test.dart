@@ -12,7 +12,7 @@ void main() {
 
   group('Cupertino Sidebar tests', () {
     testWidgets('Standard', (tester) async {
-      await tester.pumpWidget(const SidebarSample());
+      await tester.pumpWidget(const CupertinoSidebarSample());
       await tester.testScenario();
     });
   });
@@ -83,7 +83,7 @@ extension SidebarTest on WidgetTester {
   }
 
   void testContent({required bool focused, required int selectedIndex}) {
-    final contentFinder = find.byKey(SidebarSample.contentKey);
+    final contentFinder = find.byKey(CupertinoSidebarSample.contentKey);
     final contentDpadFocus = firstWidget<DpadFocus>(contentFinder);
     expect(contentDpadFocus.autofocus, true);
     expect(contentDpadFocus.canRequestFocus, true);
@@ -98,7 +98,7 @@ extension SidebarTest on WidgetTester {
 
     expect(
       contentText.data,
-      '${ItemEntry(key: ValueKey(SidebarSample.items[selectedIndex].$1))} content',
+      '${ItemEntry(key: ValueKey(CupertinoSidebarSample.items[selectedIndex].$1))} content',
     );
   }
 
@@ -108,18 +108,25 @@ extension SidebarTest on WidgetTester {
     required bool sidebarExpanded,
   }) {
     if (!sidebarExpanded) {
-      final headerFinder = find.byKey(SidebarSample.collapsedHeaderKey);
+      final headerFinder = find.byKey(
+        CupertinoSidebarSample.collapsedHeaderKey,
+      );
       expect(headerFinder, findsOneWidget);
 
-      final (title, iconData) = SidebarSample.items[selectedIndex];
+      final (title, iconData) = CupertinoSidebarSample.items[selectedIndex];
 
-      final item = SidebarSample.buildItem(title: title, icon: iconData);
+      final item = CupertinoSidebarSample.buildItem(
+        title: title,
+        icon: iconData,
+      );
 
       const states = {WidgetState.selected, WidgetState.focused};
 
       // check icon
       final realIcon = item.icon.resolve(states);
-      final expectedIcon = SidebarSample.buildIcon(iconData).resolve(states);
+      final expectedIcon = CupertinoSidebarSample.buildIcon(
+        iconData,
+      ).resolve(states);
 
       expect(realIcon.icon, expectedIcon.icon);
       expect(realIcon.color, expectedIcon.color);
@@ -134,15 +141,21 @@ extension SidebarTest on WidgetTester {
 
       expect(titleWidget.data, title);
       expect(titleWidget.maxLines, 1);
-      expect(titleWidget.style?.color, SidebarSample.buildContentColor(states));
+      expect(
+        titleWidget.style?.color,
+        CupertinoSidebarSample.buildContentColor(states),
+      );
 
       return;
     }
 
-    for (int i = 0; i < SidebarSample.items.length; ++i) {
-      final (title, iconData) = SidebarSample.items[i];
+    for (int i = 0; i < CupertinoSidebarSample.items.length; ++i) {
+      final (title, iconData) = CupertinoSidebarSample.items[i];
 
-      final item = SidebarSample.buildItem(title: title, icon: iconData);
+      final item = CupertinoSidebarSample.buildItem(
+        title: title,
+        icon: iconData,
+      );
       final itemFinder = find.byKey(ValueKey(title));
       expect(itemFinder, findsOneWidget);
 
@@ -161,12 +174,14 @@ extension SidebarTest on WidgetTester {
 
       expect(
         container.decoration! as BoxDecoration,
-        SidebarSample.buildDecoration().resolve(states),
+        CupertinoSidebarSample.buildDecoration().resolve(states),
       );
 
       // check icon
       final realIcon = item.icon.resolve(states);
-      final expectedIcon = SidebarSample.buildIcon(iconData).resolve(states);
+      final expectedIcon = CupertinoSidebarSample.buildIcon(
+        iconData,
+      ).resolve(states);
 
       expect(realIcon.icon, expectedIcon.icon);
       expect(realIcon.color, expectedIcon.color);
@@ -182,7 +197,10 @@ extension SidebarTest on WidgetTester {
 
       expect(titleWidget.data, title);
       expect(titleWidget.maxLines, 1);
-      expect(titleWidget.style?.color, SidebarSample.buildContentColor(states));
+      expect(
+        titleWidget.style?.color,
+        CupertinoSidebarSample.buildContentColor(states),
+      );
     }
   }
 }

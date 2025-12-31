@@ -3,8 +3,8 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:tv_plus/tv_plus.dart';
 
-final class SidebarSample extends StatefulWidget {
-  const SidebarSample({super.key});
+final class CupertinoSidebarSample extends StatefulWidget {
+  const CupertinoSidebarSample({super.key});
 
   static const backgroundColor = Color(0x801E1E1E);
 
@@ -29,7 +29,7 @@ final class SidebarSample extends StatefulWidget {
       return Icon(
         data,
         size: 20,
-        color: SidebarSample.buildContentColor(states),
+        color: CupertinoSidebarSample.buildContentColor(states),
       );
     });
   }
@@ -69,8 +69,8 @@ final class SidebarSample extends StatefulWidget {
   }) {
     return TvNavigationMenuItem(
       key: ValueKey(title),
-      icon: SidebarSample.buildIcon(icon),
-      decoration: SidebarSample.buildDecoration(),
+      icon: CupertinoSidebarSample.buildIcon(icon),
+      decoration: CupertinoSidebarSample.buildDecoration(),
       contentPadding: const EdgeInsets.all(12),
       builder: (_, constraints, states) {
         return ConstrainedBox(
@@ -83,7 +83,7 @@ final class SidebarSample extends StatefulWidget {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontSize: 16,
-                  color: SidebarSample.buildContentColor(states),
+                  color: CupertinoSidebarSample.buildContentColor(states),
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -95,25 +95,26 @@ final class SidebarSample extends StatefulWidget {
   }
 
   @override
-  State<StatefulWidget> createState() => _SidebarSampleState();
+  State<StatefulWidget> createState() => _CupertinoSidebarSampleState();
 }
 
-final class _SidebarSampleState extends State<SidebarSample> {
+final class _CupertinoSidebarSampleState extends State<CupertinoSidebarSample> {
   static const _animationDuration = Duration(milliseconds: 350);
 
   late final _controller = TvNavigationMenuController(
-    initialEntry: ItemEntry(key: ValueKey(SidebarSample.items[0].$1)),
+    initialEntry: ItemEntry(key: ValueKey(CupertinoSidebarSample.items[0].$1)),
     focusScopeNode: FocusScopeNode(),
     headerNode: FocusNode(),
     footerNode: FocusNode(),
     itemsNodes: {
-      for (final item in SidebarSample.items) ValueKey(item.$1): FocusNode(),
+      for (final item in CupertinoSidebarSample.items)
+        ValueKey(item.$1): FocusNode(),
     },
   );
 
   late final _contentFocusNode = FocusNode();
 
-  final _items = SidebarSample.items.toList();
+  final _items = CupertinoSidebarSample.items.toList();
 
   @override
   void dispose() {
@@ -164,7 +165,10 @@ final class _SidebarSampleState extends State<SidebarSample> {
             return const SizedBox(height: 6);
           },
           menuItems: _items.map((item) {
-            return SidebarSample.buildItem(title: item.$1, icon: item.$2);
+            return CupertinoSidebarSample.buildItem(
+              title: item.$1,
+              icon: item.$2,
+            );
           }).toList(),
           backgroundColor: CupertinoColors.darkBackgroundGray,
           drawerAnimationsDuration: _animationDuration,
@@ -177,7 +181,7 @@ final class _SidebarSampleState extends State<SidebarSample> {
           },
           collapsedHeaderBuilder: (context, _, selectedItem) {
             return CupertinoTvSidebarFloatingHeader(
-              key: SidebarSample.collapsedHeaderKey,
+              key: CupertinoSidebarSample.collapsedHeaderKey,
               controller: _controller,
               selectedItem: selectedItem,
             );
@@ -187,13 +191,13 @@ final class _SidebarSampleState extends State<SidebarSample> {
             const blurSigma = 135.91;
 
             return ClipRRect(
-              key: SidebarSample.sidebarKey,
+              key: CupertinoSidebarSample.sidebarKey,
               borderRadius: radius,
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
                 child: DecoratedBox(
                   decoration: const BoxDecoration(
-                    color: SidebarSample.backgroundColor,
+                    color: CupertinoSidebarSample.backgroundColor,
                     borderRadius: radius,
                   ),
                   child: Padding(
@@ -213,7 +217,7 @@ final class _SidebarSampleState extends State<SidebarSample> {
                 Align(
                   child: DpadFocus(
                     focusNode: _contentFocusNode,
-                    key: SidebarSample.contentKey,
+                    key: CupertinoSidebarSample.contentKey,
                     autofocus: true,
                     onLeft: (_, _) {
                       _controller.requestFocusOnMenu();
@@ -244,8 +248,8 @@ final class _SidebarSampleState extends State<SidebarSample> {
   static TvNavigationMenuItem _buildHeader({required bool isSidebarExpanded}) {
     return TvNavigationMenuItem(
       key: UniqueKey(),
-      icon: SidebarSample.buildIcon(CupertinoIcons.profile_circled),
-      decoration: SidebarSample.buildDecoration(),
+      icon: CupertinoSidebarSample.buildIcon(CupertinoIcons.profile_circled),
+      decoration: CupertinoSidebarSample.buildDecoration(),
       builder: (_, constraints, states) {
         return ConstrainedBox(
           constraints: constraints,
@@ -262,7 +266,7 @@ final class _SidebarSampleState extends State<SidebarSample> {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 16,
-                    color: SidebarSample.buildContentColor(states),
+                    color: CupertinoSidebarSample.buildContentColor(states),
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -272,7 +276,7 @@ final class _SidebarSampleState extends State<SidebarSample> {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 12,
-                    color: SidebarSample.buildContentColor(states),
+                    color: CupertinoSidebarSample.buildContentColor(states),
                   ),
                 ),
               ],
@@ -284,7 +288,7 @@ final class _SidebarSampleState extends State<SidebarSample> {
   }
 
   static TvNavigationMenuItem _buildFooter() {
-    return SidebarSample.buildItem(
+    return CupertinoSidebarSample.buildItem(
       title: 'Settings',
       icon: CupertinoIcons.settings,
     );
