@@ -6,7 +6,7 @@ final class TvTabBarController extends ChangeNotifier {
   int _selectedIndex;
   int get selectedIndex => _selectedIndex;
 
-  void selectIndex(int index) {
+  void select(int index) {
     _selectedIndex = index;
     notifyListeners();
   }
