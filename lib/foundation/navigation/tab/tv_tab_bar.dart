@@ -141,7 +141,7 @@ final class _TvTabBarFoundationState extends State<TvTabBarFoundation>
   @override
   KeyEventResult onLeftEvent(FocusNode node, KeyDownEvent event) {
     if (widget.policy.inDirection(node, TraversalDirection.left)) {
-      _controller.selectIndex(_controller.selectedIndex - 1);
+      _controller.select(_controller.selectedIndex - 1);
       return widget.onLeft?.call(node, event, false) ?? KeyEventResult.handled;
     }
 
@@ -151,7 +151,7 @@ final class _TvTabBarFoundationState extends State<TvTabBarFoundation>
   @override
   KeyEventResult onRightEvent(FocusNode node, KeyDownEvent event) {
     if (widget.policy.inDirection(node, TraversalDirection.right)) {
-      _controller.selectIndex(_controller.selectedIndex + 1);
+      _controller.select(_controller.selectedIndex + 1);
       return widget.onRight?.call(node, event, false) ?? KeyEventResult.handled;
     }
 
