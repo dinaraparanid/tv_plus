@@ -126,7 +126,9 @@ final class _SampleDpadFocusState extends State<SampleDpadFocus> {
             borderRadius: BorderRadius.circular(8),
             color: color,
           ),
-          child: Align(child: widget.child ?? Text(text)),
+          child: Align(
+            child: widget.child ?? Text(text, textAlign: TextAlign.center),
+          ),
         );
       },
     );

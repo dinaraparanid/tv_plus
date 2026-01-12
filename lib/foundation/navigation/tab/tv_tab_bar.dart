@@ -45,7 +45,7 @@ final class TvTabBarFoundation extends StatefulWidget {
   final ScrollGroupDpadEventCallback? onLeft;
   final ScrollGroupDpadEventCallback? onRight;
   final DpadEventCallback? onBack;
-  final void Function(FocusScopeNode)? onFocusChanged;
+  final void Function(FocusScopeNode, bool)? onFocusChanged;
   final void Function(FocusScopeNode)? onFocusDisabledWhenWasFocused;
 
   @override

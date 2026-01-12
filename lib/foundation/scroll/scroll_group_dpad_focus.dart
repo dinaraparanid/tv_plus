@@ -116,7 +116,7 @@ final class _ScrollGroupDpadFocusState extends State<ScrollGroupDpadFocus> {
           _handleEvent(handler: widget.rightHandler, node: node, event: event),
       onSelect: widget.onSelect,
       onBack: widget.onBack,
-      onFocusChanged: (node) async {
+      onFocusChanged: (node, hasFocus) async {
         final viewportAlignment = widget.viewportAlignment;
 
         if (viewportAlignment != null) {
@@ -125,7 +125,7 @@ final class _ScrollGroupDpadFocusState extends State<ScrollGroupDpadFocus> {
           final box = obj is RenderBox ? obj : null;
           final hasSize = box?.hasSize ?? true;
 
-          if (context != null && hasSize && node.hasFocus) {
+          if (context != null && hasSize && hasFocus) {
             await Scrollable.ensureVisible(
               node.context!,
               alignment: viewportAlignment,

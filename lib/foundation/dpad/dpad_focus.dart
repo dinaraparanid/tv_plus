@@ -5,19 +5,21 @@ import 'dpad_events.dart';
 
 typedef DpadEventCallback = KeyEventResult Function(FocusNode, KeyDownEvent);
 
-final class DpadFocus extends StatefulWidget with DpadEvents {
+final class DpadFocus extends StatefulWidget {
   const DpadFocus({
     super.key,
     this.focusNode,
     this.parentNode,
     this.autofocus = false,
     this.canRequestFocus = true,
+    this.skipTraversal,
     this.onUp,
     this.onDown,
     this.onLeft,
     this.onRight,
     this.onSelect,
     this.onBack,
+    this.onKeyEvent,
     this.onFocusChanged,
     this.onFocusDisabledWhenWasFocused,
     required this.builder,
@@ -27,63 +29,39 @@ final class DpadFocus extends StatefulWidget with DpadEvents {
   final FocusNode? parentNode;
   final bool autofocus;
   final bool canRequestFocus;
+  final bool? skipTraversal;
   final DpadEventCallback? onUp;
   final DpadEventCallback? onDown;
   final DpadEventCallback? onLeft;
   final DpadEventCallback? onRight;
   final DpadEventCallback? onSelect;
   final DpadEventCallback? onBack;
-  final void Function(FocusNode)? onFocusChanged;
+  final KeyEventResult Function(FocusNode, KeyEvent)? onKeyEvent;
+  final void Function(FocusNode, bool)? onFocusChanged;
   final void Function()? onFocusDisabledWhenWasFocused;
   final Widget Function(FocusNode) builder;
 
   @override
   State<StatefulWidget> createState() => _DpadFocusState();
-
-  @override
-  KeyEventResult onUpEvent(FocusNode node, KeyDownEvent event) {
-    return onUp?.call(node, event) ?? KeyEventResult.ignored;
-  }
-
-  @override
-  KeyEventResult onDownEvent(FocusNode node, KeyDownEvent event) {
-    return onDown?.call(node, event) ?? KeyEventResult.ignored;
-  }
-
-  @override
-  KeyEventResult onLeftEvent(FocusNode node, KeyDownEvent event) {
-    return onLeft?.call(node, event) ?? KeyEventResult.ignored;
-  }
-
-  @override
-  KeyEventResult onRightEvent(FocusNode node, KeyDownEvent event) {
-    return onRight?.call(node, event) ?? KeyEventResult.ignored;
-  }
-
-  @override
-  KeyEventResult onSelectEvent(FocusNode node, KeyDownEvent event) {
-    return onSelect?.call(node, event) ?? KeyEventResult.ignored;
-  }
-
-  @override
-  KeyEventResult onBackEvent(FocusNode node, KeyDownEvent event) {
-    return onBack?.call(node, event) ?? KeyEventResult.ignored;
-  }
 }
 
-final class _DpadFocusState extends State<DpadFocus> {
+final class _DpadFocusState extends State<DpadFocus> with DpadEvents {
   late FocusNode _focusNode;
 
-  bool ownsFocusNode = false;
+  bool _ownsFocusNode = false;
+  bool _canRequestFocus = false;
+  bool _hasFocus = false;
 
   @override
   void initState() {
     _focusNode =
         widget.focusNode ?? FocusNode(canRequestFocus: widget.canRequestFocus);
 
-    _focusNode.addListener(onFocusChange);
+    _focusNode.addListener(_focusListener);
 
-    ownsFocusNode = widget.focusNode == null;
+    _ownsFocusNode = widget.focusNode == null;
+    _canRequestFocus = _focusNode.canRequestFocus;
+    _hasFocus = _focusNode.hasFocus;
 
     super.initState();
   }
@@ -101,36 +79,74 @@ final class _DpadFocusState extends State<DpadFocus> {
     final nextFocusNode = widget.focusNode;
 
     if (nextFocusNode != _focusNode && nextFocusNode != null) {
-      _focusNode.removeListener(onFocusChange);
+      _focusNode.removeListener(_focusListener);
 
-      if (ownsFocusNode) {
+      if (_ownsFocusNode) {
         _focusNode.dispose();
       }
 
-      _focusNode = nextFocusNode..canRequestFocus = widget.canRequestFocus;
+      _focusNode = nextFocusNode
+        ..canRequestFocus = widget.canRequestFocus
+        ..addListener(_focusListener);
 
-      _focusNode.addListener(onFocusChange);
-
-      ownsFocusNode = false;
+      _ownsFocusNode = false;
+      _canRequestFocus = _focusNode.canRequestFocus;
+      _hasFocus = _focusNode.hasFocus;
     }
 
     super.didUpdateWidget(oldWidget);
   }
 
+  void _focusListener() {
+    if (_canRequestFocus != _focusNode.canRequestFocus) {
+      if (_hasFocus && !_focusNode.canRequestFocus) {
+        widget.onFocusDisabledWhenWasFocused?.call();
+      }
+    }
+
+    _hasFocus = _focusNode.hasFocus;
+    _canRequestFocus = _focusNode.canRequestFocus;
+  }
+
   @override
   void dispose() {
-    _focusNode.removeListener(onFocusChange);
+    _focusNode.removeListener(_focusListener);
 
-    if (ownsFocusNode) {
+    if (_ownsFocusNode) {
       _focusNode.dispose();
     }
 
     super.dispose();
   }
 
-  void onFocusChange() {
-    setState(() {});
-    widget.onFocusChanged?.call(_focusNode);
+  @override
+  KeyEventResult onUpEvent(FocusNode node, KeyDownEvent event) {
+    return widget.onUp?.call(node, event) ?? KeyEventResult.ignored;
+  }
+
+  @override
+  KeyEventResult onDownEvent(FocusNode node, KeyDownEvent event) {
+    return widget.onDown?.call(node, event) ?? KeyEventResult.ignored;
+  }
+
+  @override
+  KeyEventResult onLeftEvent(FocusNode node, KeyDownEvent event) {
+    return widget.onLeft?.call(node, event) ?? KeyEventResult.ignored;
+  }
+
+  @override
+  KeyEventResult onRightEvent(FocusNode node, KeyDownEvent event) {
+    return widget.onRight?.call(node, event) ?? KeyEventResult.ignored;
+  }
+
+  @override
+  KeyEventResult onSelectEvent(FocusNode node, KeyDownEvent event) {
+    return widget.onSelect?.call(node, event) ?? KeyEventResult.ignored;
+  }
+
+  @override
+  KeyEventResult onBackEvent(FocusNode node, KeyDownEvent event) {
+    return widget.onBack?.call(node, event) ?? KeyEventResult.ignored;
   }
 
   @override
@@ -139,31 +155,42 @@ final class _DpadFocusState extends State<DpadFocus> {
       focusNode: _focusNode,
       parentNode: widget.parentNode,
       canRequestFocus: widget.canRequestFocus,
+      skipTraversal: widget.skipTraversal,
       autofocus: widget.autofocus,
+      onFocusChange: (isFocused) {
+        widget.onFocusChanged?.call(_focusNode, isFocused);
+      },
       onKeyEvent: (node, event) {
         return switch (event) {
-          KeyDownEvent() when event.logicalKey == LogicalKeyboardKey.arrowUp =>
-            widget.onUpEvent(node, event),
+          KeyDownEvent(logicalKey: LogicalKeyboardKey.arrowUp) => onUpEvent(
+            node,
+            event,
+          ),
 
-          KeyDownEvent()
-              when event.logicalKey == LogicalKeyboardKey.arrowDown =>
-            widget.onDownEvent(node, event),
+          KeyDownEvent(logicalKey: LogicalKeyboardKey.arrowDown) => onDownEvent(
+            node,
+            event,
+          ),
 
-          KeyDownEvent()
-              when event.logicalKey == LogicalKeyboardKey.arrowLeft =>
-            widget.onLeftEvent(node, event),
+          KeyDownEvent(logicalKey: LogicalKeyboardKey.arrowLeft) => onLeftEvent(
+            node,
+            event,
+          ),
 
-          KeyDownEvent()
-              when event.logicalKey == LogicalKeyboardKey.arrowRight =>
-            widget.onRightEvent(node, event),
+          KeyDownEvent(logicalKey: LogicalKeyboardKey.arrowRight) =>
+            onRightEvent(node, event),
 
-          KeyDownEvent() when event.logicalKey == LogicalKeyboardKey.select =>
-            widget.onSelectEvent(node, event),
+          KeyDownEvent(logicalKey: LogicalKeyboardKey.select) => onSelectEvent(
+            node,
+            event,
+          ),
 
-          KeyDownEvent() when event.logicalKey == LogicalKeyboardKey.goBack =>
-            widget.onBackEvent(node, event),
+          KeyDownEvent(logicalKey: LogicalKeyboardKey.goBack) => onBackEvent(
+            node,
+            event,
+          ),
 
-          _ => KeyEventResult.ignored,
+          _ => widget.onKeyEvent?.call(node, event) ?? KeyEventResult.ignored,
         };
       },
       child: widget.builder(_focusNode),
