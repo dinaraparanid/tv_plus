@@ -51,7 +51,7 @@ final class TvNavigationDrawer extends StatefulWidget {
   final ScrollGroupDpadEventCallback? onDown;
   final ScrollGroupDpadEventCallback? onLeft;
   final ScrollGroupDpadEventCallback? onRight;
-  final void Function(FocusScopeNode)? onFocusChanged;
+  final void Function(FocusScopeNode, bool)? onFocusChanged;
   final void Function(FocusScopeNode)? onFocusDisabledWhenWasFocused;
   final Widget Function(BuildContext context, Widget child) drawerBuilder;
   final Widget Function(
@@ -208,8 +208,8 @@ final class _TvNavigationDrawerState extends State<TvNavigationDrawer> {
   Widget _buildContent() {
     return DpadFocus(
       focusNode: _controller.mediatorFocusNode,
-      onFocusChanged: (node) {
-        if (node.hasFocus) {
+      onFocusChanged: (_, hasFocus) {
+        if (hasFocus) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             _controller.selectedFocusNodeOrNull?.requestFocus();
           });

@@ -53,7 +53,7 @@ final class TvNavigationMenuContent extends StatefulWidget {
   final ScrollGroupDpadEventCallback? onDown;
   final ScrollGroupDpadEventCallback? onLeft;
   final ScrollGroupDpadEventCallback? onRight;
-  final void Function(FocusScopeNode)? onFocusChanged;
+  final void Function(FocusScopeNode, bool)? onFocusChanged;
   final void Function(FocusScopeNode)? onFocusDisabledWhenWasFocused;
 
   @override
