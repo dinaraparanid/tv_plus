@@ -75,10 +75,6 @@ final class _DpadFocusScopeState extends State<DpadFocusScope> with DpadEvents {
   @override
   void didUpdateWidget(covariant DpadFocusScope oldWidget) {
     if (widget.canRequestFocus != oldWidget.canRequestFocus) {
-      if (_focusScopeNode.hasFocus && widget.canRequestFocus == false) {
-        widget.onFocusDisabledWhenWasFocused?.call(_focusScopeNode);
-      }
-
       _focusScopeNode.canRequestFocus = widget.canRequestFocus;
     }
 
