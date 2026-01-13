@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:tv_plus/foundation/foundation.dart';
 import 'package:tv_plus_example/dpad/dpad_navigation_sample.dart';
+import 'package:tv_plus_example/dpad/dpad_scope_navigation_sample.dart';
 import 'package:tv_plus_example/dpad/sample_dpad_focus.dart';
-
-import 'utils.dart';
 
 final class SampleDpadData {
   SampleDpadData({
@@ -27,9 +25,11 @@ final class SampleDpadData {
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  group('Dpad navigation tests', () {
+  group('Dpad scope navigation tests', () {
     testWidgets('...', (tester) async {
-      await tester.pumpWidget(const DpadNavigationSample());
+      await tester.pumpWidget(
+        const DpadScopeNavigationSample(isTraverseTimerEnabled: true),
+      );
 
       void testDpadFocus({
         required Key key,
@@ -92,12 +92,32 @@ void main() {
 
       // ( only from center )
       //
+      //    | * | $ | F |
+      //    | $ | * | $ |
+      //    | * | $ | * |
+      //
+      // ( reverse buttons )
+      await tester.pumpAndSettle(DpadScopeNavigationSample.timerDelay);
+      testAllWidgets(_buildSampleDataList(isOddEnabled: true, focusedIndex: 3));
+
+      // ( only from center )
+      //
+      //    | * | $ | * |
+      //    | $ | F | $ |
+      //    | * | $ | * |
+      //
+      // ( reverse buttons )
+      await tester.pumpAndSettle(DpadScopeNavigationSample.timerDelay);
+      testAllWidgets(_buildSampleDataList(isOddEnabled: true, focusedIndex: 5));
+
+      // ( only from center )
+      //
       //    | * | $ | * |
       //    | $ | * | $ |
       //    | F | $ | * |
       //
       // ( reverse buttons )
-      await tester.sendDpadEventAndSettle(LogicalKeyboardKey.arrowDown);
+      await tester.pumpAndSettle(DpadScopeNavigationSample.timerDelay);
       testAllWidgets(_buildSampleDataList(isOddEnabled: true, focusedIndex: 7));
 
       // ( only from center )
@@ -107,18 +127,8 @@ void main() {
       //    | * | $ | F |
       //
       // ( reverse buttons )
-      await tester.sendDpadEventAndSettle(LogicalKeyboardKey.arrowRight);
+      await tester.pumpAndSettle(DpadScopeNavigationSample.timerDelay);
       testAllWidgets(_buildSampleDataList(isOddEnabled: true, focusedIndex: 9));
-
-      // ( only from center )
-      //
-      //    | * | $ | F |
-      //    | $ | * | $ |
-      //    | * | $ | * |
-      //
-      // ( reverse buttons )
-      await tester.sendDpadEventAndSettle(LogicalKeyboardKey.arrowUp);
-      testAllWidgets(_buildSampleDataList(isOddEnabled: true, focusedIndex: 3));
 
       // ( only from center )
       //
@@ -127,113 +137,8 @@ void main() {
       //    | * | $ | * |
       //
       // ( reverse buttons )
-      await tester.sendDpadEventAndSettle(LogicalKeyboardKey.arrowLeft);
+      await tester.pumpAndSettle(DpadScopeNavigationSample.timerDelay);
       testAllWidgets(_buildSampleDataList(isOddEnabled: true, focusedIndex: 1));
-
-      // ( only from center )
-      //
-      //    | * | $ | * |
-      //    | $ | * | $ |
-      //    | * | $ | * |
-      //
-      // ( F - reverse buttons )
-      await tester.sendDpadEventAndSettle(LogicalKeyboardKey.arrowDown);
-      await tester.sendDpadEventAndSettle(LogicalKeyboardKey.arrowDown);
-      testAllWidgets(
-        _buildSampleDataList(isOddEnabled: true, focusedIndex: 10),
-      );
-
-      // ( only from center )
-      //
-      //    | $ | * | $ |
-      //    | * | $ | * |
-      //    | $ | * | $ |
-      //
-      // ( F - reverse buttons )
-      await tester.sendDpadEventAndSettle(LogicalKeyboardKey.select);
-      testAllWidgets(
-        _buildSampleDataList(isOddEnabled: false, focusedIndex: 10),
-      );
-
-      // ( only from center )
-      //
-      //    | $ | * | $ |
-      //    | * | $ | * |
-      //    | $ | F | $ |
-      //
-      // ( reverse buttons )
-      await tester.sendDpadEventAndSettle(LogicalKeyboardKey.arrowUp);
-      testAllWidgets(
-        _buildSampleDataList(isOddEnabled: false, focusedIndex: 8),
-      );
-
-      // ( only from center )
-      //
-      //    | $ | F | $ |
-      //    | * | $ | * |
-      //    | $ | * | $ |
-      //
-      // ( reverse buttons )
-      await tester.sendDpadEventAndSettle(LogicalKeyboardKey.arrowUp);
-      testAllWidgets(
-        _buildSampleDataList(isOddEnabled: false, focusedIndex: 2),
-      );
-
-      // ( only from center )
-      //
-      //    | $ | F | $ |
-      //    | * | $ | * |
-      //    | $ | * | $ |
-      //
-      // ( reverse buttons )
-      // nothing must change
-      await tester.sendDpadEventAndSettle(LogicalKeyboardKey.arrowUp);
-      testAllWidgets(
-        _buildSampleDataList(isOddEnabled: false, focusedIndex: 2),
-      );
-
-      // ( only from center )
-      //
-      //    | $ | * | $ |
-      //    | * | $ | * |
-      //    | $ | * | $ |
-      //
-      // ( F - reverse buttons )
-      await tester.sendDpadEventAndSettle(LogicalKeyboardKey.arrowDown);
-      await tester.sendDpadEventAndSettle(LogicalKeyboardKey.arrowDown);
-      testAllWidgets(
-        _buildSampleDataList(isOddEnabled: false, focusedIndex: 10),
-      );
-
-      // ( only from center )
-      //
-      //    | * | $ | * |
-      //    | $ | F | $ |
-      //    | * | $ | * |
-      //
-      // ( reverse buttons )
-      await tester.sendDpadEventAndSettle(LogicalKeyboardKey.select);
-      testAllWidgets(_buildSampleDataList(isOddEnabled: true, focusedIndex: 5));
-
-      // ( F - only from center )
-      //
-      //    | * | $ | * |
-      //    | $ | * | $ |
-      //    | * | $ | * |
-      //
-      // ( reverse buttons )
-      await tester.sendDpadEventAndSettle(LogicalKeyboardKey.arrowUp);
-      testAllWidgets(_buildSampleDataList(isOddEnabled: true, focusedIndex: 0));
-
-      // ( only from center )
-      //
-      //    | * | $ | * |
-      //    | $ | F | $ |
-      //    | * | $ | * |
-      //
-      // ( reverse buttons )
-      await tester.sendDpadEventAndSettle(LogicalKeyboardKey.select);
-      testAllWidgets(_buildSampleDataList(isOddEnabled: true, focusedIndex: 5));
     });
   });
 }
