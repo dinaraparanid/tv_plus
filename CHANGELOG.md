@@ -3,3 +3,4 @@
 1. Basic focus management with D-pad
 2. Scrolling widgets
 3. Navigation widgets for Material and Cupertino themes
+4. Integration tests coverage
