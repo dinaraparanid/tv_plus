@@ -1,7 +1,7 @@
 name: tv_plus
 description: "Smart TV toolkit"
 version: 0.0.1
-homepage:
+repository: https://github.com/paranid5/tv_plus
 
 environment:
   sdk: ^3.9.2
