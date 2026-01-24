@@ -61,11 +61,11 @@ final class TvNavigationDrawer extends StatefulWidget {
   builder;
 
   @override
-  State<StatefulWidget> createState() => _TvNavigationDrawerState();
+  State<StatefulWidget> createState() => TvNavigationDrawerState();
 }
 
-final class _TvNavigationDrawerState extends State<TvNavigationDrawer> {
-  late TvNavigationMenuController _controller;
+final class TvNavigationDrawerState extends State<TvNavigationDrawer> {
+  late TvNavigationMenuController controller;
   var _ownsController = false;
 
   @override
@@ -80,14 +80,14 @@ final class _TvNavigationDrawerState extends State<TvNavigationDrawer> {
         );
 
       case (final TvNavigationMenuController controller, _):
-        _controller = controller;
+        this.controller = controller;
 
       case (null, final TvNavigationMenuSelectionEntry entry):
-        _controller = TvNavigationMenuController(initialEntry: entry);
+        controller = TvNavigationMenuController(initialEntry: entry);
         _ownsController = true;
     }
 
-    _controller.addListener(_controllerListener);
+    controller.addListener(_controllerListener);
     super.initState();
   }
 
@@ -96,13 +96,13 @@ final class _TvNavigationDrawerState extends State<TvNavigationDrawer> {
     final passedController = widget.controller;
 
     if (passedController != null && oldWidget.controller != passedController) {
-      _controller.removeListener(_controllerListener);
+      controller.removeListener(_controllerListener);
 
       if (_ownsController) {
-        _controller.dispose();
+        controller.dispose();
       }
 
-      _controller = passedController..addListener(_controllerListener);
+      controller = passedController..addListener(_controllerListener);
       _ownsController = false;
     }
 
@@ -113,10 +113,10 @@ final class _TvNavigationDrawerState extends State<TvNavigationDrawer> {
 
   @override
   void dispose() {
-    _controller.removeListener(_controllerListener);
+    controller.removeListener(_controllerListener);
 
     if (_ownsController) {
-      _controller.dispose();
+      controller.dispose();
     }
 
     super.dispose();
@@ -140,7 +140,7 @@ final class _TvNavigationDrawerState extends State<TvNavigationDrawer> {
         if (widget.alignment == TvNavigationMenuAlignment.start)
           _buildContent(),
 
-        Expanded(child: widget.builder(context, _controller.selectedEntry)),
+        Expanded(child: widget.builder(context, controller.selectedEntry)),
 
         if (widget.alignment == TvNavigationMenuAlignment.end) _buildContent(),
       ],
@@ -153,7 +153,7 @@ final class _TvNavigationDrawerState extends State<TvNavigationDrawer> {
         children: [
           Positioned.fill(
             left: widget.constraints.minWidth,
-            child: widget.builder(context, _controller.selectedEntry),
+            child: widget.builder(context, controller.selectedEntry),
           ),
 
           Align(alignment: Alignment.centerLeft, child: _buildContent()),
@@ -164,7 +164,7 @@ final class _TvNavigationDrawerState extends State<TvNavigationDrawer> {
         children: [
           Positioned.fill(
             right: widget.constraints.minWidth,
-            child: widget.builder(context, _controller.selectedEntry),
+            child: widget.builder(context, controller.selectedEntry),
           ),
 
           Align(alignment: Alignment.centerRight, child: _buildContent()),
@@ -175,11 +175,11 @@ final class _TvNavigationDrawerState extends State<TvNavigationDrawer> {
 
   Widget _buildContent() {
     return DpadFocus(
-      focusNode: _controller.mediatorFocusNode,
+      focusNode: controller.mediatorFocusNode,
       onFocusChanged: (_, hasFocus) {
         if (hasFocus) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            _controller.selectedFocusNodeOrNull?.requestFocus();
+            controller.selectedFocusNodeOrNull?.requestFocus();
           });
         }
       },
