@@ -5,12 +5,13 @@ import 'tv_navigation_menu_selection_entry.dart';
 final class TvNavigationMenuController extends ChangeNotifier {
   TvNavigationMenuController({
     required TvNavigationMenuSelectionEntry initialEntry,
-    required this.focusScopeNode,
+    FocusScopeNode? focusScopeNode,
     this.headerNode,
     this.footerNode,
     FocusNode? mediatorFocusNode,
     required this.itemsNodes,
   }) : _entry = initialEntry,
+       focusScopeNode = focusScopeNode ?? FocusScopeNode(),
        mediatorFocusNode = mediatorFocusNode ?? FocusNode();
 
   TvNavigationMenuSelectionEntry _entry;
