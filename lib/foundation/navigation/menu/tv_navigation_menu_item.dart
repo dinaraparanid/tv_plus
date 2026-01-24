@@ -11,7 +11,7 @@ final class TvNavigationMenuItem {
       vertical: 12,
       horizontal: 16,
     ),
-    required this.decoration,
+    this.decoration,
     this.onSelect,
     required this.builder,
   }) {
@@ -30,7 +30,7 @@ final class TvNavigationMenuItem {
   final WidgetStateProperty<Icon>? icon;
   final double iconSpacing;
   final EdgeInsets contentPadding;
-  final WidgetStateProperty<BoxDecoration> decoration;
+  final WidgetStateProperty<BoxDecoration>? decoration;
   final VoidCallback? onSelect;
 
   final Widget Function(

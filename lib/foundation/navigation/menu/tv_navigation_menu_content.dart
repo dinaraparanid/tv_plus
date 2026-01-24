@@ -426,7 +426,7 @@ final class _TvNavigationDrawerItem extends StatelessWidget {
         return AnimatedContainer(
           duration: drawerAnimationsDuration,
           padding: item.contentPadding,
-          decoration: item.decoration.resolve(widgetState),
+          decoration: item.decoration?.resolve(widgetState),
           child: Row(
             children: [
               if (icon != null)
