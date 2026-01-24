@@ -111,10 +111,6 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
 
   late final _controller = TvNavigationMenuController(
     initialEntry: ItemEntry(key: ValueKey(NavigationDrawerSample.items[0].$1)),
-    focusScopeNode: FocusScopeNode(),
-    headerNode: FocusNode(),
-    footerNode: FocusNode(),
-    itemsNodes: {for (final item in _items) ValueKey(item.$1): FocusNode()},
   );
 
   late final _contentFocusNode = FocusNode();
@@ -261,7 +257,6 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
 
   TvNavigationMenuItem _buildHeader() {
     return TvNavigationMenuItem(
-      key: UniqueKey(),
       icon: NavigationDrawerSample.buildIcon(Icons.account_circle),
       decoration: NavigationDrawerSample.buildDecoration(),
       builder: (_, constraints, states) {

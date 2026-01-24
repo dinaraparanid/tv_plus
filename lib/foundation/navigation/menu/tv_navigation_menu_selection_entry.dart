@@ -1,14 +1,12 @@
-import 'package:flutter/widgets.dart';
+part of 'menu.dart';
 
 @immutable
 sealed class TvNavigationMenuSelectionEntry {
-  const TvNavigationMenuSelectionEntry({required this.key});
-
-  final Key key;
+  const TvNavigationMenuSelectionEntry();
 }
 
 final class HeaderEntry extends TvNavigationMenuSelectionEntry {
-  const HeaderEntry({required super.key});
+  const HeaderEntry();
 
   @override
   bool operator ==(Object other) =>
@@ -23,7 +21,9 @@ final class HeaderEntry extends TvNavigationMenuSelectionEntry {
 }
 
 final class ItemEntry extends TvNavigationMenuSelectionEntry {
-  const ItemEntry({required super.key});
+  const ItemEntry({required this.key});
+
+  final Key key;
 
   @override
   bool operator ==(Object other) =>
@@ -42,7 +42,7 @@ final class ItemEntry extends TvNavigationMenuSelectionEntry {
 }
 
 final class FooterEntry extends TvNavigationMenuSelectionEntry {
-  const FooterEntry({required super.key});
+  const FooterEntry();
 
   @override
   bool operator ==(Object other) =>

@@ -71,20 +71,6 @@ final class _CupertinoTvSidebarState extends State<CupertinoTvSidebar> {
   late TvNavigationMenuController _controller;
   var _ownsController = false;
 
-  void _validateController(TvNavigationMenuController controller) {
-    if (widget.header != null && controller.headerNode == null) {
-      throw ArgumentError('Header was passed but focus node was not');
-    }
-
-    if (widget.footer != null && controller.footerNode == null) {
-      throw ArgumentError('Footer was passed but focus node was not');
-    }
-
-    if (widget.menuItems.length != controller.itemsNodes.length) {
-      throw ArgumentError('Menu items count does not match focus nodes count');
-    }
-  }
-
   @override
   void initState() {
     final passedController = widget.controller;
@@ -97,19 +83,10 @@ final class _CupertinoTvSidebarState extends State<CupertinoTvSidebar> {
         );
 
       case (final TvNavigationMenuController controller, _):
-        _validateController(controller);
         _controller = controller;
 
       case (null, final TvNavigationMenuSelectionEntry entry):
-        _controller = TvNavigationMenuController(
-          initialEntry: entry,
-          focusScopeNode: FocusScopeNode(),
-          headerNode: widget.header == null ? null : FocusNode(),
-          footerNode: widget.footer == null ? null : FocusNode(),
-          itemsNodes: {
-            for (final item in widget.menuItems) item.key: FocusNode(),
-          },
-        );
+        _controller = TvNavigationMenuController(initialEntry: entry);
         _ownsController = true;
     }
 
@@ -122,7 +99,6 @@ final class _CupertinoTvSidebarState extends State<CupertinoTvSidebar> {
     final passedController = widget.controller;
 
     if (passedController != null && oldWidget.controller != passedController) {
-      _validateController(passedController);
       _controller.removeListener(_controllerListener);
 
       if (_ownsController) {
@@ -131,14 +107,6 @@ final class _CupertinoTvSidebarState extends State<CupertinoTvSidebar> {
 
       _controller = passedController..addListener(_controllerListener);
       _ownsController = false;
-    }
-
-    if (widget.menuItems.length != oldWidget.menuItems.length &&
-        _controller.itemsNodes.length != widget.menuItems.length) {
-      throw ArgumentError(
-        'Updated menu items count does not match focus nodes count. '
-        'Recreate the controller with valid `itemsNodes` count.',
-      );
     }
 
     super.didUpdateWidget(oldWidget);

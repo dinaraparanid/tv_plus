@@ -1,12 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
-import 'package:tv_plus/foundation/dpad/dpad.dart';
-
-import '../../scroll/scroll_group_dpad_focus.dart';
-import 'tv_navigation_menu_selection_entry.dart';
-import 'tv_navigation_menu_item.dart';
-import 'tv_navigation_menu_controller.dart';
+part of 'menu.dart';
 
 final class TvNavigationMenuContent extends StatefulWidget {
   TvNavigationMenuContent({
@@ -65,17 +57,26 @@ final class _TvNavigationMenuContentState extends State<TvNavigationMenuContent>
   late TvNavigationMenuController _controller;
   var _ownsController = false;
 
-  void _validateController(TvNavigationMenuController controller) {
+  void _patchController(TvNavigationMenuController controller) {
     if (widget.header != null && controller.headerNode == null) {
-      throw ArgumentError('Header was passed but focus node was not');
+      controller._headerNode = FocusNode();
     }
 
     if (widget.footer != null && controller.footerNode == null) {
-      throw ArgumentError('Footer was passed but focus node was not');
+      controller._footerNode = FocusNode();
     }
 
     if (widget.menuItems.length != controller.itemsNodes.length) {
-      throw ArgumentError('Menu items count does not match focus nodes count');
+      final patchedNodes = widget.menuItems.indexed.map((indexedItem) {
+        final (index, item) = indexedItem;
+        final key = item.key ?? ValueKey(index);
+        final node = controller.itemsNodes[key] ?? FocusNode();
+        return (key, node);
+      });
+
+      controller._itemsNodes = {
+        for (final (key, node) in patchedNodes) key: node,
+      };
     }
   }
 
@@ -91,17 +92,17 @@ final class _TvNavigationMenuContentState extends State<TvNavigationMenuContent>
         );
 
       case (final TvNavigationMenuController controller, _):
-        _validateController(controller);
+        _patchController(controller);
         _controller = controller;
 
       case (null, final TvNavigationMenuSelectionEntry entry):
         _controller = TvNavigationMenuController(
           initialEntry: entry,
-          focusScopeNode: FocusScopeNode(),
           headerNode: widget.header == null ? null : FocusNode(),
           footerNode: widget.footer == null ? null : FocusNode(),
           itemsNodes: {
-            for (final item in widget.menuItems) item.key: FocusNode(),
+            for (final (index, item) in widget.menuItems.indexed)
+              (item.key ?? ValueKey(index)): FocusNode(),
           },
         );
         _ownsController = true;
@@ -115,22 +116,13 @@ final class _TvNavigationMenuContentState extends State<TvNavigationMenuContent>
     final passedController = widget.controller;
 
     if (passedController != null && oldWidget.controller != passedController) {
-      _validateController(passedController);
-
       if (_ownsController) {
         _controller.dispose();
       }
 
+      _patchController(passedController);
       _controller = passedController;
       _ownsController = false;
-    }
-
-    if (widget.menuItems.length != oldWidget.menuItems.length &&
-        _controller.itemsNodes.length != widget.menuItems.length) {
-      throw ArgumentError(
-        'Updated menu items count does not match focus nodes count. '
-        'Recreate the controller with valid `itemsNodes` count.',
-      );
     }
 
     super.didUpdateWidget(oldWidget);
@@ -178,8 +170,9 @@ final class _TvNavigationMenuContentState extends State<TvNavigationMenuContent>
     final footer = widget.footer;
 
     return DpadFocusScope(
-      focusScopeNode: _controller.focusScopeNode,
+      focusScopeNode: _controller._focusScopeNode,
       autofocus: widget.autofocus,
+      rebuildOnFocusChange: true,
       onUp: onUpEvent,
       onDown: onDownEvent,
       onLeft: onLeftEvent,
@@ -271,8 +264,7 @@ final class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final entryKey = item.key;
-    final entry = HeaderEntry(key: entryKey);
+    final entry = const HeaderEntry();
     final isSelected = controller.selectedEntry == entry;
 
     return _TvNavigationDrawerItem(
@@ -313,7 +305,7 @@ final class _Item extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final entryKey = item.key;
+    final entryKey = item.key ?? ValueKey(index);
     final entry = ItemEntry(key: entryKey);
     final isSelected = controller.selectedEntry == entry;
 
@@ -353,8 +345,7 @@ final class _Footer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final entryKey = item.key;
-    final entry = FooterEntry(key: entryKey);
+    final entry = const FooterEntry();
     final isSelected = controller.selectedEntry == entry;
 
     return _TvNavigationDrawerItem(

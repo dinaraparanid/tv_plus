@@ -13,6 +13,7 @@ final class DpadFocus extends StatefulWidget {
     this.autofocus = false,
     this.canRequestFocus = true,
     this.skipTraversal,
+    this.rebuildOnFocusChange = true,
     this.onUp,
     this.onDown,
     this.onLeft,
@@ -30,6 +31,7 @@ final class DpadFocus extends StatefulWidget {
   final bool autofocus;
   final bool canRequestFocus;
   final bool? skipTraversal;
+  final bool rebuildOnFocusChange;
   final DpadEventCallback? onUp;
   final DpadEventCallback? onDown;
   final DpadEventCallback? onLeft;
@@ -154,6 +156,10 @@ final class _DpadFocusState extends State<DpadFocus> with DpadEvents {
       skipTraversal: widget.skipTraversal,
       autofocus: widget.autofocus,
       onFocusChange: (isFocused) {
+        if (widget.rebuildOnFocusChange) {
+          setState(() {});
+        }
+
         widget.onFocusChanged?.call(_focusNode, isFocused);
       },
       onKeyEvent: (node, event) {
