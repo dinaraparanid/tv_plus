@@ -146,7 +146,7 @@ extension NavigationDrawerTest on WidgetTester {
       );
 
       // check icon
-      final realIcon = item.icon.resolve(states);
+      final realIcon = item.icon!.resolve(states);
 
       final expectedIcon = NavigationDrawerSample.buildIcon(
         iconData,

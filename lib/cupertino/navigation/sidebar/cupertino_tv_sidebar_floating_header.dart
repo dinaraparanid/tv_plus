@@ -91,7 +91,7 @@ final class CupertinoTvSidebarFloatingHeader extends StatelessWidget {
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(8),
-                        child: selectedItem.icon.resolve(widgetState),
+                        child: selectedItem.icon!.resolve(widgetState),
                       ),
                     ),
                   ),

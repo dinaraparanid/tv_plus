@@ -318,6 +318,10 @@ final class _Item extends StatelessWidget {
       autofocus: drawerAutofocus && isSelected,
       viewportAlignment: viewportAlignment,
       onSelect: (_, _) {
+        if (!item.isSelectable) {
+          return KeyEventResult.ignored;
+        }
+
         controller.select(entry);
         item.onSelect?.call();
         return KeyEventResult.handled;
@@ -403,13 +407,17 @@ final class _TvNavigationDrawerItem extends StatelessWidget {
             ? {WidgetState.selected, ...focusedState}
             : focusedState;
 
+        final icon = item.icon;
+
         return AnimatedContainer(
           duration: drawerAnimationsDuration,
           padding: item.contentPadding,
           decoration: item.decoration.resolve(widgetState),
           child: Row(
             children: [
-              Flexible(flex: 0, child: item.icon.resolve(widgetState)),
+              if (icon != null)
+                Flexible(flex: 0, child: icon.resolve(widgetState)),
+
               Expanded(
                 child: LayoutBuilder(
                   builder: (context, constraints) {

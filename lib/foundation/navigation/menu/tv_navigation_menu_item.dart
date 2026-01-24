@@ -1,9 +1,10 @@
 part of 'menu.dart';
 
 final class TvNavigationMenuItem {
-  const TvNavigationMenuItem({
+  TvNavigationMenuItem({
     this.key,
-    required this.icon,
+    this.isSelectable = true,
+    this.icon,
     this.iconSpacing = 12,
     this.contentPadding = const EdgeInsets.symmetric(
       vertical: 12,
@@ -12,10 +13,19 @@ final class TvNavigationMenuItem {
     required this.decoration,
     this.onSelect,
     required this.builder,
-  });
+  }) {
+    if (isSelectable && icon == null) {
+      throw ArgumentError.value(
+        icon,
+        'icon',
+        'must not be null if isSelectable is true',
+      );
+    }
+  }
 
   final Key? key;
-  final WidgetStateProperty<Icon> icon;
+  final bool isSelectable;
+  final WidgetStateProperty<Icon>? icon;
   final double iconSpacing;
   final EdgeInsets contentPadding;
   final WidgetStateProperty<BoxDecoration> decoration;
