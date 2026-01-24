@@ -128,7 +128,6 @@ final class CupertinoTvSidebarState extends State<CupertinoTvSidebar> {
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
-      key: widget.key,
       decoration: BoxDecoration(color: widget.backgroundColor),
       child: switch (widget.alignment) {
         TvNavigationMenuAlignment.start => Stack(

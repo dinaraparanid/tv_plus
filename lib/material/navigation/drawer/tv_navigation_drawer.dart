@@ -125,7 +125,6 @@ final class TvNavigationDrawerState extends State<TvNavigationDrawer> {
   @override
   Widget build(BuildContext context) {
     return Material(
-      key: widget.key,
       color: widget.backgroundColor,
       child: switch (widget.mode) {
         TvNavigationDrawerMode.standard => _buildStandard(),
