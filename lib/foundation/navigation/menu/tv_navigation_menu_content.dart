@@ -270,12 +270,17 @@ final class _Header extends StatelessWidget {
     return _TvNavigationDrawerItem(
       item: item,
       focusNode: controller.headerNode!,
+      canRequestFocus: item.canRequestFocus,
       isSelected: isSelected,
       isDrawerExpanded: isDrawerExpanded,
       drawerAnimationsDuration: drawerExpandDuration,
       autofocus: drawerAutofocus && isSelected,
       viewportAlignment: viewportAlignment,
       onSelect: (_, _) {
+        if (!item.isSelectable) {
+          return KeyEventResult.ignored;
+        }
+
         controller.select(entry);
         item.onSelect?.call();
         return KeyEventResult.handled;
@@ -312,6 +317,7 @@ final class _Item extends StatelessWidget {
     return _TvNavigationDrawerItem(
       item: item,
       focusNode: controller.itemsNodes[entryKey]!,
+      canRequestFocus: item.canRequestFocus,
       isSelected: isSelected,
       isDrawerExpanded: isDrawerExpanded,
       drawerAnimationsDuration: drawerExpandDuration,
@@ -355,12 +361,17 @@ final class _Footer extends StatelessWidget {
     return _TvNavigationDrawerItem(
       item: item,
       focusNode: controller.footerNode!,
+      canRequestFocus: item.canRequestFocus,
       isSelected: isSelected,
       isDrawerExpanded: isDrawerExpanded,
       drawerAnimationsDuration: drawerExpandDuration,
       autofocus: drawerAutofocus && isSelected,
       viewportAlignment: viewportAlignment,
       onSelect: (_, _) {
+        if (!item.isSelectable) {
+          return KeyEventResult.ignored;
+        }
+
         controller.select(entry);
         item.onSelect?.call();
         return KeyEventResult.handled;
@@ -373,6 +384,7 @@ final class _TvNavigationDrawerItem extends StatelessWidget {
   const _TvNavigationDrawerItem({
     required this.item,
     required this.focusNode,
+    required this.canRequestFocus,
     this.isSelected = false,
     required this.isDrawerExpanded,
     required this.drawerAnimationsDuration,
@@ -383,6 +395,7 @@ final class _TvNavigationDrawerItem extends StatelessWidget {
 
   final TvNavigationMenuItem item;
   final FocusNode focusNode;
+  final bool canRequestFocus;
   final bool isSelected;
   final bool isDrawerExpanded;
   final Duration drawerAnimationsDuration;
@@ -394,6 +407,7 @@ final class _TvNavigationDrawerItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScrollGroupDpadFocus(
       focusNode: focusNode,
+      canRequestFocus: canRequestFocus,
       autofocus: autofocus,
       onSelect: onSelect,
       key: item.key,

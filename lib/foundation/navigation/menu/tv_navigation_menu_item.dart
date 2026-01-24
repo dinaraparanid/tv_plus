@@ -4,6 +4,7 @@ final class TvNavigationMenuItem {
   TvNavigationMenuItem({
     this.key,
     this.isSelectable = true,
+    this.canRequestFocus = true,
     this.icon,
     this.iconSpacing = 12,
     this.contentPadding = const EdgeInsets.symmetric(
@@ -25,6 +26,7 @@ final class TvNavigationMenuItem {
 
   final Key? key;
   final bool isSelectable;
+  final bool canRequestFocus;
   final WidgetStateProperty<Icon>? icon;
   final double iconSpacing;
   final EdgeInsets contentPadding;
