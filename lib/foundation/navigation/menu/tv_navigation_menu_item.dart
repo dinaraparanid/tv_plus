@@ -30,7 +30,7 @@ final class TvNavigationMenuItem {
   final WidgetStateProperty<Widget>? icon;
   final double iconSpacing;
   final EdgeInsets contentPadding;
-  final WidgetStateProperty<BoxDecoration>? decoration;
+  final WidgetStateProperty<Decoration>? decoration;
   final VoidCallback? onSelect;
 
   final Widget Function(
