@@ -1,29 +1,37 @@
-import 'package:flutter/widgets.dart';
-
-import 'tv_navigation_menu_selection_entry.dart';
+part of 'menu.dart';
 
 final class TvNavigationMenuController extends ChangeNotifier {
   TvNavigationMenuController({
     required TvNavigationMenuSelectionEntry initialEntry,
     FocusScopeNode? focusScopeNode,
-    this.headerNode,
-    this.footerNode,
+    FocusNode? headerNode,
+    FocusNode? footerNode,
     FocusNode? mediatorFocusNode,
-    required this.itemsNodes,
+    Map<Key, FocusNode>? itemsNodes,
   }) : _entry = initialEntry,
-       focusScopeNode = focusScopeNode ?? FocusScopeNode(),
-       mediatorFocusNode = mediatorFocusNode ?? FocusNode();
+       _focusScopeNode = focusScopeNode ?? FocusScopeNode(),
+       _headerNode = headerNode,
+       _footerNode = footerNode,
+       mediatorFocusNode = mediatorFocusNode ?? FocusNode(),
+       _itemsNodes = itemsNodes ?? {};
 
   TvNavigationMenuSelectionEntry _entry;
   TvNavigationMenuSelectionEntry get selectedEntry => _entry;
 
-  final FocusScopeNode focusScopeNode;
-  final FocusNode? headerNode;
-  final FocusNode? footerNode;
-  final FocusNode mediatorFocusNode;
-  final Map<Key, FocusNode> itemsNodes;
+  final FocusScopeNode _focusScopeNode;
 
-  bool get hasFocus => focusScopeNode.hasFocus || mediatorFocusNode.hasFocus;
+  FocusNode? _headerNode;
+  FocusNode? get headerNode => _headerNode;
+
+  FocusNode? _footerNode;
+  FocusNode? get footerNode => _footerNode;
+
+  final FocusNode mediatorFocusNode;
+
+  Map<Key, FocusNode> _itemsNodes;
+  Map<Key, FocusNode> get itemsNodes => _itemsNodes;
+
+  bool get hasFocus => _focusScopeNode.hasFocus || mediatorFocusNode.hasFocus;
 
   FocusNode? get selectedFocusNodeOrNull => switch (selectedEntry) {
     HeaderEntry() => headerNode,
@@ -46,7 +54,10 @@ final class TvNavigationMenuController extends ChangeNotifier {
     required Map<Key, FocusNode> newItems,
     required TvNavigationMenuSelectionEntry Function() onSelectedItemRemoved,
   }) {
-    final selectedKey = selectedEntry.key;
+    final selectedKey = switch (selectedEntry) {
+      ItemEntry(key: final key) => key,
+      HeaderEntry() || FooterEntry() => null,
+    };
 
     itemsNodes.removeWhere((key, node) {
       final isRemoved = !newItems.containsKey(key);
@@ -67,9 +78,9 @@ final class TvNavigationMenuController extends ChangeNotifier {
 
   @override
   void dispose() {
-    focusScopeNode.dispose();
-    headerNode?.dispose();
-    footerNode?.dispose();
+    _focusScopeNode.dispose();
+    _headerNode?.dispose();
+    _footerNode?.dispose();
     mediatorFocusNode.dispose();
 
     for (final node in itemsNodes.values) {

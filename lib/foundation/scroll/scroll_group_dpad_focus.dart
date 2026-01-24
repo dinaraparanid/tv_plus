@@ -17,6 +17,7 @@ final class ScrollGroupDpadFocus extends StatefulWidget {
     this.parentNode,
     this.autofocus = false,
     this.canRequestFocus = true,
+    this.rebuildOnFocusChange = true,
     this.viewportAlignment = 0.5,
     this.upHandler,
     this.downHandler,
@@ -34,6 +35,7 @@ final class ScrollGroupDpadFocus extends StatefulWidget {
   final FocusNode? parentNode;
   final bool autofocus;
   final bool canRequestFocus;
+  final bool rebuildOnFocusChange;
   final double? viewportAlignment;
   final ScrollGroupDpadEventHandler? upHandler;
   final ScrollGroupDpadEventHandler? downHandler;
@@ -106,6 +108,7 @@ final class _ScrollGroupDpadFocusState extends State<ScrollGroupDpadFocus> {
       parentNode: widget.parentNode,
       autofocus: widget.autofocus,
       canRequestFocus: widget.canRequestFocus,
+      rebuildOnFocusChange: widget.rebuildOnFocusChange,
       onUp: (node, event) =>
           _handleEvent(handler: widget.upHandler, node: node, event: event),
       onDown: (node, event) =>

@@ -1,8 +1,8 @@
-import 'package:flutter/widgets.dart';
+part of 'menu.dart';
 
 final class TvNavigationMenuItem {
   const TvNavigationMenuItem({
-    required this.key,
+    this.key,
     required this.icon,
     this.iconSpacing = 12,
     this.contentPadding = const EdgeInsets.symmetric(
@@ -14,7 +14,7 @@ final class TvNavigationMenuItem {
     required this.builder,
   });
 
-  final Key key;
+  final Key? key;
   final WidgetStateProperty<Icon> icon;
   final double iconSpacing;
   final EdgeInsets contentPadding;
