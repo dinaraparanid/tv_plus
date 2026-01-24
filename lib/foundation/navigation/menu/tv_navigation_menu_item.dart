@@ -27,7 +27,7 @@ final class TvNavigationMenuItem {
   final Key? key;
   final bool isSelectable;
   final bool canRequestFocus;
-  final WidgetStateProperty<Icon>? icon;
+  final WidgetStateProperty<Widget>? icon;
   final double iconSpacing;
   final EdgeInsets contentPadding;
   final WidgetStateProperty<BoxDecoration>? decoration;
