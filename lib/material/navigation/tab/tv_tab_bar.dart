@@ -92,27 +92,35 @@ final class TvTabBar extends StatefulWidget {
   final void Function(FocusScopeNode)? onFocusDisabledWhenWasFocused;
 
   @override
-  State<StatefulWidget> createState() => _TvTabBarState();
+  State<StatefulWidget> createState() => TvTabBarState();
 }
 
-final class _TvTabBarState extends State<TvTabBar> {
+final class TvTabBarState extends State<TvTabBar> {
   static final _tabBarKey = GlobalKey();
   static final _indicatorKey = GlobalKey();
 
   late TvTabBarController _controller;
   var _ownsController = false;
 
+  TvTabBarController get controller => _controller;
+
   late ScrollController _scrollController;
   var _ownsScrollController = false;
+
+  ScrollController get scrollController => _scrollController;
 
   late FocusScopeNode _focusScopeNode;
   var _ownsNode = false;
 
-  late final TvTabBarMode _mode = widget.mode;
+  FocusScopeNode get focusScopeNode => _focusScopeNode;
+
+  late final TvTabBarMode mode = widget.mode;
 
   late var _currentIndex = _controller.selectedIndex;
+  int get currentIndex => _currentIndex;
 
   var _tabBarHasFocus = false;
+  bool get tabBarHasFocus => _tabBarHasFocus;
 
   Offset? _selectedOffset;
   Size? _selectedSize;
@@ -323,7 +331,7 @@ final class _TvTabBarState extends State<TvTabBar> {
   }
 
   Widget? _buildIndicator(BuildContext context) {
-    return _mode == TvTabBarMode.primary
+    return mode == TvTabBarMode.primary
         ? _buildPrimaryIndicator(context)
         : _buildSecondaryIndicator(context);
   }

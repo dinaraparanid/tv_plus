@@ -73,25 +73,33 @@ final class CupertinoTvTabBar extends StatefulWidget {
   final void Function(FocusScopeNode)? onFocusDisabledWhenWasFocused;
 
   @override
-  State<StatefulWidget> createState() => _CupertinoTvTabBarState();
+  State<StatefulWidget> createState() => CupertinoTvTabBarState();
 }
 
-final class _CupertinoTvTabBarState extends State<CupertinoTvTabBar> {
+final class CupertinoTvTabBarState extends State<CupertinoTvTabBar> {
   static final _tabBarKey = GlobalKey();
   static final _indicatorKey = GlobalKey();
 
   late TvTabBarController _controller;
   var _ownsController = false;
 
+  TvTabBarController get controller => _controller;
+
   late ScrollController _scrollController;
   var _ownsScrollController = false;
+
+  ScrollController get scrollController => _scrollController;
 
   late FocusScopeNode _focusScopeNode;
   var _ownsNode = false;
 
+  FocusScopeNode get focusScopeNode => _focusScopeNode;
+
   late var _currentIndex = _controller.selectedIndex;
+  int get currentIndex => _currentIndex;
 
   var _tabBarHasFocus = false;
+  bool get tabBarHasFocus => _tabBarHasFocus;
 
   Offset? _selectedOffset;
   Size? _selectedSize;
