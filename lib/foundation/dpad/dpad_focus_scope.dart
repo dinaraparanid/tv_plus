@@ -138,7 +138,7 @@ final class _DpadFocusScopeState extends State<DpadFocusScope>
     bool isOutOfScope,
   ) {
     return widget.onUp?.call(node, event, isOutOfScope) ??
-        KeyEventResult.ignored;
+        (isOutOfScope ? KeyEventResult.ignored : KeyEventResult.handled);
   }
 
   @override
@@ -148,7 +148,7 @@ final class _DpadFocusScopeState extends State<DpadFocusScope>
     bool isOutOfScope,
   ) {
     return widget.onDown?.call(node, event, isOutOfScope) ??
-        KeyEventResult.ignored;
+        (isOutOfScope ? KeyEventResult.ignored : KeyEventResult.handled);
   }
 
   @override
@@ -158,7 +158,7 @@ final class _DpadFocusScopeState extends State<DpadFocusScope>
     bool isOutOfScope,
   ) {
     return widget.onLeft?.call(node, event, isOutOfScope) ??
-        KeyEventResult.ignored;
+        (isOutOfScope ? KeyEventResult.ignored : KeyEventResult.handled);
   }
 
   @override
@@ -168,7 +168,7 @@ final class _DpadFocusScopeState extends State<DpadFocusScope>
     bool isOutOfScope,
   ) {
     return widget.onRight?.call(node, event, isOutOfScope) ??
-        KeyEventResult.ignored;
+        (isOutOfScope ? KeyEventResult.ignored : KeyEventResult.handled);
   }
 
   @override
@@ -192,6 +192,8 @@ final class _DpadFocusScopeState extends State<DpadFocusScope>
         parentNode: widget.parentNode,
         canRequestFocus: widget.canRequestFocus,
         autofocus: widget.autofocus,
+        descendantsAreFocusable: widget.descendantsAreFocusable,
+        descendantsAreTraversable: widget.descendantsAreTraversable,
         includeSemantics: widget.includeSemantics,
         onFocusChange: (isFocused) {
           if (widget.rebuildOnFocusChange) {
@@ -205,28 +207,28 @@ final class _DpadFocusScopeState extends State<DpadFocusScope>
             KeyDownEvent(logicalKey: LogicalKeyboardKey.arrowUp) => onUpEvent(
               node,
               event,
-              widget.policy.inDirection(node, TraversalDirection.up),
+              !widget.policy.inDirection(node, TraversalDirection.up),
             ),
 
             KeyDownEvent(logicalKey: LogicalKeyboardKey.arrowDown) =>
               onDownEvent(
                 node,
                 event,
-                widget.policy.inDirection(node, TraversalDirection.down),
+                !widget.policy.inDirection(node, TraversalDirection.down),
               ),
 
             KeyDownEvent(logicalKey: LogicalKeyboardKey.arrowLeft) =>
               onLeftEvent(
                 node,
                 event,
-                widget.policy.inDirection(node, TraversalDirection.left),
+                !widget.policy.inDirection(node, TraversalDirection.left),
               ),
 
             KeyDownEvent(logicalKey: LogicalKeyboardKey.arrowRight) =>
               onRightEvent(
                 node,
                 event,
-                widget.policy.inDirection(node, TraversalDirection.right),
+                !widget.policy.inDirection(node, TraversalDirection.right),
               ),
 
             KeyDownEvent(logicalKey: LogicalKeyboardKey.select) =>
