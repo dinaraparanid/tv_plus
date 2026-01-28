@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/rendering.dart';
 import 'package:tv_plus/foundation/scroll/scroll_group_dpad_focus.dart';
@@ -8,7 +7,7 @@ import 'package:tv_plus/foundation/scroll/types.dart';
 
 import '../dpad/dpad.dart';
 
-final class TvListView extends BoxScrollView with DpadEvents {
+final class TvListView extends BoxScrollView {
   TvListView({
     super.key,
     super.scrollDirection,
@@ -169,42 +168,6 @@ final class TvListView extends BoxScrollView with DpadEvents {
   }
 
   @override
-  KeyEventResult onUpEvent(FocusNode node, KeyDownEvent event) {
-    if (policy.inDirection(node, TraversalDirection.up)) {
-      return onUp?.call(node, event, false) ?? KeyEventResult.handled;
-    }
-
-    return onUp?.call(node, event, true) ?? KeyEventResult.ignored;
-  }
-
-  @override
-  KeyEventResult onDownEvent(FocusNode node, KeyDownEvent event) {
-    if (policy.inDirection(node, TraversalDirection.down)) {
-      return onDown?.call(node, event, false) ?? KeyEventResult.handled;
-    }
-
-    return onDown?.call(node, event, true) ?? KeyEventResult.ignored;
-  }
-
-  @override
-  KeyEventResult onLeftEvent(FocusNode node, KeyDownEvent event) {
-    if (policy.inDirection(node, TraversalDirection.left)) {
-      return onLeft?.call(node, event, false) ?? KeyEventResult.handled;
-    }
-
-    return onLeft?.call(node, event, true) ?? KeyEventResult.ignored;
-  }
-
-  @override
-  KeyEventResult onRightEvent(FocusNode node, KeyDownEvent event) {
-    if (policy.inDirection(node, TraversalDirection.right)) {
-      return onRight?.call(node, event, false) ?? KeyEventResult.handled;
-    }
-
-    return onRight?.call(node, event, true) ?? KeyEventResult.ignored;
-  }
-
-  @override
   Widget buildChildLayout(BuildContext context) {
     if (itemExtent != null) {
       return SliverFixedExtentList(
@@ -235,10 +198,10 @@ final class TvListView extends BoxScrollView with DpadEvents {
     return DpadFocusScope(
       focusScopeNode: focusScopeNode,
       autofocus: autofocus,
-      onUp: onUpEvent,
-      onDown: onDownEvent,
-      onLeft: onLeftEvent,
-      onRight: onRightEvent,
+      onUp: onUp,
+      onDown: onDown,
+      onLeft: onLeft,
+      onRight: onRight,
       builder: (_) => super.build(context),
     );
   }

@@ -52,8 +52,8 @@ final class TvNavigationMenuContent extends StatefulWidget {
   State<StatefulWidget> createState() => _TvNavigationMenuContentState();
 }
 
-final class _TvNavigationMenuContentState extends State<TvNavigationMenuContent>
-    with DpadEvents {
+final class _TvNavigationMenuContentState
+    extends State<TvNavigationMenuContent> {
   late TvNavigationMenuController _controller;
   var _ownsController = false;
 
@@ -129,42 +129,6 @@ final class _TvNavigationMenuContentState extends State<TvNavigationMenuContent>
   }
 
   @override
-  KeyEventResult onUpEvent(FocusNode node, KeyDownEvent event) {
-    if (widget.policy.inDirection(node, TraversalDirection.up)) {
-      return widget.onUp?.call(node, event, false) ?? KeyEventResult.handled;
-    }
-
-    return widget.onUp?.call(node, event, true) ?? KeyEventResult.ignored;
-  }
-
-  @override
-  KeyEventResult onDownEvent(FocusNode node, KeyDownEvent event) {
-    if (widget.policy.inDirection(node, TraversalDirection.down)) {
-      return widget.onDown?.call(node, event, false) ?? KeyEventResult.handled;
-    }
-
-    return widget.onDown?.call(node, event, true) ?? KeyEventResult.ignored;
-  }
-
-  @override
-  KeyEventResult onLeftEvent(FocusNode node, KeyDownEvent event) {
-    if (widget.policy.inDirection(node, TraversalDirection.left)) {
-      return widget.onLeft?.call(node, event, false) ?? KeyEventResult.handled;
-    }
-
-    return widget.onLeft?.call(node, event, true) ?? KeyEventResult.ignored;
-  }
-
-  @override
-  KeyEventResult onRightEvent(FocusNode node, KeyDownEvent event) {
-    if (widget.policy.inDirection(node, TraversalDirection.right)) {
-      return widget.onRight?.call(node, event, false) ?? KeyEventResult.handled;
-    }
-
-    return widget.onRight?.call(node, event, true) ?? KeyEventResult.ignored;
-  }
-
-  @override
   Widget build(BuildContext context) {
     final header = widget.header;
     final footer = widget.footer;
@@ -173,10 +137,10 @@ final class _TvNavigationMenuContentState extends State<TvNavigationMenuContent>
       focusScopeNode: _controller._focusScopeNode,
       autofocus: widget.autofocus,
       rebuildOnFocusChange: true,
-      onUp: onUpEvent,
-      onDown: onDownEvent,
-      onLeft: onLeftEvent,
-      onRight: onRightEvent,
+      onUp: widget.onUp,
+      onDown: widget.onDown,
+      onLeft: widget.onLeft,
+      onRight: widget.onRight,
       onFocusChanged: widget.onFocusChanged,
       onFocusDisabledWhenWasFocused: widget.onFocusDisabledWhenWasFocused,
       builder: (_) {

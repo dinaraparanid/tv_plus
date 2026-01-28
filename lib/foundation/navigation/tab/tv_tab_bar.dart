@@ -1,5 +1,4 @@
 import 'package:flutter/widgets.dart';
-import 'package:flutter/services.dart';
 import 'package:tv_plus/foundation/foundation.dart';
 
 final class TvTabBarFoundation extends StatefulWidget {
@@ -52,8 +51,7 @@ final class TvTabBarFoundation extends StatefulWidget {
   State<StatefulWidget> createState() => _TvTabBarFoundationState();
 }
 
-final class _TvTabBarFoundationState extends State<TvTabBarFoundation>
-    with DpadEvents {
+final class _TvTabBarFoundationState extends State<TvTabBarFoundation> {
   late TvTabBarController _controller;
   var _ownsController = false;
 
@@ -121,44 +119,6 @@ final class _TvTabBarFoundationState extends State<TvTabBarFoundation>
   }
 
   @override
-  KeyEventResult onUpEvent(FocusNode node, KeyDownEvent event) {
-    if (widget.policy.inDirection(node, TraversalDirection.up)) {
-      return widget.onUp?.call(node, event, false) ?? KeyEventResult.handled;
-    }
-
-    return widget.onUp?.call(node, event, true) ?? KeyEventResult.ignored;
-  }
-
-  @override
-  KeyEventResult onDownEvent(FocusNode node, KeyDownEvent event) {
-    if (widget.policy.inDirection(node, TraversalDirection.down)) {
-      return widget.onDown?.call(node, event, false) ?? KeyEventResult.handled;
-    }
-
-    return widget.onDown?.call(node, event, true) ?? KeyEventResult.ignored;
-  }
-
-  @override
-  KeyEventResult onLeftEvent(FocusNode node, KeyDownEvent event) {
-    if (widget.policy.inDirection(node, TraversalDirection.left)) {
-      _controller.select(_controller.selectedIndex - 1);
-      return widget.onLeft?.call(node, event, false) ?? KeyEventResult.handled;
-    }
-
-    return widget.onLeft?.call(node, event, true) ?? KeyEventResult.ignored;
-  }
-
-  @override
-  KeyEventResult onRightEvent(FocusNode node, KeyDownEvent event) {
-    if (widget.policy.inDirection(node, TraversalDirection.right)) {
-      _controller.select(_controller.selectedIndex + 1);
-      return widget.onRight?.call(node, event, false) ?? KeyEventResult.handled;
-    }
-
-    return widget.onRight?.call(node, event, true) ?? KeyEventResult.ignored;
-  }
-
-  @override
   void dispose() {
     if (_ownsController) {
       _controller.dispose();
@@ -181,10 +141,10 @@ final class _TvTabBarFoundationState extends State<TvTabBarFoundation>
       policy: widget.policy,
       descendantsAreFocusable: widget.descendantsAreFocusable,
       descendantsAreTraversable: widget.descendantsAreTraversable,
-      onUp: onUpEvent,
-      onDown: onDownEvent,
-      onLeft: onLeftEvent,
-      onRight: onRightEvent,
+      onUp: widget.onUp,
+      onDown: widget.onDown,
+      onLeft: widget.onLeft,
+      onRight: widget.onRight,
       onBack: widget.onBack,
       onFocusChanged: widget.onFocusChanged,
       onFocusDisabledWhenWasFocused: widget.onFocusDisabledWhenWasFocused,
