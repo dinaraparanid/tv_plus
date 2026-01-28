@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:tv_plus/foundation/foundation.dart';
 
@@ -51,7 +52,8 @@ final class TvTabBarFoundation extends StatefulWidget {
   State<StatefulWidget> createState() => _TvTabBarFoundationState();
 }
 
-final class _TvTabBarFoundationState extends State<TvTabBarFoundation> {
+final class _TvTabBarFoundationState extends State<TvTabBarFoundation>
+    with DpadScopeEvents {
   late TvTabBarController _controller;
   var _ownsController = false;
 
@@ -119,6 +121,34 @@ final class _TvTabBarFoundationState extends State<TvTabBarFoundation> {
   }
 
   @override
+  KeyEventResult onLeftEvent(
+    FocusNode node,
+    KeyDownEvent event,
+    bool isOutOfScope,
+  ) {
+    if (!isOutOfScope) {
+      _controller.select(_controller.selectedIndex - 1);
+      return widget.onLeft?.call(node, event, false) ?? KeyEventResult.handled;
+    }
+
+    return widget.onLeft?.call(node, event, true) ?? KeyEventResult.ignored;
+  }
+
+  @override
+  KeyEventResult onRightEvent(
+    FocusNode node,
+    KeyDownEvent event,
+    bool isOutOfScope,
+  ) {
+    if (!isOutOfScope) {
+      _controller.select(_controller.selectedIndex + 1);
+      return widget.onRight?.call(node, event, false) ?? KeyEventResult.handled;
+    }
+
+    return widget.onRight?.call(node, event, true) ?? KeyEventResult.ignored;
+  }
+
+  @override
   void dispose() {
     if (_ownsController) {
       _controller.dispose();
@@ -143,8 +173,8 @@ final class _TvTabBarFoundationState extends State<TvTabBarFoundation> {
       descendantsAreTraversable: widget.descendantsAreTraversable,
       onUp: widget.onUp,
       onDown: widget.onDown,
-      onLeft: widget.onLeft,
-      onRight: widget.onRight,
+      onLeft: onLeftEvent,
+      onRight: onRightEvent,
       onBack: widget.onBack,
       onFocusChanged: widget.onFocusChanged,
       onFocusDisabledWhenWasFocused: widget.onFocusDisabledWhenWasFocused,
