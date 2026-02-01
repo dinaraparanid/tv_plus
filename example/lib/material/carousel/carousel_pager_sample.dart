@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tv_plus/material/carousel/carousel.dart';
+import 'package:tv_plus/tv_plus.dart';
 
 final class CarouselPagerSample extends StatefulWidget {
   const CarouselPagerSample({super.key});

@@ -178,7 +178,7 @@ final class _CupertinoTvTabBarSampleState
                 },
                 onLeft: (_, _) => KeyEventResult.handled,
                 onRight: (_, _) => KeyEventResult.handled,
-                builder: (node) => Container(
+                builder: (context, node) => Container(
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.all(Radius.circular(16)),
                     color: node.hasFocus

@@ -44,7 +44,6 @@ final class TvTabBarFoundationSample extends StatefulWidget {
 
 final class _TvTabBarFoundationSampleState
     extends State<TvTabBarFoundationSample> {
-
   late final _focusScopeNode = FocusScopeNode();
 
   late final _scrollController = ScrollController();
@@ -135,7 +134,11 @@ final class _TvTabBarFoundationSampleState
                       return KeyEventResult.handled;
                     },
                     tabs: [
-                      for (var i = 0; i < TvTabBarFoundationSample.items.length; ++i)
+                      for (
+                        var i = 0;
+                        i < TvTabBarFoundationSample.items.length;
+                        ++i
+                      )
                         TabItem(
                           key: TvTabBarFoundationSample.tabsKeys[i],
                           index: i,
@@ -228,7 +231,7 @@ final class _TvTabBarFoundationSampleState
                 },
                 onLeft: (_, _) => KeyEventResult.handled,
                 onRight: (_, _) => KeyEventResult.handled,
-                builder: (node) => Container(
+                builder: (context, node) => Container(
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.all(Radius.circular(16)),
                     color: node.hasFocus
@@ -268,16 +271,12 @@ final class _TvTabBarFoundationSampleState
   }
 
   (Offset?, Size?) _getSelectionConstraints() {
-    final obj = TvTabBarFoundationSample
-        .tabsKeys[_currentIndex]
-        .currentContext
+    final obj = TvTabBarFoundationSample.tabsKeys[_currentIndex].currentContext
         ?.findRenderObject();
 
     final box = obj is RenderBox ? obj : null;
 
-    final parentObj = TvTabBarFoundationSample
-        .tabBarKey
-        .currentContext
+    final parentObj = TvTabBarFoundationSample.tabBarKey.currentContext
         ?.findRenderObject();
 
     final parentBox = parentObj is RenderBox ? parentObj : null;
@@ -290,12 +289,12 @@ final class _TvTabBarFoundationSampleState
         : null;
 
     final scrollOffset = _scrollController.hasClients
-        ? _scrollController.offset : 0;
+        ? _scrollController.offset
+        : 0;
 
-    final visibleOffset = localOffset == null ? null : Offset(
-      localOffset.dx - scrollOffset,
-      localOffset.dy,
-    );
+    final visibleOffset = localOffset == null
+        ? null
+        : Offset(localOffset.dx - scrollOffset, localOffset.dy);
 
     final size = hasSize ? box?.size : null;
 

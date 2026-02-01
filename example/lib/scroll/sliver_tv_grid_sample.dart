@@ -71,7 +71,7 @@ final class _SliverTvGridSampleState extends State<SliverTvGridSample> {
                   _requestFocusOnGridItem();
                   return KeyEventResult.handled;
                 },
-                builder: (node) => Wrap(
+                builder: (context, node) => Wrap(
                   children: [
                     TvGridButtonItem(
                       key: SliverTvGridSample.leftButtonKey,
@@ -97,7 +97,7 @@ final class _SliverTvGridSampleState extends State<SliverTvGridSample> {
                             },
                             onLeft: (_, _) => KeyEventResult.handled,
                             onRight: (_, _) => KeyEventResult.handled,
-                            builder: (node) => TvGridButtonItem(
+                            builder: (context, node) => TvGridButtonItem(
                               key: SliverTvGridSample.upButtonKey,
                               node: node,
                               text: 'Up Button',
@@ -155,7 +155,7 @@ final class _SliverTvGridSampleState extends State<SliverTvGridSample> {
                               SliverTvGridSample.buildItemName(index: index),
                             ),
                             focusNode: _gridFocusNodes[index],
-                            builder: (node) =>
+                            builder: (context, node) =>
                                 TvGridItem(node: node, index: index),
                           );
                         },
@@ -176,7 +176,7 @@ final class _SliverTvGridSampleState extends State<SliverTvGridSample> {
                             },
                             onLeft: (_, _) => KeyEventResult.handled,
                             onRight: (_, _) => KeyEventResult.handled,
-                            builder: (node) => TvGridButtonItem(
+                            builder: (context, node) => TvGridButtonItem(
                               key: SliverTvGridSample.downButtonKey,
                               node: node,
                               text: 'Down Button',
@@ -198,7 +198,7 @@ final class _SliverTvGridSampleState extends State<SliverTvGridSample> {
                   return KeyEventResult.handled;
                 },
                 onRight: (_, _) => KeyEventResult.handled,
-                builder: (node) => Wrap(
+                builder: (context, node) => Wrap(
                   children: [
                     TvGridButtonItem(
                       key: SliverTvGridSample.rightButtonKey,

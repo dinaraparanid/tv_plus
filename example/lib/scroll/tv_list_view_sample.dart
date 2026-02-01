@@ -82,7 +82,8 @@ final class _TvListViewSampleState extends State<TvListViewSample> {
                       autofocus: index == 0,
                       viewportAlignment: 0,
                       scrollToNextNodeDuration: TvListViewSample.scrollDuration,
-                      builder: (node) => TvListItem(index: index, node: node),
+                      builder: (context, node) =>
+                          TvListItem(index: index, node: node),
                     );
                   },
                   separatorBuilder: (_, _) => const SizedBox(width: 12),
@@ -108,7 +109,8 @@ final class _TvListViewSampleState extends State<TvListViewSample> {
                       ),
                       focusNode: _verticalListFocusNodes[index],
                       scrollToNextNodeDuration: TvListViewSample.scrollDuration,
-                      builder: (node) => TvListItem(index: index, node: node),
+                      builder: (context, node) =>
+                          TvListItem(index: index, node: node),
                     );
                   },
                   separatorBuilder: (_, _) => const SizedBox(height: 12),

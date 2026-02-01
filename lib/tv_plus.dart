@@ -1,3 +1,3 @@
-export 'cupertino/cupertino.dart';
-export 'foundation/foundation.dart';
-export 'material/material.dart';
+export 'src/cupertino/cupertino.dart';
+export 'src/foundation/foundation.dart';
+export 'src/material/material.dart';

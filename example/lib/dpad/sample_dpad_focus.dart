@@ -120,7 +120,7 @@ final class _SampleDpadFocusState extends State<SampleDpadFocus> {
       onSelect: widget.onSelect,
       onBack: widget.onBack,
       onFocusDisabledWhenWasFocused: widget.onFocusDisabledWhenWasFocused,
-      builder: (_) {
+      builder: (context, node) {
         return DecoratedBox(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),

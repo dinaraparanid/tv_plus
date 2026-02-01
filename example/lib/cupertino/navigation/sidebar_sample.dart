@@ -223,7 +223,7 @@ final class _CupertinoSidebarSampleState extends State<CupertinoSidebarSample> {
                       _controller.requestFocusOnMenu();
                       return KeyEventResult.handled;
                     },
-                    builder: (node) {
+                    builder: (context, node) {
                       return AnimatedContainer(
                         duration: _animationDuration,
                         color: node.hasFocus
