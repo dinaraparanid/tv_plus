@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:tv_plus/foundation/foundation.dart';
+import 'package:tv_plus/tv_plus.dart';
 import 'package:tv_plus_example/dpad/dpad_navigation_sample.dart';
 import 'package:tv_plus_example/dpad/dpad_scope_navigation_sample.dart';
 import 'package:tv_plus_example/dpad/sample_dpad_focus.dart';

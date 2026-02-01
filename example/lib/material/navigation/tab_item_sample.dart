@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tv_plus/foundation/navigation/tab/tv_tab.dart';
+import 'package:tv_plus/tv_plus.dart';
 
 final class TvTabItemSample extends StatelessWidget {
   const TvTabItemSample({

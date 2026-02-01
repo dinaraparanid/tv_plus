@@ -69,7 +69,7 @@ final class _TvGridViewSampleState extends State<TvGridViewSample> {
                 },
                 onLeft: (_, _) => KeyEventResult.handled,
                 onRight: (_, _) => KeyEventResult.handled,
-                builder: (node) => Wrap(
+                builder: (context, node) => Wrap(
                   children: [
                     TvGridButtonItem(
                       key: TvGridViewSample.upButtonKey,
@@ -94,7 +94,7 @@ final class _TvGridViewSampleState extends State<TvGridViewSample> {
                         _requestFocusOnGridItem();
                         return KeyEventResult.handled;
                       },
-                      builder: (node) => Wrap(
+                      builder: (context, node) => Wrap(
                         children: [
                           TvGridButtonItem(
                             key: TvGridViewSample.leftButtonKey,
@@ -151,7 +151,7 @@ final class _TvGridViewSampleState extends State<TvGridViewSample> {
                               TvGridViewSample.buildItemName(index: index),
                             ),
                             focusNode: _gridFocusNodes[index],
-                            builder: (node) =>
+                            builder: (context, node) =>
                                 TvGridItem(node: node, index: index),
                           );
                         },
@@ -167,7 +167,7 @@ final class _TvGridViewSampleState extends State<TvGridViewSample> {
                         return KeyEventResult.handled;
                       },
                       onRight: (_, _) => KeyEventResult.handled,
-                      builder: (node) => Wrap(
+                      builder: (context, node) => Wrap(
                         children: [
                           TvGridButtonItem(
                             key: TvGridViewSample.rightButtonKey,
@@ -189,7 +189,7 @@ final class _TvGridViewSampleState extends State<TvGridViewSample> {
                 },
                 onLeft: (_, _) => KeyEventResult.handled,
                 onRight: (_, _) => KeyEventResult.handled,
-                builder: (node) => Wrap(
+                builder: (context, node) => Wrap(
                   children: [
                     TvGridButtonItem(
                       key: TvGridViewSample.downButtonKey,

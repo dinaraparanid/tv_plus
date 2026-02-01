@@ -75,7 +75,7 @@ final class _SliverTvListSampleState extends State<SliverTvListSample> {
 
                     return KeyEventResult.handled;
                   },
-                  builder: (node) => TvListButtonItem(
+                  builder: (context, node) => TvListButtonItem(
                     key: SliverTvListSample.goToLastButtonKey,
                     node: node,
                     text: 'Go to last',
@@ -111,7 +111,7 @@ final class _SliverTvListSampleState extends State<SliverTvListSample> {
                       ),
                       focusNode: _listFocusNodes[index],
                       autofocus: index == 0,
-                      builder: (node) {
+                      builder: (context, node) {
                         return TvListItem(node: node, index: index);
                       },
                     );
@@ -144,7 +144,7 @@ final class _SliverTvListSampleState extends State<SliverTvListSample> {
 
                     return KeyEventResult.handled;
                   },
-                  builder: (node) => TvListButtonItem(
+                  builder: (context, node) => TvListButtonItem(
                     key: SliverTvListSample.goToFirstButtonKey,
                     node: node,
                     text: 'Go to first',

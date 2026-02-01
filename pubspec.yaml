@@ -1,6 +1,6 @@
 name: tv_plus
 description: "Smart TV toolkit"
-version: 0.0.3
+version: 0.1.0
 repository: https://github.com/dinaraparanid/tv_plus
 
 environment:

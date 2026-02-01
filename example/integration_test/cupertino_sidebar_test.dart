@@ -123,7 +123,8 @@ extension SidebarTest on WidgetTester {
       const states = {WidgetState.selected, WidgetState.focused};
 
       // check icon
-      final realIcon = item.icon.resolve(states);
+      final realIcon = item.icon!.resolve(states) as Icon;
+
       final expectedIcon = CupertinoSidebarSample.buildIcon(
         iconData,
       ).resolve(states);
@@ -178,7 +179,8 @@ extension SidebarTest on WidgetTester {
       );
 
       // check icon
-      final realIcon = item.icon.resolve(states);
+      final realIcon = item.icon!.resolve(states) as Icon;
+
       final expectedIcon = CupertinoSidebarSample.buildIcon(
         iconData,
       ).resolve(states);

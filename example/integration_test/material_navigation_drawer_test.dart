@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:tv_plus/foundation/foundation.dart';
-import 'package:tv_plus/material/material.dart';
+import 'package:tv_plus/tv_plus.dart';
 import 'package:tv_plus_example/material/navigation/navigation_drawer_sample.dart';
 
 import 'utils.dart';
@@ -146,7 +145,7 @@ extension NavigationDrawerTest on WidgetTester {
       );
 
       // check icon
-      final realIcon = item.icon.resolve(states);
+      final realIcon = item.icon!.resolve(states) as Icon;
 
       final expectedIcon = NavigationDrawerSample.buildIcon(
         iconData,

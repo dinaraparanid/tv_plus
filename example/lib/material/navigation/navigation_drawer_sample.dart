@@ -233,7 +233,7 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
                       _controller.requestFocusOnMenu();
                       return KeyEventResult.handled;
                     },
-                    builder: (node) {
+                    builder: (context, node) {
                       return AnimatedContainer(
                         duration: _animationDuration,
                         color: node.hasFocus
