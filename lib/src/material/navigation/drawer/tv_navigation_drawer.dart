@@ -44,10 +44,10 @@ final class TvNavigationDrawer extends StatefulWidget {
   final bool descendantsAreFocusable;
   final bool descendantsAreTraversable;
   final bool autofocus;
-  final ScrollGroupDpadEventCallback? onUp;
-  final ScrollGroupDpadEventCallback? onDown;
-  final ScrollGroupDpadEventCallback? onLeft;
-  final ScrollGroupDpadEventCallback? onRight;
+  final DpadScopeEventCallback? onUp;
+  final DpadScopeEventCallback? onDown;
+  final DpadScopeEventCallback? onLeft;
+  final DpadScopeEventCallback? onRight;
   final void Function(FocusScopeNode, bool)? onFocusChanged;
   final void Function(FocusScopeNode)? onFocusDisabledWhenWasFocused;
   final Widget Function(BuildContext context, Widget child) drawerBuilder;

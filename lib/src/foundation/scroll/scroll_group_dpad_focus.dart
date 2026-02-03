@@ -1,12 +1,5 @@
 part of 'scroll.dart';
 
-typedef ScrollGroupDpadEventCallback =
-    KeyEventResult Function(
-      FocusNode node,
-      KeyDownEvent event,
-      bool isOutOfScope,
-    );
-
 final class ScrollGroupDpadFocus extends StatefulWidget {
   const ScrollGroupDpadFocus({
     super.key,
@@ -16,10 +9,10 @@ final class ScrollGroupDpadFocus extends StatefulWidget {
     this.canRequestFocus = true,
     this.rebuildOnFocusChange = true,
     this.viewportAlignment = 0.5,
-    this.upHandler,
-    this.downHandler,
-    this.leftHandler,
-    this.rightHandler,
+    this.onUp,
+    this.onDown,
+    this.onLeft,
+    this.onRight,
     this.onSelect,
     this.onBack,
     this.onFocusChanged,
@@ -34,10 +27,10 @@ final class ScrollGroupDpadFocus extends StatefulWidget {
   final bool canRequestFocus;
   final bool rebuildOnFocusChange;
   final double? viewportAlignment;
-  final ScrollGroupDpadEventHandler? upHandler;
-  final ScrollGroupDpadEventHandler? downHandler;
-  final ScrollGroupDpadEventHandler? leftHandler;
-  final ScrollGroupDpadEventHandler? rightHandler;
+  final DpadEventCallback? onUp;
+  final DpadEventCallback? onDown;
+  final DpadEventCallback? onLeft;
+  final DpadEventCallback? onRight;
   final DpadEventCallback? onSelect;
   final DpadEventCallback? onBack;
   final void Function(FocusNode)? onFocusChanged;
@@ -106,14 +99,10 @@ final class _ScrollGroupDpadFocusState extends State<ScrollGroupDpadFocus> {
       autofocus: widget.autofocus,
       canRequestFocus: widget.canRequestFocus,
       rebuildOnFocusChange: widget.rebuildOnFocusChange,
-      onUp: (node, event) =>
-          _handleEvent(handler: widget.upHandler, node: node, event: event),
-      onDown: (node, event) =>
-          _handleEvent(handler: widget.downHandler, node: node, event: event),
-      onLeft: (node, event) =>
-          _handleEvent(handler: widget.leftHandler, node: node, event: event),
-      onRight: (node, event) =>
-          _handleEvent(handler: widget.rightHandler, node: node, event: event),
+      onUp: widget.onUp,
+      onDown: widget.onDown,
+      onLeft: widget.onLeft,
+      onRight: widget.onRight,
       onSelect: widget.onSelect,
       onBack: widget.onBack,
       onFocusChanged: (node, hasFocus) async {
@@ -142,31 +131,4 @@ final class _ScrollGroupDpadFocusState extends State<ScrollGroupDpadFocus> {
       builder: (context, node) => widget.builder(context, node),
     );
   }
-
-  KeyEventResult _handleEvent({
-    required ScrollGroupDpadEventHandler? handler,
-    required FocusNode node,
-    required KeyDownEvent event,
-  }) {
-    if (handler == null) {
-      return KeyEventResult.ignored;
-    }
-
-    final nextNode = handler.nextNode?..requestFocus();
-    final nextContext = nextNode?.context;
-
-    if (nextContext == null) {
-      return handler.onEvent?.call(node, event) ?? KeyEventResult.ignored;
-    }
-
-    return handler.onEvent?.call(node, event) ?? KeyEventResult.handled;
-  }
-}
-
-@immutable
-final class ScrollGroupDpadEventHandler {
-  const ScrollGroupDpadEventHandler({this.nextNode, this.onEvent});
-
-  final FocusNode? nextNode;
-  final DpadEventCallback? onEvent;
 }

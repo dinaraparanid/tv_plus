@@ -43,10 +43,10 @@ final class CupertinoTvSidebar extends StatefulWidget {
   final bool descendantsAreFocusable;
   final bool descendantsAreTraversable;
   final bool autofocus;
-  final ScrollGroupDpadEventCallback? onUp;
-  final ScrollGroupDpadEventCallback? onDown;
-  final ScrollGroupDpadEventCallback? onLeft;
-  final ScrollGroupDpadEventCallback? onRight;
+  final DpadScopeEventCallback? onUp;
+  final DpadScopeEventCallback? onDown;
+  final DpadScopeEventCallback? onLeft;
+  final DpadScopeEventCallback? onRight;
   final Widget Function(
     BuildContext context,
     TvNavigationMenuSelectionEntry? selectedEntry,
