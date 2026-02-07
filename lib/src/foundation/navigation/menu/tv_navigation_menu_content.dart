@@ -143,7 +143,7 @@ final class _TvNavigationMenuContentState
     final footer = widget.footer;
 
     return DpadFocusScope(
-      focusScopeNode: _controller._focusScopeNode,
+      focusScopeNode: _controller.focusScopeNode,
       autofocus: widget.autofocus,
       rebuildOnFocusChange: true,
       policy: widget.policy,
