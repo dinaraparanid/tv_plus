@@ -171,7 +171,7 @@ final class TvNavigationDrawerState extends State<TvNavigationDrawer> {
 
   Widget _buildContent() {
     return DpadFocus(
-      focusNode: controller.mediatorFocusNode,
+      focusNode: controller.mediatorNode,
       onFocusChanged: (_, hasFocus) {
         if (hasFocus) {
           WidgetsBinding.instance.addPostFrameCallback((_) {

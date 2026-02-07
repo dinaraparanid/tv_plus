@@ -156,55 +156,47 @@ final class _TvNavigationMenuContentState
                       : widget.constraints.minWidth,
                 )
               : null,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              if (header != null)
-                _Header(
-                  controller: _controller,
-                  drawerAutofocus: widget.autofocus,
-                  drawerExpandDuration: widget.drawerAnimationsDuration,
-                  isDrawerExpanded: _controller.hasFocus,
-                  item: header,
-                  viewportAlignment: widget.viewportAlignment,
-                ),
-
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: widget.itemsAlignment,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      for (final (index, child)
-                          in widget.menuItems.indexed) ...[
-                        if (index != 0) ?widget.separatorBuilder?.call(index),
-
-                        _Item(
-                          index: index,
-                          item: child,
-                          controller: _controller,
-                          drawerAutofocus: widget.autofocus,
-                          isDrawerExpanded: _controller.hasFocus,
-                          drawerExpandDuration: widget.drawerAnimationsDuration,
-                          viewportAlignment: widget.viewportAlignment,
-                        ),
-                      ],
-                    ],
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: widget.itemsAlignment,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (header != null)
+                  _Header(
+                    controller: _controller,
+                    drawerAutofocus: widget.autofocus,
+                    drawerExpandDuration: widget.drawerAnimationsDuration,
+                    isDrawerExpanded: _controller.hasFocus,
+                    item: header,
+                    viewportAlignment: widget.viewportAlignment,
                   ),
-                ),
-              ),
 
-              if (footer != null)
-                _Footer(
-                  item: footer,
-                  controller: _controller,
-                  drawerAutofocus: widget.autofocus,
-                  isDrawerExpanded: _controller.hasFocus,
-                  drawerExpandDuration: widget.drawerAnimationsDuration,
-                  viewportAlignment: widget.viewportAlignment,
-                ),
-            ],
+                for (final (index, child) in widget.menuItems.indexed) ...[
+                  if (index != 0) ?widget.separatorBuilder?.call(index),
+
+                  _Item(
+                    index: index,
+                    item: child,
+                    controller: _controller,
+                    drawerAutofocus: widget.autofocus,
+                    isDrawerExpanded: _controller.hasFocus,
+                    drawerExpandDuration: widget.drawerAnimationsDuration,
+                    viewportAlignment: widget.viewportAlignment,
+                  ),
+                ],
+
+                if (footer != null)
+                  _Footer(
+                    item: footer,
+                    controller: _controller,
+                    drawerAutofocus: widget.autofocus,
+                    isDrawerExpanded: _controller.hasFocus,
+                    drawerExpandDuration: widget.drawerAnimationsDuration,
+                    viewportAlignment: widget.viewportAlignment,
+                  ),
+              ],
+            ),
           ),
         );
       },

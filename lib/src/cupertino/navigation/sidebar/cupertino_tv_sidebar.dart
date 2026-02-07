@@ -173,7 +173,7 @@ final class CupertinoTvSidebarState extends State<CupertinoTvSidebar> {
         widget.drawerMargin.bottom;
 
     return DpadFocus(
-      focusNode: controller.mediatorFocusNode,
+      focusNode: controller.mediatorNode,
       onFocusChanged: (_, hasFocus) {
         if (hasFocus) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
