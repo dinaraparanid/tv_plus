@@ -60,15 +60,22 @@ final class CupertinoTvSidebar extends StatefulWidget {
   )
   builder;
 
+  static TvNavigationMenuController? maybeOf(BuildContext context) {
+    return context
+        .findAncestorStateOfType<_CupertinoTvSidebarState>()
+        ?._controller;
+  }
+
+  static TvNavigationMenuController of(BuildContext context) =>
+      maybeOf(context)!;
+
   @override
-  State<StatefulWidget> createState() => CupertinoTvSidebarState();
+  State<StatefulWidget> createState() => _CupertinoTvSidebarState();
 }
 
-final class CupertinoTvSidebarState extends State<CupertinoTvSidebar> {
+final class _CupertinoTvSidebarState extends State<CupertinoTvSidebar> {
   late TvNavigationMenuController _controller;
   var _ownsController = false;
-
-  TvNavigationMenuController get controller => _controller;
 
   @override
   void initState() {

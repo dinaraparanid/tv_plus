@@ -57,15 +57,22 @@ final class TvNavigationDrawer extends StatefulWidget {
   )
   builder;
 
+  static TvNavigationMenuController? maybeOf(BuildContext context) {
+    return context
+        .findAncestorStateOfType<_TvNavigationDrawerState>()
+        ?._controller;
+  }
+
+  static TvNavigationMenuController of(BuildContext context) =>
+      maybeOf(context)!;
+
   @override
-  State<StatefulWidget> createState() => TvNavigationDrawerState();
+  State<StatefulWidget> createState() => _TvNavigationDrawerState();
 }
 
-final class TvNavigationDrawerState extends State<TvNavigationDrawer> {
+final class _TvNavigationDrawerState extends State<TvNavigationDrawer> {
   late TvNavigationMenuController _controller;
   var _ownsController = false;
-
-  TvNavigationMenuController get controller => _controller;
 
   @override
   void initState() {
