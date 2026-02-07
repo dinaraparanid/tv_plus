@@ -49,13 +49,15 @@ final class TvNavigationMenuContent extends StatefulWidget {
   final void Function(FocusScopeNode)? onFocusDisabledWhenWasFocused;
 
   @override
-  State<StatefulWidget> createState() => _TvNavigationMenuContentState();
+  State<StatefulWidget> createState() => TvNavigationMenuContentState();
 }
 
-final class _TvNavigationMenuContentState
+final class TvNavigationMenuContentState
     extends State<TvNavigationMenuContent> {
   late TvNavigationMenuController _controller;
   var _ownsController = false;
+
+  TvNavigationMenuController get controller => _controller;
 
   void _patchController(TvNavigationMenuController controller) {
     if (widget.header != null && controller.headerNode == null) {
