@@ -1,6 +1,6 @@
 part of 'menu.dart';
 
-final class TvNavigationMenuController extends ChangeNotifier {
+final class TvNavigationMenuController with ChangeNotifier {
   TvNavigationMenuController({
     required TvNavigationMenuSelectionEntry initialEntry,
     FocusScopeNode? focusScopeNode,

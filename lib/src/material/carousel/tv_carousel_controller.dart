@@ -1,6 +1,6 @@
 part of 'carousel.dart';
 
-final class TvCarouselController extends ChangeNotifier {
+final class TvCarouselController with ChangeNotifier {
   TvCarouselController({required int itemCount, int initialActiveIndex = 0})
     : assert(
         itemCount > 0 &&

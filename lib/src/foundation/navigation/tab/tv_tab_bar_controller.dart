@@ -1,6 +1,6 @@
 part of 'tab.dart';
 
-final class TvTabBarController extends ChangeNotifier {
+final class TvTabBarController with ChangeNotifier {
   TvTabBarController({int initialIndex = 0}) : _selectedIndex = initialIndex;
 
   int _selectedIndex;
