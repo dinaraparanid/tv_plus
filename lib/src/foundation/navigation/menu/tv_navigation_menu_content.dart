@@ -3,7 +3,7 @@ part of 'menu.dart';
 final class TvNavigationMenuContent extends StatefulWidget {
   TvNavigationMenuContent({
     super.key,
-    this.initialEntry,
+    this.initialSelectedEntry,
     this.controller,
     this.header,
     this.footer,
@@ -26,7 +26,7 @@ final class TvNavigationMenuContent extends StatefulWidget {
     this.onFocusDisabledWhenWasFocused,
   }) : policy = policy ?? ReadingOrderTraversalPolicy();
 
-  final TvNavigationMenuSelectionEntry? initialEntry;
+  final TvNavigationMenuEntry? initialSelectedEntry;
   final TvNavigationMenuController? controller;
   final TvNavigationMenuItem? header;
   final TvNavigationMenuItem? footer;
@@ -35,7 +35,7 @@ final class TvNavigationMenuContent extends StatefulWidget {
   final bool animateDrawerExpansion;
   final Duration drawerAnimationsDuration;
   final List<TvNavigationMenuItem> menuItems;
-  final Widget Function(int index)? separatorBuilder;
+  final Widget Function(TvNavigationMenuEntry)? separatorBuilder;
   final FocusTraversalPolicy policy;
   final bool descendantsAreFocusable;
   final bool descendantsAreTraversable;
@@ -92,7 +92,7 @@ final class _TvNavigationMenuContentState
   @override
   void initState() {
     final passedController = widget.controller;
-    final passedInitialEntry = widget.initialEntry;
+    final passedInitialEntry = widget.initialSelectedEntry;
 
     switch ((passedController, passedInitialEntry)) {
       case (null, null):
@@ -104,7 +104,7 @@ final class _TvNavigationMenuContentState
         _patchController(controller);
         _controller = controller;
 
-      case (null, final TvNavigationMenuSelectionEntry entry):
+      case (null, final TvNavigationMenuEntry entry):
         _controller = TvNavigationMenuController(
           initialEntry: entry,
           headerNode: widget.header == null ? null : FocusNode(),
@@ -141,6 +141,7 @@ final class _TvNavigationMenuContentState
   Widget build(BuildContext context) {
     final header = widget.header;
     final footer = widget.footer;
+    final separatorBuilder = widget.separatorBuilder;
 
     return DpadFocusScope(
       focusScopeNode: _controller.focusScopeNode,
@@ -165,47 +166,66 @@ final class _TvNavigationMenuContentState
                       : widget.constraints.minWidth,
                 )
               : null,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: widget.itemsAlignment,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                if (header != null)
-                  _Header(
-                    controller: _controller,
-                    drawerAutofocus: widget.autofocus,
-                    drawerExpandDuration: widget.drawerAnimationsDuration,
-                    isDrawerExpanded: _controller.hasFocus,
-                    item: header,
-                    viewportAlignment: widget.viewportAlignment,
-                  ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (header != null) ...[
+                _Header(
+                  controller: _controller,
+                  drawerAutofocus: widget.autofocus,
+                  drawerExpandDuration: widget.drawerAnimationsDuration,
+                  isDrawerExpanded: _controller.hasFocus,
+                  item: header,
+                  viewportAlignment: widget.viewportAlignment,
+                ),
 
-                for (final (index, child) in widget.menuItems.indexed) ...[
-                  if (index != 0) ?widget.separatorBuilder?.call(index),
-
-                  _Item(
-                    index: index,
-                    item: child,
-                    controller: _controller,
-                    drawerAutofocus: widget.autofocus,
-                    isDrawerExpanded: _controller.hasFocus,
-                    drawerExpandDuration: widget.drawerAnimationsDuration,
-                    viewportAlignment: widget.viewportAlignment,
-                  ),
-                ],
-
-                if (footer != null)
-                  _Footer(
-                    item: footer,
-                    controller: _controller,
-                    drawerAutofocus: widget.autofocus,
-                    isDrawerExpanded: _controller.hasFocus,
-                    drawerExpandDuration: widget.drawerAnimationsDuration,
-                    viewportAlignment: widget.viewportAlignment,
-                  ),
+                if (separatorBuilder != null)
+                  separatorBuilder(const HeaderEntry()),
               ],
-            ),
+
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: widget.itemsAlignment,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      for (final (index, child)
+                          in widget.menuItems.indexed) ...[
+                        _Item(
+                          index: index,
+                          item: child,
+                          controller: _controller,
+                          drawerAutofocus: widget.autofocus,
+                          isDrawerExpanded: _controller.hasFocus,
+                          drawerExpandDuration: widget.drawerAnimationsDuration,
+                          viewportAlignment: widget.viewportAlignment,
+                        ),
+
+                        if (separatorBuilder != null)
+                          separatorBuilder(
+                            ItemEntry(key: child.key ?? ValueKey(index)),
+                          ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+
+              if (footer != null) ...[
+                if (separatorBuilder != null)
+                  separatorBuilder(const FooterEntry()),
+
+                _Footer(
+                  item: footer,
+                  controller: _controller,
+                  drawerAutofocus: widget.autofocus,
+                  isDrawerExpanded: _controller.hasFocus,
+                  drawerExpandDuration: widget.drawerAnimationsDuration,
+                  viewportAlignment: widget.viewportAlignment,
+                ),
+              ],
+            ],
           ),
         );
       },

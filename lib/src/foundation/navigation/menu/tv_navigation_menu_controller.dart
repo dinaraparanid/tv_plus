@@ -2,7 +2,7 @@ part of 'menu.dart';
 
 final class TvNavigationMenuController with ChangeNotifier {
   TvNavigationMenuController({
-    required TvNavigationMenuSelectionEntry initialEntry,
+    required TvNavigationMenuEntry initialEntry,
     FocusScopeNode? focusScopeNode,
     FocusNode? headerNode,
     FocusNode? footerNode,
@@ -15,8 +15,8 @@ final class TvNavigationMenuController with ChangeNotifier {
        mediatorNode = mediatorNode ?? FocusNode(),
        _itemsNodes = itemsNodes ?? {};
 
-  TvNavigationMenuSelectionEntry _entry;
-  TvNavigationMenuSelectionEntry get selectedEntry => _entry;
+  TvNavigationMenuEntry _entry;
+  TvNavigationMenuEntry get selectedEntry => _entry;
 
   final FocusScopeNode focusScopeNode;
 
@@ -41,7 +41,7 @@ final class TvNavigationMenuController with ChangeNotifier {
 
   FocusNode get selectedFocusNode => selectedFocusNodeOrNull!;
 
-  void select(TvNavigationMenuSelectionEntry entry) {
+  void select(TvNavigationMenuEntry entry) {
     _entry = entry;
     notifyListeners();
   }
@@ -52,7 +52,7 @@ final class TvNavigationMenuController with ChangeNotifier {
 
   void invalidateItemsNodes({
     required Map<Key, FocusNode> newItems,
-    required TvNavigationMenuSelectionEntry Function() onSelectedItemRemoved,
+    required TvNavigationMenuEntry Function() onSelectedItemRemoved,
   }) {
     final selectedKey = switch (selectedEntry) {
       ItemEntry(key: final key) => key,

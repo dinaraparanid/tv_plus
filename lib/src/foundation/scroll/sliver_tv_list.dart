@@ -6,7 +6,7 @@ final class SliverTvList extends SliverMultiBoxAdaptorWidget {
     bool addAutomaticKeepAlives = true,
     bool addRepaintBoundaries = true,
     bool addSemanticIndexes = true,
-    List<ScrollGroupDpadFocus> children = const [],
+    List<Widget> children = const [],
     int? semanticChildCount,
   }) : super(
          delegate: SliverChildListDelegate(

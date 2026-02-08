@@ -155,7 +155,7 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
     );
   }
 
-  TvNavigationMenuSelectionEntry _selectedEntryFallback() =>
+  TvNavigationMenuEntry _selectedEntryFallback() =>
       ItemEntry(key: ValueKey(_items.first.$1));
 
   @override
@@ -181,7 +181,7 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
           header: _isHeaderPresent ? _buildHeader() : null,
           footer: _isFooterPresent ? _buildFooter() : null,
           separatorBuilder: (i) {
-            if (i == 2) {
+            if (i == const ItemEntry(key: ValueKey('Home'))) {
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [

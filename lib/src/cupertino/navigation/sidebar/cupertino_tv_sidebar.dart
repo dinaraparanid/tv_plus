@@ -36,9 +36,9 @@ final class CupertinoTvSidebar extends StatefulWidget {
   final EdgeInsets drawerMargin;
   final Duration drawerAnimationsDuration;
   final TvNavigationMenuAlignment alignment;
-  final TvNavigationMenuSelectionEntry? initialEntry;
+  final TvNavigationMenuEntry? initialEntry;
   final List<TvNavigationMenuItem> menuItems;
-  final Widget Function(int index)? separatorBuilder;
+  final Widget Function(TvNavigationMenuEntry)? separatorBuilder;
   final FocusTraversalPolicy policy;
   final bool descendantsAreFocusable;
   final bool descendantsAreTraversable;
@@ -49,14 +49,14 @@ final class CupertinoTvSidebar extends StatefulWidget {
   final DpadScopeEventCallback? onRight;
   final Widget Function(
     BuildContext context,
-    TvNavigationMenuSelectionEntry? selectedEntry,
+    TvNavigationMenuEntry? selectedEntry,
     TvNavigationMenuItem selectedItem,
   )?
   collapsedHeaderBuilder;
   final Widget Function(BuildContext context, Widget child) sidebarBuilder;
   final Widget Function(
     BuildContext context,
-    TvNavigationMenuSelectionEntry? selectedEntry,
+    TvNavigationMenuEntry? selectedEntry,
   )
   builder;
 
@@ -91,7 +91,7 @@ final class _CupertinoTvSidebarState extends State<CupertinoTvSidebar> {
       case (final TvNavigationMenuController controller, _):
         _controller = controller;
 
-      case (null, final TvNavigationMenuSelectionEntry entry):
+      case (null, final TvNavigationMenuEntry entry):
         _controller = TvNavigationMenuController(initialEntry: entry);
         _ownsController = true;
     }
@@ -207,7 +207,6 @@ final class _CupertinoTvSidebarState extends State<CupertinoTvSidebar> {
                   header: widget.header,
                   footer: widget.footer,
                   constraints: widget.constraints,
-                  itemsAlignment: MainAxisAlignment.start,
                   animateDrawerExpansion: false,
                   drawerAnimationsDuration: widget.drawerAnimationsDuration,
                   menuItems: widget.menuItems,

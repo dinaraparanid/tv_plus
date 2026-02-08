@@ -37,9 +37,9 @@ final class TvNavigationDrawer extends StatefulWidget {
   final Duration drawerExpandDuration;
   final TvNavigationMenuAlignment alignment;
   final TvNavigationDrawerMode mode;
-  final TvNavigationMenuSelectionEntry? initialEntry;
+  final TvNavigationMenuEntry? initialEntry;
   final List<TvNavigationMenuItem> menuItems;
-  final Widget Function(int index)? separatorBuilder;
+  final Widget Function(TvNavigationMenuEntry)? separatorBuilder;
   final FocusTraversalPolicy policy;
   final bool descendantsAreFocusable;
   final bool descendantsAreTraversable;
@@ -51,10 +51,7 @@ final class TvNavigationDrawer extends StatefulWidget {
   final void Function(FocusScopeNode, bool)? onFocusChanged;
   final void Function(FocusScopeNode)? onFocusDisabledWhenWasFocused;
   final Widget Function(BuildContext context, Widget child) drawerBuilder;
-  final Widget Function(
-    BuildContext context,
-    TvNavigationMenuSelectionEntry? entry,
-  )
+  final Widget Function(BuildContext context, TvNavigationMenuEntry? entry)
   builder;
 
   static TvNavigationMenuController? maybeOf(BuildContext context) {
@@ -88,7 +85,7 @@ final class _TvNavigationDrawerState extends State<TvNavigationDrawer> {
       case (final TvNavigationMenuController controller, _):
         _controller = controller;
 
-      case (null, final TvNavigationMenuSelectionEntry entry):
+      case (null, final TvNavigationMenuEntry entry):
         _controller = TvNavigationMenuController(initialEntry: entry);
         _ownsController = true;
     }
