@@ -1,5 +1,12 @@
 part of 'carousel.dart';
 
+typedef CarouselDpadEventCallback =
+    KeyEventResult Function(
+      FocusNode node,
+      KeyDownEvent event,
+      bool hasReachedBoundary,
+    );
+
 final class TvCarouselPager extends StatefulWidget {
   const TvCarouselPager({
     super.key,
@@ -36,8 +43,8 @@ final class TvCarouselPager extends StatefulWidget {
   final bool rebuildOnFocusChange;
   final DpadEventCallback? onUp;
   final DpadEventCallback? onDown;
-  final DpadEventCallback? onLeft;
-  final DpadEventCallback? onRight;
+  final CarouselDpadEventCallback? onLeft;
+  final CarouselDpadEventCallback? onRight;
   final DpadEventCallback? onSelect;
   final DpadEventCallback? onBack;
   final KeyEventResult Function(FocusNode, KeyEvent)? onKeyEvent;
@@ -139,20 +146,20 @@ final class _TvCarouselPagerState extends State<TvCarouselPager>
   KeyEventResult onLeftEvent(FocusNode node, KeyDownEvent event) {
     if (_controller.canScrollLeft) {
       _controller.scrollLeft();
-      return widget.onLeft?.call(node, event) ?? KeyEventResult.handled;
+      return widget.onLeft?.call(node, event, false) ?? KeyEventResult.handled;
     }
 
-    return widget.onLeft?.call(node, event) ?? KeyEventResult.ignored;
+    return widget.onLeft?.call(node, event, true) ?? KeyEventResult.ignored;
   }
 
   @override
   KeyEventResult onRightEvent(FocusNode node, KeyDownEvent event) {
     if (_controller.canScrollRight) {
       _controller.scrollRight();
-      return widget.onLeft?.call(node, event) ?? KeyEventResult.handled;
+      return widget.onLeft?.call(node, event, false) ?? KeyEventResult.handled;
     }
 
-    return widget.onLeft?.call(node, event) ?? KeyEventResult.ignored;
+    return widget.onLeft?.call(node, event, true) ?? KeyEventResult.ignored;
   }
 
   @override
