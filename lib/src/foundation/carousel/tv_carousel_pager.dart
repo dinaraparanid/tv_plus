@@ -156,10 +156,10 @@ final class _TvCarouselPagerState extends State<TvCarouselPager>
   KeyEventResult onRightEvent(FocusNode node, KeyDownEvent event) {
     if (_controller.canScrollRight) {
       _controller.scrollRight();
-      return widget.onLeft?.call(node, event, false) ?? KeyEventResult.handled;
+      return widget.onRight?.call(node, event, false) ?? KeyEventResult.handled;
     }
 
-    return widget.onLeft?.call(node, event, true) ?? KeyEventResult.ignored;
+    return widget.onRight?.call(node, event, true) ?? KeyEventResult.ignored;
   }
 
   @override
