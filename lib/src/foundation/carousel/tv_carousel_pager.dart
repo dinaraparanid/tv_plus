@@ -7,7 +7,20 @@ final class TvCarouselPager extends StatefulWidget {
     this.initialActiveIndex,
     this.controller,
     this.focusNode,
+    this.parentNode,
     this.autofocus = false,
+    this.canRequestFocus = true,
+    this.skipTraversal,
+    this.rebuildOnFocusChange = true,
+    this.onUp,
+    this.onDown,
+    this.onLeft,
+    this.onRight,
+    this.onSelect,
+    this.onBack,
+    this.onKeyEvent,
+    this.onFocusChanged,
+    this.onFocusDisabledWhenWasFocused,
     this.spacing = 0,
     required this.itemBuilder,
   });
@@ -16,7 +29,20 @@ final class TvCarouselPager extends StatefulWidget {
   final int? initialActiveIndex;
   final TvCarouselController? controller;
   final FocusNode? focusNode;
+  final FocusNode? parentNode;
   final bool autofocus;
+  final bool canRequestFocus;
+  final bool? skipTraversal;
+  final bool rebuildOnFocusChange;
+  final DpadEventCallback? onUp;
+  final DpadEventCallback? onDown;
+  final DpadEventCallback? onLeft;
+  final DpadEventCallback? onRight;
+  final DpadEventCallback? onSelect;
+  final DpadEventCallback? onBack;
+  final KeyEventResult Function(FocusNode, KeyEvent)? onKeyEvent;
+  final void Function(FocusNode, bool)? onFocusChanged;
+  final void Function()? onFocusDisabledWhenWasFocused;
   final double spacing;
   final Widget Function(
     BuildContext context,
@@ -100,23 +126,33 @@ final class _TvCarouselPagerState extends State<TvCarouselPager>
   }
 
   @override
+  KeyEventResult onUpEvent(FocusNode node, KeyDownEvent event) {
+    return widget.onUp?.call(node, event) ?? KeyEventResult.ignored;
+  }
+
+  @override
+  KeyEventResult onDownEvent(FocusNode node, KeyDownEvent event) {
+    return widget.onDown?.call(node, event) ?? KeyEventResult.ignored;
+  }
+
+  @override
   KeyEventResult onLeftEvent(FocusNode node, KeyDownEvent event) {
     if (_controller.canScrollLeft) {
       _controller.scrollLeft();
-      return KeyEventResult.handled;
+      return widget.onLeft?.call(node, event) ?? KeyEventResult.handled;
     }
 
-    return KeyEventResult.ignored;
+    return widget.onLeft?.call(node, event) ?? KeyEventResult.ignored;
   }
 
   @override
   KeyEventResult onRightEvent(FocusNode node, KeyDownEvent event) {
     if (_controller.canScrollRight) {
       _controller.scrollRight();
-      return KeyEventResult.handled;
+      return widget.onLeft?.call(node, event) ?? KeyEventResult.handled;
     }
 
-    return KeyEventResult.ignored;
+    return widget.onLeft?.call(node, event) ?? KeyEventResult.ignored;
   }
 
   @override
@@ -134,9 +170,18 @@ final class _TvCarouselPagerState extends State<TvCarouselPager>
   Widget build(BuildContext context) {
     return DpadFocus(
       focusNode: _focusNode,
+      parentNode: widget.parentNode,
       autofocus: widget.autofocus,
+      canRequestFocus: widget.canRequestFocus,
+      skipTraversal: widget.skipTraversal,
+      rebuildOnFocusChange: widget.rebuildOnFocusChange,
+      onUp: onUpEvent,
+      onDown: onDownEvent,
       onLeft: onLeftEvent,
       onRight: onRightEvent,
+      onKeyEvent: widget.onKeyEvent,
+      onFocusChanged: widget.onFocusChanged,
+      onFocusDisabledWhenWasFocused: widget.onFocusDisabledWhenWasFocused,
       builder: (context, node) => Row(
         mainAxisSize: MainAxisSize.min,
         spacing: widget.spacing,
