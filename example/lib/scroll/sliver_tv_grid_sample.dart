@@ -139,7 +139,7 @@ final class _SliverTvGridSampleState extends State<SliverTvGridSample> {
 
                         return KeyEventResult.handled;
                       },
-                      sliver: SliverTvGrid(
+                      sliver: SliverGrid.builder(
                         key: SliverTvGridSample.gridKey,
                         itemCount: SliverTvGridSample.itemCount,
                         gridDelegate:
