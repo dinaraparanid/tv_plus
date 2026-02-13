@@ -20,10 +20,10 @@ final class SliverTVScrollAdapter extends StatelessWidget with DpadScopeEvents {
   final bool descendantsAreFocusable;
   final bool descendantsAreTraversable;
   final bool autofocus;
-  final ScrollGroupDpadEventCallback? onUp;
-  final ScrollGroupDpadEventCallback? onDown;
-  final ScrollGroupDpadEventCallback? onLeft;
-  final ScrollGroupDpadEventCallback? onRight;
+  final DpadScopeEventCallback? onUp;
+  final DpadScopeEventCallback? onDown;
+  final DpadScopeEventCallback? onLeft;
+  final DpadScopeEventCallback? onRight;
   final Widget sliver;
 
   @override

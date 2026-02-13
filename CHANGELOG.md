@@ -1,3 +1,16 @@
+## 0.2.0
+* chore: replace ScrollGroupDpadEventHandler with DpadEventCallback; replace ScrollGroupDpadEventCallback with DpadScopeEventCallback
+* chore: rename NavigationMenu's mediatorFocusNode -> mediatorNode
+* feat: add static of() / maybyOf() methods for NavigationMenu to retrieve the controller
+* chore:  make focus scope node public in NavigationMenu's controller
+* chore: allow scroll items to accept any child widget
+* feat: improved separator by type in NavigationMenu
+* feat: make carousel pager common in foundation
+* feat: added CarouselDpadEventCallback for onLeft / onRight to handle case when first / last carousel item was shown
+* fix: carousel pager onRight was calling onLeft
+* chore: remove SliverTvList & SliverTvGrid (use SliverList and SliverGrid with SliverTVScrollAdapter)
+
+
 ## 0.1.0
 * chore: library structure improvements
 * chore: remove requirement for FocusScopeNode in TvNavigationMenuController constructor

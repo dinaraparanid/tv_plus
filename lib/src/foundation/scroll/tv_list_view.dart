@@ -17,7 +17,7 @@ final class TvListView extends BoxScrollView {
     bool addRepaintBoundaries = true,
     bool addSemanticIndexes = true,
     super.cacheExtent,
-    List<ScrollGroupDpadFocus> children = const [],
+    List<Widget> children = const [],
     int? semanticChildCount,
     this.focusScopeNode,
     FocusTraversalPolicy? policy,
@@ -28,6 +28,8 @@ final class TvListView extends BoxScrollView {
     this.onDown,
     this.onLeft,
     this.onRight,
+    this.onFocusChanged,
+    this.onFocusDisabledWhenWasFocused,
     super.dragStartBehavior,
     super.keyboardDismissBehavior,
     super.restorationId,
@@ -67,6 +69,8 @@ final class TvListView extends BoxScrollView {
     this.onDown,
     this.onLeft,
     this.onRight,
+    this.onFocusChanged,
+    this.onFocusDisabledWhenWasFocused,
     bool addAutomaticKeepAlives = true,
     bool addRepaintBoundaries = true,
     bool addSemanticIndexes = true,
@@ -110,6 +114,8 @@ final class TvListView extends BoxScrollView {
     this.onDown,
     this.onLeft,
     this.onRight,
+    this.onFocusChanged,
+    this.onFocusDisabledWhenWasFocused,
     bool addAutomaticKeepAlives = true,
     bool addRepaintBoundaries = true,
     bool addSemanticIndexes = true,
@@ -148,10 +154,12 @@ final class TvListView extends BoxScrollView {
   final bool descendantsAreFocusable;
   final bool descendantsAreTraversable;
   final bool autofocus;
-  final ScrollGroupDpadEventCallback? onUp;
-  final ScrollGroupDpadEventCallback? onDown;
-  final ScrollGroupDpadEventCallback? onLeft;
-  final ScrollGroupDpadEventCallback? onRight;
+  final DpadScopeEventCallback? onUp;
+  final DpadScopeEventCallback? onDown;
+  final DpadScopeEventCallback? onLeft;
+  final DpadScopeEventCallback? onRight;
+  final void Function(FocusScopeNode, bool)? onFocusChanged;
+  final void Function(FocusScopeNode)? onFocusDisabledWhenWasFocused;
   final double? itemExtent;
   final ItemExtentBuilder? itemExtentBuilder;
   final Widget? prototypeItem;
@@ -190,11 +198,16 @@ final class TvListView extends BoxScrollView {
   Widget build(BuildContext context) {
     return DpadFocusScope(
       focusScopeNode: focusScopeNode,
+      policy: policy,
+      descendantsAreFocusable: descendantsAreFocusable,
+      descendantsAreTraversable: descendantsAreTraversable,
       autofocus: autofocus,
       onUp: onUp,
       onDown: onDown,
       onLeft: onLeft,
       onRight: onRight,
+      onFocusChanged: onFocusChanged,
+      onFocusDisabledWhenWasFocused: onFocusDisabledWhenWasFocused,
       builder: (_) => super.build(context),
     );
   }

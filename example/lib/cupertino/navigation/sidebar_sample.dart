@@ -130,10 +130,10 @@ final class _CupertinoSidebarSampleState extends State<CupertinoSidebarSample> {
       builder: (context, _) {
         return CupertinoTvSidebar(
           controller: _controller,
-          header: _buildHeader(isSidebarExpanded: _controller.hasFocus),
+          header: _buildHeader(),
           footer: _buildFooter(),
           separatorBuilder: (i) {
-            if (i == 2) {
+            if (i == const ItemEntry(key: ValueKey('Home'))) {
               return const Row(
                 children: [
                   SizedBox(width: 12),
@@ -245,7 +245,7 @@ final class _CupertinoSidebarSampleState extends State<CupertinoSidebarSample> {
     );
   }
 
-  static TvNavigationMenuItem _buildHeader({required bool isSidebarExpanded}) {
+  static TvNavigationMenuItem _buildHeader() {
     return TvNavigationMenuItem(
       key: UniqueKey(),
       icon: CupertinoSidebarSample.buildIcon(CupertinoIcons.profile_circled),
@@ -253,34 +253,30 @@ final class _CupertinoSidebarSampleState extends State<CupertinoSidebarSample> {
       builder: (_, constraints, states) {
         return ConstrainedBox(
           constraints: constraints,
-          child: AnimatedOpacity(
-            opacity: isSidebarExpanded ? 1 : 0,
-            duration: _animationDuration,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Name',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: CupertinoSidebarSample.buildContentColor(states),
-                    fontWeight: FontWeight.w600,
-                  ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Name',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: CupertinoSidebarSample.buildContentColor(states),
+                  fontWeight: FontWeight.w600,
                 ),
-                Text(
-                  'Switch account',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: CupertinoSidebarSample.buildContentColor(states),
-                  ),
+              ),
+              Text(
+                'Switch account',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: CupertinoSidebarSample.buildContentColor(states),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },

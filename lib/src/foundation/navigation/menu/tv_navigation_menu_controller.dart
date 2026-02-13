@@ -1,24 +1,24 @@
 part of 'menu.dart';
 
-final class TvNavigationMenuController extends ChangeNotifier {
+final class TvNavigationMenuController with ChangeNotifier {
   TvNavigationMenuController({
-    required TvNavigationMenuSelectionEntry initialEntry,
+    required TvNavigationMenuEntry initialEntry,
     FocusScopeNode? focusScopeNode,
     FocusNode? headerNode,
     FocusNode? footerNode,
-    FocusNode? mediatorFocusNode,
+    FocusNode? mediatorNode,
     Map<Key, FocusNode>? itemsNodes,
   }) : _entry = initialEntry,
-       _focusScopeNode = focusScopeNode ?? FocusScopeNode(),
+       focusScopeNode = focusScopeNode ?? FocusScopeNode(),
        _headerNode = headerNode,
        _footerNode = footerNode,
-       mediatorFocusNode = mediatorFocusNode ?? FocusNode(),
+       mediatorNode = mediatorNode ?? FocusNode(),
        _itemsNodes = itemsNodes ?? {};
 
-  TvNavigationMenuSelectionEntry _entry;
-  TvNavigationMenuSelectionEntry get selectedEntry => _entry;
+  TvNavigationMenuEntry _entry;
+  TvNavigationMenuEntry get selectedEntry => _entry;
 
-  final FocusScopeNode _focusScopeNode;
+  final FocusScopeNode focusScopeNode;
 
   FocusNode? _headerNode;
   FocusNode? get headerNode => _headerNode;
@@ -26,12 +26,12 @@ final class TvNavigationMenuController extends ChangeNotifier {
   FocusNode? _footerNode;
   FocusNode? get footerNode => _footerNode;
 
-  final FocusNode mediatorFocusNode;
+  final FocusNode mediatorNode;
 
   Map<Key, FocusNode> _itemsNodes;
   Map<Key, FocusNode> get itemsNodes => _itemsNodes;
 
-  bool get hasFocus => _focusScopeNode.hasFocus || mediatorFocusNode.hasFocus;
+  bool get hasFocus => focusScopeNode.hasFocus || mediatorNode.hasFocus;
 
   FocusNode? get selectedFocusNodeOrNull => switch (selectedEntry) {
     HeaderEntry() => headerNode,
@@ -41,18 +41,18 @@ final class TvNavigationMenuController extends ChangeNotifier {
 
   FocusNode get selectedFocusNode => selectedFocusNodeOrNull!;
 
-  void select(TvNavigationMenuSelectionEntry entry) {
+  void select(TvNavigationMenuEntry entry) {
     _entry = entry;
     notifyListeners();
   }
 
   void requestFocusOnMenu() {
-    mediatorFocusNode.requestFocus();
+    mediatorNode.requestFocus();
   }
 
   void invalidateItemsNodes({
     required Map<Key, FocusNode> newItems,
-    required TvNavigationMenuSelectionEntry Function() onSelectedItemRemoved,
+    required TvNavigationMenuEntry Function() onSelectedItemRemoved,
   }) {
     final selectedKey = switch (selectedEntry) {
       ItemEntry(key: final key) => key,
@@ -78,10 +78,10 @@ final class TvNavigationMenuController extends ChangeNotifier {
 
   @override
   void dispose() {
-    _focusScopeNode.dispose();
+    focusScopeNode.dispose();
     _headerNode?.dispose();
     _footerNode?.dispose();
-    mediatorFocusNode.dispose();
+    mediatorNode.dispose();
 
     for (final node in itemsNodes.values) {
       node.dispose();

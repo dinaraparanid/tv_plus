@@ -1,11 +1,11 @@
 part of 'menu.dart';
 
 @immutable
-sealed class TvNavigationMenuSelectionEntry {
-  const TvNavigationMenuSelectionEntry();
+sealed class TvNavigationMenuEntry {
+  const TvNavigationMenuEntry();
 }
 
-final class HeaderEntry extends TvNavigationMenuSelectionEntry {
+final class HeaderEntry extends TvNavigationMenuEntry {
   const HeaderEntry();
 
   @override
@@ -20,7 +20,7 @@ final class HeaderEntry extends TvNavigationMenuSelectionEntry {
   String toString() => 'HeaderEntry';
 }
 
-final class ItemEntry extends TvNavigationMenuSelectionEntry {
+final class ItemEntry extends TvNavigationMenuEntry {
   const ItemEntry({required this.key});
 
   final Key key;
@@ -41,7 +41,7 @@ final class ItemEntry extends TvNavigationMenuSelectionEntry {
   }
 }
 
-final class FooterEntry extends TvNavigationMenuSelectionEntry {
+final class FooterEntry extends TvNavigationMenuEntry {
   const FooterEntry();
 
   @override

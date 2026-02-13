@@ -101,7 +101,7 @@ final class _SliverTvListSampleState extends State<SliverTvListSample> {
 
                   return KeyEventResult.handled;
                 },
-                sliver: SliverTvList.separated(
+                sliver: SliverList.separated(
                   key: SliverTvListSample.listKey,
                   itemCount: SliverTvListSample.itemCount,
                   itemBuilder: (context, index) {

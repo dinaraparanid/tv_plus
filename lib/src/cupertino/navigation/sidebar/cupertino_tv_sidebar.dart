@@ -36,36 +36,45 @@ final class CupertinoTvSidebar extends StatefulWidget {
   final EdgeInsets drawerMargin;
   final Duration drawerAnimationsDuration;
   final TvNavigationMenuAlignment alignment;
-  final TvNavigationMenuSelectionEntry? initialEntry;
+  final TvNavigationMenuEntry? initialEntry;
   final List<TvNavigationMenuItem> menuItems;
-  final Widget Function(int index)? separatorBuilder;
+  final Widget Function(TvNavigationMenuEntry)? separatorBuilder;
   final FocusTraversalPolicy policy;
   final bool descendantsAreFocusable;
   final bool descendantsAreTraversable;
   final bool autofocus;
-  final ScrollGroupDpadEventCallback? onUp;
-  final ScrollGroupDpadEventCallback? onDown;
-  final ScrollGroupDpadEventCallback? onLeft;
-  final ScrollGroupDpadEventCallback? onRight;
+  final DpadScopeEventCallback? onUp;
+  final DpadScopeEventCallback? onDown;
+  final DpadScopeEventCallback? onLeft;
+  final DpadScopeEventCallback? onRight;
   final Widget Function(
     BuildContext context,
-    TvNavigationMenuSelectionEntry? selectedEntry,
+    TvNavigationMenuEntry? selectedEntry,
     TvNavigationMenuItem selectedItem,
   )?
   collapsedHeaderBuilder;
   final Widget Function(BuildContext context, Widget child) sidebarBuilder;
   final Widget Function(
     BuildContext context,
-    TvNavigationMenuSelectionEntry? selectedEntry,
+    TvNavigationMenuEntry? selectedEntry,
   )
   builder;
 
+  static TvNavigationMenuController? maybeOf(BuildContext context) {
+    return context
+        .findAncestorStateOfType<_CupertinoTvSidebarState>()
+        ?._controller;
+  }
+
+  static TvNavigationMenuController of(BuildContext context) =>
+      maybeOf(context)!;
+
   @override
-  State<StatefulWidget> createState() => CupertinoTvSidebarState();
+  State<StatefulWidget> createState() => _CupertinoTvSidebarState();
 }
 
-final class CupertinoTvSidebarState extends State<CupertinoTvSidebar> {
-  late TvNavigationMenuController controller;
+final class _CupertinoTvSidebarState extends State<CupertinoTvSidebar> {
+  late TvNavigationMenuController _controller;
   var _ownsController = false;
 
   @override
@@ -80,14 +89,14 @@ final class CupertinoTvSidebarState extends State<CupertinoTvSidebar> {
         );
 
       case (final TvNavigationMenuController controller, _):
-        this.controller = controller;
+        _controller = controller;
 
-      case (null, final TvNavigationMenuSelectionEntry entry):
-        controller = TvNavigationMenuController(initialEntry: entry);
+      case (null, final TvNavigationMenuEntry entry):
+        _controller = TvNavigationMenuController(initialEntry: entry);
         _ownsController = true;
     }
 
-    controller.addListener(_controllerListener);
+    _controller.addListener(_controllerListener);
     super.initState();
   }
 
@@ -96,13 +105,13 @@ final class CupertinoTvSidebarState extends State<CupertinoTvSidebar> {
     final passedController = widget.controller;
 
     if (passedController != null && oldWidget.controller != passedController) {
-      controller.removeListener(_controllerListener);
+      _controller.removeListener(_controllerListener);
 
       if (_ownsController) {
-        controller.dispose();
+        _controller.dispose();
       }
 
-      controller = passedController..addListener(_controllerListener);
+      _controller = passedController..addListener(_controllerListener);
       _ownsController = false;
     }
 
@@ -113,10 +122,10 @@ final class CupertinoTvSidebarState extends State<CupertinoTvSidebar> {
 
   @override
   void dispose() {
-    controller.removeListener(_controllerListener);
+    _controller.removeListener(_controllerListener);
 
     if (_ownsController) {
-      controller.dispose();
+      _controller.dispose();
     }
 
     super.dispose();
@@ -133,7 +142,7 @@ final class CupertinoTvSidebarState extends State<CupertinoTvSidebar> {
 
             Positioned.fill(
               left: widget.constraints.minWidth,
-              child: widget.builder(context, controller.selectedEntry),
+              child: widget.builder(context, _controller.selectedEntry),
             ),
 
             Positioned(
@@ -151,7 +160,7 @@ final class CupertinoTvSidebarState extends State<CupertinoTvSidebar> {
 
             Positioned.fill(
               right: widget.constraints.minWidth,
-              child: widget.builder(context, controller.selectedEntry),
+              child: widget.builder(context, _controller.selectedEntry),
             ),
 
             Positioned(
@@ -173,18 +182,18 @@ final class CupertinoTvSidebarState extends State<CupertinoTvSidebar> {
         widget.drawerMargin.bottom;
 
     return DpadFocus(
-      focusNode: controller.mediatorFocusNode,
+      focusNode: _controller.mediatorNode,
       onFocusChanged: (_, hasFocus) {
         if (hasFocus) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            controller.selectedFocusNode.requestFocus();
+            _controller.selectedFocusNode.requestFocus();
           });
         }
       },
       builder: (context, node) {
         return AnimatedCrossFade(
           duration: widget.drawerAnimationsDuration,
-          crossFadeState: controller.hasFocus
+          crossFadeState: _controller.hasFocus
               ? CrossFadeState.showFirst
               : CrossFadeState.showSecond,
           firstChild: ConstrainedBox(
@@ -198,7 +207,6 @@ final class CupertinoTvSidebarState extends State<CupertinoTvSidebar> {
                   header: widget.header,
                   footer: widget.footer,
                   constraints: widget.constraints,
-                  itemsAlignment: MainAxisAlignment.start,
                   animateDrawerExpansion: false,
                   drawerAnimationsDuration: widget.drawerAnimationsDuration,
                   menuItems: widget.menuItems,
@@ -218,11 +226,11 @@ final class CupertinoTvSidebarState extends State<CupertinoTvSidebar> {
           secondChild:
               widget.collapsedHeaderBuilder?.call(
                 context,
-                controller.selectedEntry,
+                _controller.selectedEntry,
                 _buildSidebarMenuItem(),
               ) ??
               CupertinoTvSidebarFloatingHeader(
-                controller: controller,
+                controller: _controller,
                 selectedItem: _buildSidebarMenuItem(),
               ),
         );
@@ -231,7 +239,7 @@ final class CupertinoTvSidebarState extends State<CupertinoTvSidebar> {
   }
 
   TvNavigationMenuItem _buildSidebarMenuItem() {
-    return switch (controller.selectedEntry) {
+    return switch (_controller.selectedEntry) {
       HeaderEntry() => widget.header!,
 
       ItemEntry(key: final key) => widget.menuItems.firstWhere(

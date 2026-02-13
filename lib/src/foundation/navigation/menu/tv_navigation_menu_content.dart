@@ -3,7 +3,7 @@ part of 'menu.dart';
 final class TvNavigationMenuContent extends StatefulWidget {
   TvNavigationMenuContent({
     super.key,
-    this.initialEntry,
+    this.initialSelectedEntry,
     this.controller,
     this.header,
     this.footer,
@@ -26,7 +26,7 @@ final class TvNavigationMenuContent extends StatefulWidget {
     this.onFocusDisabledWhenWasFocused,
   }) : policy = policy ?? ReadingOrderTraversalPolicy();
 
-  final TvNavigationMenuSelectionEntry? initialEntry;
+  final TvNavigationMenuEntry? initialSelectedEntry;
   final TvNavigationMenuController? controller;
   final TvNavigationMenuItem? header;
   final TvNavigationMenuItem? footer;
@@ -35,18 +35,27 @@ final class TvNavigationMenuContent extends StatefulWidget {
   final bool animateDrawerExpansion;
   final Duration drawerAnimationsDuration;
   final List<TvNavigationMenuItem> menuItems;
-  final Widget Function(int index)? separatorBuilder;
+  final Widget Function(TvNavigationMenuEntry)? separatorBuilder;
   final FocusTraversalPolicy policy;
   final bool descendantsAreFocusable;
   final bool descendantsAreTraversable;
   final bool autofocus;
   final double? viewportAlignment;
-  final ScrollGroupDpadEventCallback? onUp;
-  final ScrollGroupDpadEventCallback? onDown;
-  final ScrollGroupDpadEventCallback? onLeft;
-  final ScrollGroupDpadEventCallback? onRight;
+  final DpadScopeEventCallback? onUp;
+  final DpadScopeEventCallback? onDown;
+  final DpadScopeEventCallback? onLeft;
+  final DpadScopeEventCallback? onRight;
   final void Function(FocusScopeNode, bool)? onFocusChanged;
   final void Function(FocusScopeNode)? onFocusDisabledWhenWasFocused;
+
+  static TvNavigationMenuController? maybeOf(BuildContext context) {
+    return context
+        .findAncestorStateOfType<_TvNavigationMenuContentState>()
+        ?._controller;
+  }
+
+  static TvNavigationMenuController of(BuildContext context) =>
+      maybeOf(context)!;
 
   @override
   State<StatefulWidget> createState() => _TvNavigationMenuContentState();
@@ -83,7 +92,7 @@ final class _TvNavigationMenuContentState
   @override
   void initState() {
     final passedController = widget.controller;
-    final passedInitialEntry = widget.initialEntry;
+    final passedInitialEntry = widget.initialSelectedEntry;
 
     switch ((passedController, passedInitialEntry)) {
       case (null, null):
@@ -95,7 +104,7 @@ final class _TvNavigationMenuContentState
         _patchController(controller);
         _controller = controller;
 
-      case (null, final TvNavigationMenuSelectionEntry entry):
+      case (null, final TvNavigationMenuEntry entry):
         _controller = TvNavigationMenuController(
           initialEntry: entry,
           headerNode: widget.header == null ? null : FocusNode(),
@@ -132,9 +141,10 @@ final class _TvNavigationMenuContentState
   Widget build(BuildContext context) {
     final header = widget.header;
     final footer = widget.footer;
+    final separatorBuilder = widget.separatorBuilder;
 
     return DpadFocusScope(
-      focusScopeNode: _controller._focusScopeNode,
+      focusScopeNode: _controller.focusScopeNode,
       autofocus: widget.autofocus,
       rebuildOnFocusChange: true,
       policy: widget.policy,
@@ -159,7 +169,7 @@ final class _TvNavigationMenuContentState
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              if (header != null)
+              if (header != null) ...[
                 _Header(
                   controller: _controller,
                   drawerAutofocus: widget.autofocus,
@@ -168,6 +178,10 @@ final class _TvNavigationMenuContentState
                   item: header,
                   viewportAlignment: widget.viewportAlignment,
                 ),
+
+                if (separatorBuilder != null)
+                  separatorBuilder(const HeaderEntry()),
+              ],
 
               Expanded(
                 child: SingleChildScrollView(
@@ -178,8 +192,6 @@ final class _TvNavigationMenuContentState
                     children: [
                       for (final (index, child)
                           in widget.menuItems.indexed) ...[
-                        if (index != 0) ?widget.separatorBuilder?.call(index),
-
                         _Item(
                           index: index,
                           item: child,
@@ -189,13 +201,21 @@ final class _TvNavigationMenuContentState
                           drawerExpandDuration: widget.drawerAnimationsDuration,
                           viewportAlignment: widget.viewportAlignment,
                         ),
+
+                        if (separatorBuilder != null)
+                          separatorBuilder(
+                            ItemEntry(key: child.key ?? ValueKey(index)),
+                          ),
                       ],
                     ],
                   ),
                 ),
               ),
 
-              if (footer != null)
+              if (footer != null) ...[
+                if (separatorBuilder != null)
+                  separatorBuilder(const FooterEntry()),
+
                 _Footer(
                   item: footer,
                   controller: _controller,
@@ -204,6 +224,7 @@ final class _TvNavigationMenuContentState
                   drawerExpandDuration: widget.drawerAnimationsDuration,
                   viewportAlignment: widget.viewportAlignment,
                 ),
+              ],
             ],
           ),
         );

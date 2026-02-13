@@ -1,6 +1,6 @@
 part of 'carousel.dart';
 
-final class TvCarouselController extends ChangeNotifier {
+final class TvCarouselController with ChangeNotifier {
   TvCarouselController({required int itemCount, int initialActiveIndex = 0})
     : assert(
         itemCount > 0 &&
@@ -12,6 +12,12 @@ final class TvCarouselController extends ChangeNotifier {
 
   int _itemCount;
   int get itemCount => _itemCount;
+
+  int _selectedIndex = 0;
+  int get selectedIndex => _selectedIndex;
+
+  bool get canScrollLeft => selectedIndex > 0;
+  bool get canScrollRight => selectedIndex < itemCount - 1;
 
   void reset({required int count, int? newSelectedIndex}) {
     if (newSelectedIndex != null) {
@@ -33,9 +39,6 @@ final class TvCarouselController extends ChangeNotifier {
     notifyListeners();
   }
 
-  int _selectedIndex = 0;
-  int get selectedIndex => _selectedIndex;
-
   void select(int index) {
     if (index >= itemCount || index < 0) {
       throw ArgumentError("Index $index is out of bounds [0; $itemCount)");
@@ -44,9 +47,6 @@ final class TvCarouselController extends ChangeNotifier {
     _selectedIndex = index;
     notifyListeners();
   }
-
-  bool get canScrollLeft => selectedIndex > 0;
-  bool get canScrollRight => selectedIndex < itemCount - 1;
 
   void scrollLeft() => select(selectedIndex - 1);
   void scrollRight() => select(selectedIndex + 1);
