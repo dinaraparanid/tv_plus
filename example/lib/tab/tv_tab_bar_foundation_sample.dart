@@ -143,8 +143,8 @@ final class _TvTabBarFoundationSampleState
                           key: TvTabBarFoundationSample.tabsKeys[i],
                           index: i,
                           currentIndex: _currentIndex,
-                          onFocusChanged: (node) {
-                            if (node.hasFocus) {
+                          onFocusChanged: (_, hasFocus) {
+                            if (hasFocus) {
                               _updateSelectionConstraints();
                             }
                           },
@@ -313,7 +313,7 @@ final class TabItem extends StatelessWidget {
 
   final int index;
   final int currentIndex;
-  final void Function(FocusNode)? onFocusChanged;
+  final void Function(FocusNode, bool)? onFocusChanged;
 
   @override
   Widget build(BuildContext context) {
