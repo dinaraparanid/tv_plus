@@ -10,7 +10,6 @@
 * fix: carousel pager onRight was calling onLeft
 * chore: remove SliverTvList & SliverTvGrid (use SliverList and SliverGrid with SliverTVScrollAdapter)
 
-
 ## 0.1.0
 * chore: library structure improvements
 * chore: remove requirement for FocusScopeNode in TvNavigationMenuController constructor

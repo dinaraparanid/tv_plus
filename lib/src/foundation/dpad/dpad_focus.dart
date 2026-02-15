@@ -179,10 +179,10 @@ final class _DpadFocusState extends State<DpadFocus> with DpadEvents {
           KeyDownEvent(logicalKey: LogicalKeyboardKey.arrowRight) =>
             onRightEvent(node, event),
 
-          KeyDownEvent(logicalKey: LogicalKeyboardKey.select) => onSelectEvent(
-            node,
-            event,
-          ),
+          KeyDownEvent(
+            logicalKey: LogicalKeyboardKey.select || LogicalKeyboardKey.enter,
+          ) =>
+            onSelectEvent(node, event),
 
           KeyDownEvent(logicalKey: LogicalKeyboardKey.goBack) => onBackEvent(
             node,
@@ -192,9 +192,7 @@ final class _DpadFocusState extends State<DpadFocus> with DpadEvents {
           _ => widget.onKeyEvent?.call(node, event) ?? KeyEventResult.ignored,
         };
       },
-      child: Builder(
-        builder: (context) => widget.builder(context, _focusNode),
-      ),
+      child: Builder(builder: (context) => widget.builder(context, _focusNode)),
     );
   }
 }
