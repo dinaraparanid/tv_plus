@@ -15,6 +15,7 @@ final class ScrollGroupDpadFocus extends StatefulWidget {
     this.onRight,
     this.onSelect,
     this.onBack,
+    this.onKeyEvent,
     this.onFocusChanged,
     this.onFocusDisabledWhenWasFocused,
     this.scrollToNextNodeDuration,
@@ -33,6 +34,7 @@ final class ScrollGroupDpadFocus extends StatefulWidget {
   final DpadEventCallback? onRight;
   final DpadEventCallback? onSelect;
   final DpadEventCallback? onBack;
+  final KeyEventResult Function(FocusNode, KeyEvent)? onKeyEvent;
   final void Function(FocusNode, bool)? onFocusChanged;
   final void Function()? onFocusDisabledWhenWasFocused;
   final Duration? scrollToNextNodeDuration;
@@ -105,6 +107,7 @@ final class _ScrollGroupDpadFocusState extends State<ScrollGroupDpadFocus> {
       onRight: widget.onRight,
       onSelect: widget.onSelect,
       onBack: widget.onBack,
+      onKeyEvent: widget.onKeyEvent,
       onFocusChanged: (node, hasFocus) async {
         final viewportAlignment = widget.viewportAlignment;
 
