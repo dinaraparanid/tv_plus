@@ -72,8 +72,8 @@ final class CupertinoTvTabBar extends StatefulWidget {
 }
 
 final class CupertinoTvTabBarState extends State<CupertinoTvTabBar> {
-  static final _tabBarKey = GlobalKey();
-  static final _indicatorKey = GlobalKey();
+  final _tabBarKey = GlobalKey();
+  final _indicatorKey = GlobalKey();
 
   late TvTabBarController _controller;
   var _ownsController = false;
