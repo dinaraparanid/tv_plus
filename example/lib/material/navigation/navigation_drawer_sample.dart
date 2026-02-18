@@ -16,6 +16,7 @@ final class NavigationDrawerSample extends StatefulWidget {
   final TvNavigationDrawerMode mode;
 
   static const backgroundColor = Color(0xFF131314);
+  static const backgroundColorTransparent = Color(0x03131314);
 
   static const items = [
     ('Search', Icons.search),
@@ -32,7 +33,7 @@ final class NavigationDrawerSample extends StatefulWidget {
 
   static WidgetStateProperty<Icon> buildIcon(IconData data) {
     return WidgetStateProperty.resolveWith((states) {
-      return Icon(data, size: 32, color: buildContentColor(states));
+      return Icon(data, size: 28, color: buildContentColor(states));
     });
   }
 
@@ -68,28 +69,34 @@ final class NavigationDrawerSample extends StatefulWidget {
   static TvNavigationMenuItem buildItem({
     required String title,
     required IconData icon,
-    required bool Function() isDrawerExpanded,
   }) {
     return TvNavigationMenuItem(
       key: ValueKey(title),
-      icon: NavigationDrawerSample.buildIcon(icon),
-      decoration: NavigationDrawerSample.buildDecoration(),
-      builder: (_, constraints, states) {
-        return ConstrainedBox(
+      iconBuilder: (_) => NavigationDrawerSample.buildIcon(icon),
+      builder: (context, constraints, states, icon) {
+        return Container(
+          decoration: NavigationDrawerSample.buildDecoration().resolve(states),
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
           constraints: constraints,
-          child: Stack(
+          child: Row(
             children: [
-              AnimatedOpacity(
-                opacity: isDrawerExpanded() ? 1 : 0,
-                duration: _animationDuration,
-                child: Text(
-                  title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: NavigationDrawerSample.buildContentColor(states),
-                    fontWeight: FontWeight.w600,
+              if (icon != null) Flexible(flex: 0, child: icon),
+
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 12),
+                  child: Opacity(
+                    opacity: TvNavigationDrawer.animationOf(context).value,
+                    child: Text(
+                      title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: NavigationDrawerSample.buildContentColor(states),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -177,6 +184,7 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
           controller: _controller,
           backgroundColor: NavigationDrawerSample.backgroundColor,
           drawerExpandDuration: _animationDuration,
+          constraints: const BoxConstraints(minWidth: 80, maxWidth: 220),
           mode: widget.mode,
           header: _isHeaderPresent ? _buildHeader() : null,
           footer: _isFooterPresent ? _buildFooter() : null,
@@ -195,7 +203,10 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
             return const SizedBox(height: 12);
           },
           menuItems: _items.map((item) {
-            return _buildItem(title: item.$1, icon: item.$2);
+            return NavigationDrawerSample.buildItem(
+              title: item.$1,
+              icon: item.$2,
+            );
           }).toList(),
           onRight: (_, _, isOutOfScope) {
             if (isOutOfScope) {
@@ -204,13 +215,13 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
 
             return KeyEventResult.handled;
           },
-          drawerBuilder: (context, child) {
+          drawerBuilder: (context, animation, child) {
             return DecoratedBox(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
                     NavigationDrawerSample.backgroundColor,
-                    Colors.transparent,
+                    NavigationDrawerSample.backgroundColorTransparent,
                   ],
                 ),
                 borderRadius: BorderRadius.only(
@@ -218,10 +229,10 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
                   bottomRight: Radius.circular(12),
                 ),
               ),
-              child: Padding(padding: const EdgeInsets.all(20), child: child),
+              child: Padding(padding: const EdgeInsets.all(8), child: child),
             );
           },
-          builder: (context, entry) {
+          builder: (context, animation, entry) {
             return Stack(
               children: [
                 Align(
@@ -234,11 +245,12 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
                       return KeyEventResult.handled;
                     },
                     builder: (context, node) {
-                      return AnimatedContainer(
-                        duration: _animationDuration,
-                        color: node.hasFocus
-                            ? Colors.green
-                            : Colors.indigoAccent,
+                      return Container(
+                        color: Color.lerp(
+                          Colors.indigoAccent,
+                          Colors.green,
+                          animation.value,
+                        ),
                         width: 700,
                         height: 500,
                         alignment: Alignment.center,
@@ -257,58 +269,61 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
 
   TvNavigationMenuItem _buildHeader() {
     return TvNavigationMenuItem(
-      icon: NavigationDrawerSample.buildIcon(Icons.account_circle),
-      decoration: NavigationDrawerSample.buildDecoration(),
-      builder: (_, constraints, states) {
-        return ConstrainedBox(
+      iconBuilder: (_) =>
+          NavigationDrawerSample.buildIcon(Icons.account_circle),
+      builder: (context, constraints, states, icon) {
+        final contentColor = NavigationDrawerSample.buildContentColor(states);
+
+        return Container(
+          decoration: NavigationDrawerSample.buildDecoration().resolve(states),
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
           constraints: constraints,
-          child: AnimatedOpacity(
-            opacity: _controller.hasFocus ? 1 : 0,
-            duration: _animationDuration,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Name',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: NavigationDrawerSample.buildContentColor(states),
-                    fontWeight: FontWeight.w600,
+          child: Row(
+            children: [
+              if (icon != null) Flexible(flex: 0, child: icon),
+
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 12),
+                  child: Opacity(
+                    opacity: TvNavigationDrawer.animationOf(context).value,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Name',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: contentColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(
+                          'Switch account',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontSize: 12, color: contentColor),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                Text(
-                  'Switch account',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: NavigationDrawerSample.buildContentColor(states),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },
     );
   }
 
-  TvNavigationMenuItem _buildItem({
-    required String title,
-    required IconData icon,
-  }) {
-    return NavigationDrawerSample.buildItem(
-      title: title,
-      icon: icon,
-      isDrawerExpanded: () => _controller.hasFocus,
-    );
-  }
-
   TvNavigationMenuItem _buildFooter() {
-    return _buildItem(title: 'Settings', icon: Icons.settings);
+    return NavigationDrawerSample.buildItem(
+      title: 'Settings',
+      icon: Icons.settings,
+    );
   }
 
   Widget _buildContentSeparator() {
@@ -321,12 +336,14 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
         children: [
           SizedBox(width: 16),
 
-          Text(
-            'Content',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.white,
-              fontWeight: FontWeight.w800,
+          Expanded(
+            child: Text(
+              'Content',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.white,
+                fontWeight: FontWeight.w800,
+              ),
             ),
           ),
         ],

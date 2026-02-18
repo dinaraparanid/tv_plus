@@ -56,36 +56,25 @@ final class OneUiNavigationDrawerSample extends StatefulWidget {
 
   static WidgetStateProperty<Icon> buildIcon(IconData data) {
     return WidgetStateProperty.resolveWith((states) {
-      return Icon(data, size: 32, color: buildContentColor(states));
+      return Icon(data, size: 28, color: buildContentColor(states));
     });
   }
 
   static WidgetStateProperty<BoxDecoration> buildDecoration() {
     return WidgetStateProperty.resolveWith((states) {
       if (states.containsAll([WidgetState.selected, WidgetState.focused])) {
-        return const BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(24)),
-          color: Colors.deepPurpleAccent,
-        );
+        return const BoxDecoration(color: Colors.deepPurpleAccent);
       }
 
       if (states.contains(WidgetState.selected)) {
-        return const BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(24)),
-          color: Colors.indigoAccent,
-        );
+        return const BoxDecoration(color: Colors.indigoAccent);
       }
 
       if (states.contains(WidgetState.focused)) {
-        return BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(24)),
-          color: Colors.teal.withValues(alpha: 0.33),
-        );
+        return BoxDecoration(color: Colors.teal.withValues(alpha: 0.33));
       }
 
-      return const BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(24)),
-      );
+      return const BoxDecoration();
     });
   }
 
@@ -96,26 +85,35 @@ final class OneUiNavigationDrawerSample extends StatefulWidget {
   }) {
     return TvNavigationMenuItem(
       key: ValueKey(title),
-      icon: OneUiNavigationDrawerSample.buildIcon(icon),
-      decoration: OneUiNavigationDrawerSample.buildDecoration(),
-      builder: (_, constraints, states) {
-        return ConstrainedBox(
+      iconBuilder: (_) => OneUiNavigationDrawerSample.buildIcon(icon),
+      builder: (context, constraints, states, icon) {
+        return Container(
+          decoration: OneUiNavigationDrawerSample.buildDecoration().resolve(
+            states,
+          ),
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
           constraints: constraints,
-          child: Stack(
+          child: Row(
             children: [
-              AnimatedOpacity(
-                opacity: isDrawerExpanded() ? 1 : 0,
-                duration: _animationDuration,
-                child: Text(
-                  title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: OneUiNavigationDrawerSample.buildContentColor(
-                      states,
+              if (icon != null) Flexible(flex: 0, child: icon),
+
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 12),
+                  child: Opacity(
+                    opacity: OneUiTvNavigationDrawer.animationOf(context).value,
+                    child: Text(
+                      title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: OneUiNavigationDrawerSample.buildContentColor(
+                          states,
+                        ),
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
@@ -157,7 +155,7 @@ final class _OneUiNavigationDrawerSampleState
           controller: _controller,
           backgroundColor: OneUiNavigationDrawerSample.backgroundColor,
           drawerExpandDuration: _animationDuration,
-          constraints: const BoxConstraints(minWidth: 64, maxWidth: 200),
+          constraints: const BoxConstraints(minWidth: 64, maxWidth: 220),
           header: _buildHeader(),
           footer: _buildFooter(),
           separatorBuilder: (i) {
@@ -186,18 +184,16 @@ final class _OneUiNavigationDrawerSampleState
           },
           drawerBuilder: (context, expandAnimation, child) {
             return Row(
-              mainAxisSize: MainAxisSize.min,
               children: [
-                DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: Gradient.lerp(
-                      OneUiNavigationDrawerSample.backgroundGradientCollapsed,
-                      OneUiNavigationDrawerSample.backgroundGradientExpanded,
-                      expandAnimation.value,
+                Expanded(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: Gradient.lerp(
+                        OneUiNavigationDrawerSample.backgroundGradientCollapsed,
+                        OneUiNavigationDrawerSample.backgroundGradientExpanded,
+                        expandAnimation.value,
+                      ),
                     ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
                     child: child,
                   ),
                 ),
@@ -215,7 +211,7 @@ final class _OneUiNavigationDrawerSampleState
               ],
             );
           },
-          builder: (context, entry) {
+          builder: (context, animation, entry) {
             return DpadFocus(
               focusNode: _contentFocusNode,
               key: OneUiNavigationDrawerSample.contentKey,
@@ -225,9 +221,12 @@ final class _OneUiNavigationDrawerSampleState
                 return KeyEventResult.handled;
               },
               builder: (context, node) {
-                return AnimatedContainer(
-                  duration: _animationDuration,
-                  color: node.hasFocus ? Colors.green : Colors.indigoAccent,
+                return Container(
+                  color: Color.lerp(
+                    Colors.indigoAccent,
+                    Colors.green,
+                    animation.value,
+                  ),
                   alignment: Alignment.center,
                   child: Text('$entry content'),
                 );
@@ -241,43 +240,60 @@ final class _OneUiNavigationDrawerSampleState
 
   TvNavigationMenuItem _buildHeader() {
     return TvNavigationMenuItem(
-      icon: OneUiNavigationDrawerSample.buildIcon(Icons.account_circle),
-      decoration: OneUiNavigationDrawerSample.buildDecoration(),
-      builder: (_, constraints, states) {
-        return ConstrainedBox(
+      iconBuilder: (_) {
+        return OneUiNavigationDrawerSample.buildIcon(Icons.account_circle);
+      },
+      builder: (context, constraints, states, icon) {
+        return Container(
+          decoration: OneUiNavigationDrawerSample.buildDecoration().resolve(
+            states,
+          ),
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
           constraints: constraints,
-          child: AnimatedOpacity(
-            opacity: _controller.hasFocus ? 1 : 0,
-            duration: _animationDuration,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Name',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: OneUiNavigationDrawerSample.buildContentColor(
-                      states,
+          child: Row(
+            children: [
+              if (icon != null) Flexible(flex: 0, child: icon),
+
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 12),
+                  child: Opacity(
+                    opacity: OneUiTvNavigationDrawer.animationOf(context).value,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Name',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color:
+                                OneUiNavigationDrawerSample.buildContentColor(
+                                  states,
+                                ),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(
+                          'Switch account',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color:
+                                OneUiNavigationDrawerSample.buildContentColor(
+                                  states,
+                                ),
+                          ),
+                        ),
+                      ],
                     ),
-                    fontWeight: FontWeight.w600,
                   ),
                 ),
-                Text(
-                  'Switch account',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: OneUiNavigationDrawerSample.buildContentColor(
-                      states,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },
@@ -309,12 +325,14 @@ final class _OneUiNavigationDrawerSampleState
         children: [
           SizedBox(width: 16),
 
-          Text(
-            'Content',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.white,
-              fontWeight: FontWeight.w800,
+          Expanded(
+            child: Text(
+              'Content',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.white,
+                fontWeight: FontWeight.w800,
+              ),
             ),
           ),
         ],

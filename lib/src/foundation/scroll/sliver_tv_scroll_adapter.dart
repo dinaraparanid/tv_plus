@@ -36,7 +36,7 @@ final class SliverTVScrollAdapter extends StatelessWidget with DpadScopeEvents {
       onLeft: onLeft,
       onRight: onRight,
       includeSemantics: false,
-      builder: (_) => sliver,
+      builder: (_, _) => sliver,
     );
   }
 }

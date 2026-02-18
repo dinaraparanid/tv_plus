@@ -208,7 +208,7 @@ final class TvListView extends BoxScrollView {
       onRight: onRight,
       onFocusChanged: onFocusChanged,
       onFocusDisabledWhenWasFocused: onFocusDisabledWhenWasFocused,
-      builder: (_) => super.build(context),
+      builder: (context, _) => super.build(context),
     );
   }
 }

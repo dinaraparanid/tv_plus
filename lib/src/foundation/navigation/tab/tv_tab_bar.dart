@@ -176,15 +176,13 @@ final class _TvTabBarFoundationState extends State<TvTabBarFoundation>
       onBack: widget.onBack,
       onFocusChanged: widget.onFocusChanged,
       onFocusDisabledWhenWasFocused: widget.onFocusDisabledWhenWasFocused,
-      builder: (_) {
-        return Row(
-          mainAxisSize: widget.mainAxisSize,
-          mainAxisAlignment: widget.mainAxisAlignment,
-          crossAxisAlignment: widget.crossAxisAlignment,
-          spacing: widget.spacing,
-          children: widget.tabs,
-        );
-      },
+      builder: (_, _) => Row(
+        mainAxisSize: widget.mainAxisSize,
+        mainAxisAlignment: widget.mainAxisAlignment,
+        crossAxisAlignment: widget.crossAxisAlignment,
+        spacing: widget.spacing,
+        children: widget.tabs,
+      ),
     );
   }
 }

@@ -48,35 +48,54 @@ final class OneUiTvNavigationDrawer extends StatefulWidget {
   final DpadScopeEventCallback? onRight;
   final void Function(FocusScopeNode, bool)? onFocusChanged;
   final void Function(FocusScopeNode)? onFocusDisabledWhenWasFocused;
+
   final Widget Function(
     BuildContext context,
     Animation<double> expandAnimation,
     Widget child,
   )
   drawerBuilder;
-  final Widget Function(BuildContext context, TvNavigationMenuEntry? entry)
+
+  final Widget Function(
+    BuildContext context,
+    Animation<double> expandAnimation,
+    TvNavigationMenuEntry? entry,
+  )
   builder;
 
   static TvNavigationMenuController? maybeOf(BuildContext context) {
     return context
-        .findAncestorStateOfType<_OneUiTvNavigationDrawerState>()
-        ?._controller;
+        .findAncestorStateOfType<OneUiTvNavigationDrawerState>()
+        ?.controller;
   }
 
   static TvNavigationMenuController of(BuildContext context) =>
       maybeOf(context)!;
 
+  static Animation<double>? maybeAnimationOf(BuildContext context) {
+    return context
+        .findAncestorStateOfType<OneUiTvNavigationDrawerState>()
+        ?.expandAnimation;
+  }
+
+  static Animation<double> animationOf(BuildContext context) =>
+      maybeAnimationOf(context)!;
+
   @override
-  State<StatefulWidget> createState() => _OneUiTvNavigationDrawerState();
+  State<StatefulWidget> createState() => OneUiTvNavigationDrawerState();
 }
 
-final class _OneUiTvNavigationDrawerState extends State<OneUiTvNavigationDrawer>
+final class OneUiTvNavigationDrawerState extends State<OneUiTvNavigationDrawer>
     with SingleTickerProviderStateMixin {
   late AnimationController _expandController;
   late Animation<double> _expandAnimation;
 
+  Animation<double> get expandAnimation => _expandAnimation;
+
   late TvNavigationMenuController _controller;
   var _ownsController = false;
+
+  TvNavigationMenuController get controller => _controller;
 
   @override
   void initState() {
@@ -167,6 +186,12 @@ final class _OneUiTvNavigationDrawerState extends State<OneUiTvNavigationDrawer>
   }
 
   Widget _buildContent(Animation<double> expandAnimation) {
+    final collapsedConstraints = widget.constraints.copyWith(
+      maxWidth: widget.constraints.minWidth,
+    );
+
+    final expandedConstraints = widget.constraints;
+
     return DpadFocus(
       focusNode: _controller.mediatorNode,
       onFocusChanged: (_, hasFocus) {
@@ -176,36 +201,40 @@ final class _OneUiTvNavigationDrawerState extends State<OneUiTvNavigationDrawer>
           });
         }
       },
-      builder: (context, node) => widget.drawerBuilder(
-        context,
-        expandAnimation,
-        TvNavigationMenuContent(
-          controller: widget.controller,
-          header: widget.header,
-          footer: widget.footer,
-          constraints: widget.constraints,
-          animateDrawerExpansion: true,
-          drawerAnimationsDuration: widget.drawerExpandDuration,
-          menuItems: widget.menuItems,
-          separatorBuilder: widget.separatorBuilder,
-          policy: widget.policy,
-          descendantsAreFocusable: widget.descendantsAreFocusable,
-          descendantsAreTraversable: widget.descendantsAreTraversable,
-          autofocus: widget.autofocus,
-          onUp: widget.onUp,
-          onDown: widget.onDown,
-          onLeft: widget.onLeft,
-          onRight: widget.onRight,
-          onFocusChanged: (node, hasFocus) {
-            if (hasFocus) {
-              _expandController.forward();
-            } else {
-              _expandController.reverse();
-            }
+      builder: (context, node) => ConstrainedBox(
+        constraints: BoxConstraints.lerp(
+          collapsedConstraints,
+          expandedConstraints,
+          expandAnimation.value,
+        )!,
+        child: widget.drawerBuilder(
+          context,
+          expandAnimation,
+          TvNavigationMenuContent(
+            controller: widget.controller,
+            header: widget.header,
+            footer: widget.footer,
+            menuItems: widget.menuItems,
+            separatorBuilder: widget.separatorBuilder,
+            policy: widget.policy,
+            descendantsAreFocusable: widget.descendantsAreFocusable,
+            descendantsAreTraversable: widget.descendantsAreTraversable,
+            autofocus: widget.autofocus,
+            onUp: widget.onUp,
+            onDown: widget.onDown,
+            onLeft: widget.onLeft,
+            onRight: widget.onRight,
+            onFocusChanged: (node, hasFocus) {
+              if (hasFocus) {
+                _expandController.forward();
+              } else {
+                _expandController.reverse();
+              }
 
-            widget.onFocusChanged?.call(node, hasFocus);
-          },
-          onFocusDisabledWhenWasFocused: widget.onFocusDisabledWhenWasFocused,
+              widget.onFocusChanged?.call(node, hasFocus);
+            },
+            onFocusDisabledWhenWasFocused: widget.onFocusDisabledWhenWasFocused,
+          ),
         ),
       ),
     );
@@ -227,9 +256,15 @@ final class _AnimatedContent extends AnimatedWidget {
   final Color? backgroundColor;
   final BoxConstraints constraints;
   final TvNavigationMenuAlignment alignment;
+
   final Widget Function(BuildContext context, Animation<double> expandAnimation)
   drawerBuilder;
-  final Widget Function(BuildContext context, TvNavigationMenuEntry? entry)
+
+  final Widget Function(
+    BuildContext context,
+    Animation<double> expandAnimation,
+    TvNavigationMenuEntry? entry,
+  )
   builder;
 
   @override
@@ -248,7 +283,11 @@ final class _AnimatedContent extends AnimatedWidget {
           children: [
             Positioned.fill(
               left: expandOffset,
-              child: builder(context, controller.selectedEntry),
+              child: builder(
+                context,
+                expandAnimation,
+                controller.selectedEntry,
+              ),
             ),
 
             Align(
@@ -264,7 +303,11 @@ final class _AnimatedContent extends AnimatedWidget {
           children: [
             Positioned.fill(
               right: expandOffset,
-              child: builder(context, controller.selectedEntry),
+              child: builder(
+                context,
+                expandAnimation,
+                controller.selectedEntry,
+              ),
             ),
 
             Align(

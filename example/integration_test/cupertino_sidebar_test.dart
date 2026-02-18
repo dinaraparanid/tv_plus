@@ -115,23 +115,7 @@ extension SidebarTest on WidgetTester {
 
       final (title, iconData) = CupertinoSidebarSample.items[selectedIndex];
 
-      final item = CupertinoSidebarSample.buildItem(
-        title: title,
-        icon: iconData,
-      );
-
       const states = {WidgetState.selected, WidgetState.focused};
-
-      // check icon
-      final realIcon = item.icon!.resolve(states) as Icon;
-
-      final expectedIcon = CupertinoSidebarSample.buildIcon(
-        iconData,
-      ).resolve(states);
-
-      expect(realIcon.icon, expectedIcon.icon);
-      expect(realIcon.color, expectedIcon.color);
-      expect(realIcon.size, expectedIcon.size);
 
       final titleFinder = find.descendant(
         of: headerFinder,
@@ -152,11 +136,6 @@ extension SidebarTest on WidgetTester {
 
     for (int i = 0; i < CupertinoSidebarSample.items.length; ++i) {
       final (title, iconData) = CupertinoSidebarSample.items[i];
-
-      final item = CupertinoSidebarSample.buildItem(
-        title: title,
-        icon: iconData,
-      );
       final itemFinder = find.byKey(ValueKey(title));
       expect(itemFinder, findsOneWidget);
 
@@ -168,26 +147,15 @@ extension SidebarTest on WidgetTester {
       // check decoration
       final containerFinder = find.descendant(
         of: itemFinder,
-        matching: find.byType(AnimatedContainer),
+        matching: find.byType(Container),
       );
 
-      final container = firstWidget<AnimatedContainer>(containerFinder);
+      final container = firstWidget<Container>(containerFinder);
 
       expect(
         container.decoration! as BoxDecoration,
         CupertinoSidebarSample.buildDecoration().resolve(states),
       );
-
-      // check icon
-      final realIcon = item.icon!.resolve(states) as Icon;
-
-      final expectedIcon = CupertinoSidebarSample.buildIcon(
-        iconData,
-      ).resolve(states);
-
-      expect(realIcon.icon, expectedIcon.icon);
-      expect(realIcon.color, expectedIcon.color);
-      expect(realIcon.size, expectedIcon.size);
 
       // check title
       final titleFinder = find.descendant(
