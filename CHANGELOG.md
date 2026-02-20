@@ -1,3 +1,12 @@
+## 0.3.0
+* fix: select key for Tizen TV
+* feat: added hasFocus flag to onFocusChanged() of ScrollGroupDpadFocus & TvTab
+* feat: added onKeyEvent() for ScrollGroupDpadFocus & TvTab
+* feat: OneUiNavigationDrawer for Tizen TV (+ test case)
+* chore: major refactor of all navigation menus for better customization support and animations integration
+* chore: added nearest context parameter for DpadFocusScope's builder()
+* feat: migration from spacing to separator builder for all TabBar widgets
+
 ## 0.2.0
 * chore: replace ScrollGroupDpadEventHandler with DpadEventCallback; replace ScrollGroupDpadEventCallback with DpadScopeEventCallback
 * chore: rename NavigationMenu's mediatorFocusNode -> mediatorNode
