@@ -109,7 +109,7 @@ final class _TvTabBarSecondarySampleState
               focusScopeNode: _focusScopeNode,
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.start,
-              spacing: 16,
+              separatorBuilder: (_, _) => const SizedBox(width: 16),
               onDown: (_, _, isOutOfScope) {
                 if (isOutOfScope) {
                   _contentFocusNode.requestFocus();

@@ -19,7 +19,7 @@ final class CupertinoTvTabBar extends StatefulWidget {
     this.mainAxisSize = MainAxisSize.max,
     this.mainAxisAlignment = MainAxisAlignment.spaceAround,
     this.crossAxisAlignment = CrossAxisAlignment.center,
-    this.spacing = 0.0,
+    this.separatorBuilder,
     this.padding = const EdgeInsets.symmetric(vertical: 4, horizontal: 32),
     this.decorationBuilder,
     this.focusScopeNode,
@@ -49,7 +49,7 @@ final class CupertinoTvTabBar extends StatefulWidget {
   final MainAxisSize mainAxisSize;
   final MainAxisAlignment mainAxisAlignment;
   final CrossAxisAlignment crossAxisAlignment;
-  final double spacing;
+  final Widget Function(BuildContext, int)? separatorBuilder;
   final EdgeInsets padding;
   final Widget Function(BuildContext, Widget)? decorationBuilder;
   final FocusScopeNode? focusScopeNode;
@@ -277,7 +277,7 @@ final class CupertinoTvTabBarState extends State<CupertinoTvTabBar> {
               : widget.mainAxisSize,
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: widget.crossAxisAlignment,
-          spacing: widget.spacing,
+          separatorBuilder: widget.separatorBuilder,
           focusScopeNode: _focusScopeNode,
           parentNode: widget.parentNode,
           autofocus: widget.autofocus,
