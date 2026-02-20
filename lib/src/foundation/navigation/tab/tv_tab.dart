@@ -20,6 +20,7 @@ final class TvTab extends StatelessWidget implements PreferredSizeWidget {
     this.onRight,
     this.onSelect,
     this.onBack,
+    this.onKeyEvent,
     this.onFocusChanged,
     this.onFocusDisabledWhenWasFocused,
     this.scrollToNextNodeDuration,
@@ -39,7 +40,8 @@ final class TvTab extends StatelessWidget implements PreferredSizeWidget {
   final DpadEventCallback? onRight;
   final DpadEventCallback? onSelect;
   final DpadEventCallback? onBack;
-  final void Function(FocusNode)? onFocusChanged;
+  final KeyEventResult Function(FocusNode, KeyEvent)? onKeyEvent;
+  final void Function(FocusNode, bool)? onFocusChanged;
   final void Function()? onFocusDisabledWhenWasFocused;
   final Duration? scrollToNextNodeDuration;
 
@@ -99,6 +101,7 @@ final class TvTab extends StatelessWidget implements PreferredSizeWidget {
       onRight: onRight,
       onSelect: onSelect,
       onBack: onBack,
+      onKeyEvent: onKeyEvent,
       onFocusChanged: onFocusChanged,
       onFocusDisabledWhenWasFocused: onFocusDisabledWhenWasFocused,
       scrollToNextNodeDuration: scrollToNextNodeDuration,

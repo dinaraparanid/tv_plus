@@ -106,7 +106,7 @@ final class _CupertinoTvTabBarSampleState
                 focusScopeNode: _focusScopeNode,
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.start,
-                spacing: 40,
+                separatorBuilder: (_, _) => const SizedBox(width: 40),
                 indicatorPadding: const EdgeInsets.symmetric(horizontal: 20),
                 onDown: (_, _, isOutOfScope) {
                   if (isOutOfScope) {

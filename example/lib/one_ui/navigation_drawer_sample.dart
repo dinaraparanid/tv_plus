@@ -1,22 +1,45 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:tv_plus/tv_plus.dart';
 
 const _animationDuration = Duration(milliseconds: 350);
 
-final class NavigationDrawerSample extends StatefulWidget {
-  const NavigationDrawerSample({
-    super.key,
-    this.isTimerEnabled = false,
-    this.mode = TvNavigationDrawerMode.modal,
-  });
-
-  final bool isTimerEnabled;
-  final TvNavigationDrawerMode mode;
+final class OneUiNavigationDrawerSample extends StatefulWidget {
+  const OneUiNavigationDrawerSample({super.key});
 
   static const backgroundColor = Color(0xFF131314);
-  static const backgroundColorTransparent = Color(0x03131314);
+
+  static const backgroundGradientCollapsed = LinearGradient(
+    begin: Alignment.bottomCenter,
+    end: Alignment.topCenter,
+    stops: [0, 0.75, 1],
+    colors: [
+      OneUiNavigationDrawerSample.backgroundColor,
+      OneUiNavigationDrawerSample.backgroundColor,
+      Colors.transparent,
+    ],
+  );
+
+  static const backgroundGradientExpanded = LinearGradient(
+    begin: Alignment.bottomCenter,
+    end: Alignment.topCenter,
+    colors: [
+      OneUiNavigationDrawerSample.backgroundColor,
+      OneUiNavigationDrawerSample.backgroundColor,
+    ],
+  );
+
+  static const drawerCornerGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    stops: [0, 0.4, 0.6, 0.8, 1],
+    colors: [
+      Colors.transparent,
+      Colors.transparent,
+      Colors.pink,
+      Colors.transparent,
+      Colors.transparent,
+    ],
+  );
 
   static const items = [
     ('Search', Icons.search),
@@ -40,42 +63,34 @@ final class NavigationDrawerSample extends StatefulWidget {
   static WidgetStateProperty<BoxDecoration> buildDecoration() {
     return WidgetStateProperty.resolveWith((states) {
       if (states.containsAll([WidgetState.selected, WidgetState.focused])) {
-        return const BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(24)),
-          color: Colors.deepPurpleAccent,
-        );
+        return const BoxDecoration(color: Colors.deepPurpleAccent);
       }
 
       if (states.contains(WidgetState.selected)) {
-        return const BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(24)),
-          color: Colors.indigoAccent,
-        );
+        return const BoxDecoration(color: Colors.indigoAccent);
       }
 
       if (states.contains(WidgetState.focused)) {
-        return BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(24)),
-          color: Colors.teal.withValues(alpha: 0.33),
-        );
+        return BoxDecoration(color: Colors.teal.withValues(alpha: 0.33));
       }
 
-      return const BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(24)),
-      );
+      return const BoxDecoration();
     });
   }
 
   static TvNavigationMenuItem buildItem({
     required String title,
     required IconData icon,
+    required bool Function() isDrawerExpanded,
   }) {
     return TvNavigationMenuItem(
       key: ValueKey(title),
-      iconBuilder: (_) => NavigationDrawerSample.buildIcon(icon),
+      iconBuilder: (_) => OneUiNavigationDrawerSample.buildIcon(icon),
       builder: (context, constraints, states, icon) {
         return Container(
-          decoration: NavigationDrawerSample.buildDecoration().resolve(states),
+          decoration: OneUiNavigationDrawerSample.buildDecoration().resolve(
+            states,
+          ),
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
           constraints: constraints,
           child: Row(
@@ -86,14 +101,16 @@ final class NavigationDrawerSample extends StatefulWidget {
                 child: Padding(
                   padding: const EdgeInsets.only(left: 12),
                   child: Opacity(
-                    opacity: TvNavigationDrawer.animationOf(context).value,
+                    opacity: OneUiTvNavigationDrawer.animationOf(context).value,
                     child: Text(
                       title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 16,
-                        color: NavigationDrawerSample.buildContentColor(states),
+                        color: OneUiNavigationDrawerSample.buildContentColor(
+                          states,
+                        ),
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -108,69 +125,23 @@ final class NavigationDrawerSample extends StatefulWidget {
   }
 
   @override
-  State<StatefulWidget> createState() => _NavigationDrawerSampleState();
+  State<StatefulWidget> createState() => _OneUiNavigationDrawerSampleState();
 }
 
-final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
-  final _items = NavigationDrawerSample.items.toList();
-
-  late final Timer timer;
+final class _OneUiNavigationDrawerSampleState
+    extends State<OneUiNavigationDrawerSample> {
+  final _items = OneUiNavigationDrawerSample.items.toList();
 
   late final _controller = TvNavigationMenuController(
-    initialEntry: ItemEntry(key: ValueKey(NavigationDrawerSample.items[0].$1)),
+    initialEntry: ItemEntry(
+      key: ValueKey(OneUiNavigationDrawerSample.items[0].$1),
+    ),
   );
 
   late final _contentFocusNode = FocusNode();
 
-  var _isHeaderPresent = true;
-  var _isFooterPresent = true;
-
-  @override
-  void initState() {
-    if (widget.isTimerEnabled) {
-      timer = Timer.periodic(const Duration(seconds: 3), (timer) {
-        if (_items.length > 1) {
-          setState(() {
-            _items.removeLast();
-            _invalidateItems();
-          });
-        } else if (_isHeaderPresent) {
-          if (_controller.selectedEntry is HeaderEntry) {
-            _controller.select(_selectedEntryFallback());
-          }
-
-          setState(() => _isHeaderPresent = false);
-        } else if (_isFooterPresent) {
-          if (_controller.selectedEntry is FooterEntry) {
-            _controller.select(_selectedEntryFallback());
-          }
-
-          setState(() => _isFooterPresent = false);
-        } else {
-          timer.cancel();
-        }
-      });
-    }
-
-    super.initState();
-  }
-
-  void _invalidateItems() {
-    _controller.invalidateItemsNodes(
-      newItems: {for (final item in _items) ValueKey(item.$1): FocusNode()},
-      onSelectedItemRemoved: _selectedEntryFallback,
-    );
-  }
-
-  TvNavigationMenuEntry _selectedEntryFallback() =>
-      ItemEntry(key: ValueKey(_items.first.$1));
-
   @override
   void dispose() {
-    if (widget.isTimerEnabled) {
-      timer.cancel();
-    }
-
     _controller.dispose();
     _contentFocusNode.dispose();
     super.dispose();
@@ -180,14 +151,13 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
   Widget build(BuildContext context) {
     return MaterialApp(
       builder: (context, _) {
-        return TvNavigationDrawer(
+        return OneUiTvNavigationDrawer(
           controller: _controller,
-          backgroundColor: NavigationDrawerSample.backgroundColor,
+          backgroundColor: OneUiNavigationDrawerSample.backgroundColor,
           drawerExpandDuration: _animationDuration,
-          constraints: const BoxConstraints(minWidth: 80, maxWidth: 220),
-          mode: widget.mode,
-          header: _isHeaderPresent ? _buildHeader() : null,
-          footer: _isFooterPresent ? _buildFooter() : null,
+          constraints: const BoxConstraints(minWidth: 64, maxWidth: 220),
+          header: _buildHeader(),
+          footer: _buildFooter(),
           separatorBuilder: (i) {
             if (i == const ItemEntry(key: ValueKey('Home'))) {
               return Column(
@@ -203,10 +173,7 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
             return const SizedBox(height: 12);
           },
           menuItems: _items.map((item) {
-            return NavigationDrawerSample.buildItem(
-              title: item.$1,
-              icon: item.$2,
-            );
+            return _buildItem(title: item.$1, icon: item.$2);
           }).toList(),
           onRight: (_, _, isOutOfScope) {
             if (isOutOfScope) {
@@ -215,51 +182,55 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
 
             return KeyEventResult.handled;
           },
-          drawerBuilder: (context, animation, child) {
-            return DecoratedBox(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    NavigationDrawerSample.backgroundColor,
-                    NavigationDrawerSample.backgroundColorTransparent,
-                  ],
-                ),
-                borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(12),
-                  bottomRight: Radius.circular(12),
-                ),
-              ),
-              child: Padding(padding: const EdgeInsets.all(8), child: child),
-            );
-          },
-          builder: (context, animation, entry) {
-            return Stack(
+          drawerBuilder: (context, expandAnimation, child) {
+            return Row(
               children: [
-                Align(
-                  child: DpadFocus(
-                    focusNode: _contentFocusNode,
-                    key: NavigationDrawerSample.contentKey,
-                    autofocus: true,
-                    onLeft: (_, _) {
-                      _controller.requestFocusOnMenu();
-                      return KeyEventResult.handled;
-                    },
-                    builder: (context, node) {
-                      return Container(
-                        color: Color.lerp(
-                          Colors.indigoAccent,
-                          Colors.green,
-                          animation.value,
-                        ),
-                        width: 700,
-                        height: 500,
-                        alignment: Alignment.center,
-                        child: Text('$entry content'),
-                      );
-                    },
+                Expanded(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: Gradient.lerp(
+                        OneUiNavigationDrawerSample.backgroundGradientCollapsed,
+                        OneUiNavigationDrawerSample.backgroundGradientExpanded,
+                        expandAnimation.value,
+                      ),
+                    ),
+                    child: child,
+                  ),
+                ),
+
+                const SizedBox(
+                  width: 4,
+                  height: double.infinity,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient:
+                          OneUiNavigationDrawerSample.drawerCornerGradient,
+                    ),
                   ),
                 ),
               ],
+            );
+          },
+          builder: (context, animation, entry) {
+            return DpadFocus(
+              focusNode: _contentFocusNode,
+              key: OneUiNavigationDrawerSample.contentKey,
+              autofocus: true,
+              onLeft: (_, _) {
+                _controller.requestFocusOnMenu();
+                return KeyEventResult.handled;
+              },
+              builder: (context, node) {
+                return Container(
+                  color: Color.lerp(
+                    Colors.indigoAccent,
+                    Colors.green,
+                    animation.value,
+                  ),
+                  alignment: Alignment.center,
+                  child: Text('$entry content'),
+                );
+              },
             );
           },
         );
@@ -269,13 +240,14 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
 
   TvNavigationMenuItem _buildHeader() {
     return TvNavigationMenuItem(
-      iconBuilder: (_) =>
-          NavigationDrawerSample.buildIcon(Icons.account_circle),
+      iconBuilder: (_) {
+        return OneUiNavigationDrawerSample.buildIcon(Icons.account_circle);
+      },
       builder: (context, constraints, states, icon) {
-        final contentColor = NavigationDrawerSample.buildContentColor(states);
-
         return Container(
-          decoration: NavigationDrawerSample.buildDecoration().resolve(states),
+          decoration: OneUiNavigationDrawerSample.buildDecoration().resolve(
+            states,
+          ),
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
           constraints: constraints,
           child: Row(
@@ -286,7 +258,7 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
                 child: Padding(
                   padding: const EdgeInsets.only(left: 12),
                   child: Opacity(
-                    opacity: TvNavigationDrawer.animationOf(context).value,
+                    opacity: OneUiTvNavigationDrawer.animationOf(context).value,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -297,7 +269,10 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: 16,
-                            color: contentColor,
+                            color:
+                                OneUiNavigationDrawerSample.buildContentColor(
+                                  states,
+                                ),
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -305,7 +280,13 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
                           'Switch account',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontSize: 12, color: contentColor),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color:
+                                OneUiNavigationDrawerSample.buildContentColor(
+                                  states,
+                                ),
+                          ),
                         ),
                       ],
                     ),
@@ -319,11 +300,19 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
     );
   }
 
-  TvNavigationMenuItem _buildFooter() {
-    return NavigationDrawerSample.buildItem(
-      title: 'Settings',
-      icon: Icons.settings,
+  TvNavigationMenuItem _buildItem({
+    required String title,
+    required IconData icon,
+  }) {
+    return OneUiNavigationDrawerSample.buildItem(
+      title: title,
+      icon: icon,
+      isDrawerExpanded: () => _controller.hasFocus,
     );
+  }
+
+  TvNavigationMenuItem _buildFooter() {
+    return _buildItem(title: 'Settings', icon: Icons.settings);
   }
 
   Widget _buildContentSeparator() {

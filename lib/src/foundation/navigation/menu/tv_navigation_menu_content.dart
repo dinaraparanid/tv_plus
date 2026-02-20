@@ -7,10 +7,7 @@ final class TvNavigationMenuContent extends StatefulWidget {
     this.controller,
     this.header,
     this.footer,
-    required this.constraints,
     this.itemsAlignment = MainAxisAlignment.center,
-    required this.animateDrawerExpansion,
-    this.drawerAnimationsDuration = const Duration(milliseconds: 300),
     required this.menuItems,
     this.separatorBuilder,
     FocusTraversalPolicy? policy,
@@ -30,10 +27,7 @@ final class TvNavigationMenuContent extends StatefulWidget {
   final TvNavigationMenuController? controller;
   final TvNavigationMenuItem? header;
   final TvNavigationMenuItem? footer;
-  final BoxConstraints constraints;
   final MainAxisAlignment itemsAlignment;
-  final bool animateDrawerExpansion;
-  final Duration drawerAnimationsDuration;
   final List<TvNavigationMenuItem> menuItems;
   final Widget Function(TvNavigationMenuEntry)? separatorBuilder;
   final FocusTraversalPolicy policy;
@@ -138,11 +132,16 @@ final class _TvNavigationMenuContentState
   }
 
   @override
-  Widget build(BuildContext context) {
-    final header = widget.header;
-    final footer = widget.footer;
-    final separatorBuilder = widget.separatorBuilder;
+  void dispose() {
+    if (_ownsController) {
+      _controller.dispose();
+    }
 
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return DpadFocusScope(
       focusScopeNode: _controller.focusScopeNode,
       autofocus: widget.autofocus,
@@ -156,99 +155,82 @@ final class _TvNavigationMenuContentState
       onRight: widget.onRight,
       onFocusChanged: widget.onFocusChanged,
       onFocusDisabledWhenWasFocused: widget.onFocusDisabledWhenWasFocused,
-      builder: (_) {
-        return AnimatedContainer(
-          duration: widget.drawerAnimationsDuration,
-          constraints: widget.animateDrawerExpansion
-              ? widget.constraints.copyWith(
-                  maxWidth: _controller.hasFocus
-                      ? null
-                      : widget.constraints.minWidth,
-                )
-              : null,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              if (header != null) ...[
-                _Header(
-                  controller: _controller,
-                  drawerAutofocus: widget.autofocus,
-                  drawerExpandDuration: widget.drawerAnimationsDuration,
-                  isDrawerExpanded: _controller.hasFocus,
-                  item: header,
-                  viewportAlignment: widget.viewportAlignment,
-                ),
+      builder: (context, _) => _buildContent(context),
+    );
+  }
 
-                if (separatorBuilder != null)
-                  separatorBuilder(const HeaderEntry()),
-              ],
+  Widget _buildContent(BuildContext context) {
+    final header = widget.header;
+    final footer = widget.footer;
+    final separatorBuilder = widget.separatorBuilder;
 
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: widget.itemsAlignment,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      for (final (index, child)
-                          in widget.menuItems.indexed) ...[
-                        _Item(
-                          index: index,
-                          item: child,
-                          controller: _controller,
-                          drawerAutofocus: widget.autofocus,
-                          isDrawerExpanded: _controller.hasFocus,
-                          drawerExpandDuration: widget.drawerAnimationsDuration,
-                          viewportAlignment: widget.viewportAlignment,
-                        ),
-
-                        if (separatorBuilder != null)
-                          separatorBuilder(
-                            ItemEntry(key: child.key ?? ValueKey(index)),
-                          ),
-                      ],
-                    ],
-                  ),
-                ),
-              ),
-
-              if (footer != null) ...[
-                if (separatorBuilder != null)
-                  separatorBuilder(const FooterEntry()),
-
-                _Footer(
-                  item: footer,
-                  controller: _controller,
-                  drawerAutofocus: widget.autofocus,
-                  isDrawerExpanded: _controller.hasFocus,
-                  drawerExpandDuration: widget.drawerAnimationsDuration,
-                  viewportAlignment: widget.viewportAlignment,
-                ),
-              ],
-            ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (header != null) ...[
+          _Header(
+            controller: _controller,
+            drawerAutofocus: widget.autofocus,
+            item: header,
+            viewportAlignment: widget.viewportAlignment,
           ),
-        );
-      },
+
+          if (separatorBuilder != null) separatorBuilder(const HeaderEntry()),
+        ],
+
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: widget.itemsAlignment,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                for (final (index, child) in widget.menuItems.indexed) ...[
+                  _Item(
+                    index: index,
+                    item: child,
+                    controller: _controller,
+                    drawerAutofocus: widget.autofocus,
+                    viewportAlignment: widget.viewportAlignment,
+                  ),
+
+                  if (separatorBuilder != null)
+                    separatorBuilder(
+                      ItemEntry(key: child.key ?? ValueKey(index)),
+                    ),
+                ],
+              ],
+            ),
+          ),
+        ),
+
+        if (footer != null) ...[
+          if (separatorBuilder != null) separatorBuilder(const FooterEntry()),
+
+          _Footer(
+            item: footer,
+            controller: _controller,
+            drawerAutofocus: widget.autofocus,
+            viewportAlignment: widget.viewportAlignment,
+          ),
+        ],
+      ],
     );
   }
 }
 
 final class _Header extends StatelessWidget {
   const _Header({
+    required this.item,
     required this.controller,
     required this.drawerAutofocus,
-    required this.drawerExpandDuration,
-    required this.isDrawerExpanded,
     required this.viewportAlignment,
-    required this.item,
   });
 
+  final TvNavigationMenuItem item;
   final TvNavigationMenuController controller;
   final bool drawerAutofocus;
-  final Duration drawerExpandDuration;
-  final bool isDrawerExpanded;
   final double? viewportAlignment;
-  final TvNavigationMenuItem item;
 
   @override
   Widget build(BuildContext context) {
@@ -260,8 +242,6 @@ final class _Header extends StatelessWidget {
       focusNode: controller.headerNode!,
       canRequestFocus: item.canRequestFocus,
       isSelected: isSelected,
-      isDrawerExpanded: isDrawerExpanded,
-      drawerAnimationsDuration: drawerExpandDuration,
       autofocus: drawerAutofocus && isSelected,
       viewportAlignment: viewportAlignment,
       onSelect: (_, _) {
@@ -283,8 +263,6 @@ final class _Item extends StatelessWidget {
     required this.item,
     required this.controller,
     required this.drawerAutofocus,
-    required this.isDrawerExpanded,
-    required this.drawerExpandDuration,
     required this.viewportAlignment,
   });
 
@@ -292,8 +270,6 @@ final class _Item extends StatelessWidget {
   final TvNavigationMenuItem item;
   final TvNavigationMenuController controller;
   final bool drawerAutofocus;
-  final bool isDrawerExpanded;
-  final Duration drawerExpandDuration;
   final double? viewportAlignment;
 
   @override
@@ -307,8 +283,6 @@ final class _Item extends StatelessWidget {
       focusNode: controller.itemsNodes[entryKey]!,
       canRequestFocus: item.canRequestFocus,
       isSelected: isSelected,
-      isDrawerExpanded: isDrawerExpanded,
-      drawerAnimationsDuration: drawerExpandDuration,
       autofocus: drawerAutofocus && isSelected,
       viewportAlignment: viewportAlignment,
       onSelect: (_, _) {
@@ -329,16 +303,12 @@ final class _Footer extends StatelessWidget {
     required this.item,
     required this.controller,
     required this.drawerAutofocus,
-    required this.isDrawerExpanded,
-    required this.drawerExpandDuration,
     required this.viewportAlignment,
   });
 
   final TvNavigationMenuItem item;
   final TvNavigationMenuController controller;
   final bool drawerAutofocus;
-  final bool isDrawerExpanded;
-  final Duration drawerExpandDuration;
   final double? viewportAlignment;
 
   @override
@@ -351,8 +321,6 @@ final class _Footer extends StatelessWidget {
       focusNode: controller.footerNode!,
       canRequestFocus: item.canRequestFocus,
       isSelected: isSelected,
-      isDrawerExpanded: isDrawerExpanded,
-      drawerAnimationsDuration: drawerExpandDuration,
       autofocus: drawerAutofocus && isSelected,
       viewportAlignment: viewportAlignment,
       onSelect: (_, _) {
@@ -374,8 +342,6 @@ final class _TvNavigationDrawerItem extends StatelessWidget {
     required this.focusNode,
     required this.canRequestFocus,
     this.isSelected = false,
-    required this.isDrawerExpanded,
-    required this.drawerAnimationsDuration,
     this.autofocus = false,
     required this.viewportAlignment,
     this.onSelect,
@@ -385,8 +351,6 @@ final class _TvNavigationDrawerItem extends StatelessWidget {
   final FocusNode focusNode;
   final bool canRequestFocus;
   final bool isSelected;
-  final bool isDrawerExpanded;
-  final Duration drawerAnimationsDuration;
   final bool autofocus;
   final double? viewportAlignment;
   final KeyEventResult Function(FocusNode, KeyDownEvent)? onSelect;
@@ -409,29 +373,12 @@ final class _TvNavigationDrawerItem extends StatelessWidget {
             ? {WidgetState.selected, ...focusedState}
             : focusedState;
 
-        final icon = item.icon;
+        final icon = item.iconBuilder?.call(context).resolve(widgetState);
 
-        return AnimatedContainer(
-          duration: drawerAnimationsDuration,
-          padding: item.contentPadding,
-          decoration: item.decoration?.resolve(widgetState),
-          child: Row(
-            children: [
-              if (icon != null)
-                Flexible(flex: 0, child: icon.resolve(widgetState)),
-
-              Expanded(
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    return Padding(
-                      padding: EdgeInsets.only(left: item.iconSpacing),
-                      child: item.builder(context, constraints, widgetState),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            return item.builder(context, constraints, widgetState, icon);
+          },
         );
       },
     );

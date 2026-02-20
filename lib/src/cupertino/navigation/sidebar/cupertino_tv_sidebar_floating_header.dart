@@ -3,8 +3,10 @@ part of 'sidebar.dart';
 final class CupertinoTvSidebarFloatingHeader extends StatelessWidget {
   const CupertinoTvSidebarFloatingHeader({
     super.key,
-    required this.selectedItem,
     required this.controller,
+    this.iconSpacing = 12,
+    required this.iconBuilder,
+    required this.itemBuilder,
   });
 
   static const _backgroundLight = Color(0x29FFFFFF);
@@ -14,8 +16,17 @@ final class CupertinoTvSidebarFloatingHeader extends StatelessWidget {
   static const _iconBackgroundLight = Color(0x4DFFFFFF);
   static const _iconBackgroundDark = Color(0x33FFFFFF);
 
-  final TvNavigationMenuItem selectedItem;
   final TvNavigationMenuController controller;
+  final double iconSpacing;
+
+  final WidgetStateProperty<Widget> Function(BuildContext context) iconBuilder;
+
+  final Widget Function(
+    BuildContext context,
+    BoxConstraints itemConstraints,
+    Set<WidgetState> itemStates,
+  )
+  itemBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -85,12 +96,12 @@ final class CupertinoTvSidebarFloatingHeader extends StatelessWidget {
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(8),
-                        child: selectedItem.icon!.resolve(widgetState),
+                        child: iconBuilder(context).resolve(widgetState),
                       ),
                     ),
                   ),
 
-                  SizedBox(width: selectedItem.iconSpacing),
+                  SizedBox(width: iconSpacing),
 
                   Padding(
                     padding: const EdgeInsets.only(
@@ -102,11 +113,7 @@ final class CupertinoTvSidebarFloatingHeader extends StatelessWidget {
                       constraints: const BoxConstraints(maxWidth: 198),
                       child: LayoutBuilder(
                         builder: (context, constraints) {
-                          return selectedItem.builder(
-                            context,
-                            constraints,
-                            widgetState,
-                          );
+                          return itemBuilder(context, constraints, widgetState);
                         },
                       ),
                     ),

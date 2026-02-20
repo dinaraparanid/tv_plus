@@ -1,7 +1,7 @@
 part of 'drawer.dart';
 
-final class TvNavigationDrawer extends StatefulWidget {
-  TvNavigationDrawer({
+final class OneUiTvNavigationDrawer extends StatefulWidget {
+  OneUiTvNavigationDrawer({
     super.key,
     this.controller,
     this.header,
@@ -10,7 +10,6 @@ final class TvNavigationDrawer extends StatefulWidget {
     this.constraints = const BoxConstraints(minWidth: 64, maxWidth: 280),
     this.drawerExpandDuration = const Duration(milliseconds: 300),
     this.alignment = TvNavigationMenuAlignment.start,
-    this.mode = TvNavigationDrawerMode.standard,
     this.initialEntry,
     required this.menuItems,
     this.separatorBuilder,
@@ -36,7 +35,6 @@ final class TvNavigationDrawer extends StatefulWidget {
   final BoxConstraints constraints;
   final Duration drawerExpandDuration;
   final TvNavigationMenuAlignment alignment;
-  final TvNavigationDrawerMode mode;
   final TvNavigationMenuEntry? initialEntry;
   final List<TvNavigationMenuItem> menuItems;
   final Widget Function(TvNavigationMenuEntry)? separatorBuilder;
@@ -67,7 +65,7 @@ final class TvNavigationDrawer extends StatefulWidget {
 
   static TvNavigationMenuController? maybeOf(BuildContext context) {
     return context
-        .findAncestorStateOfType<TvNavigationDrawerState>()
+        .findAncestorStateOfType<OneUiTvNavigationDrawerState>()
         ?.controller;
   }
 
@@ -76,7 +74,7 @@ final class TvNavigationDrawer extends StatefulWidget {
 
   static Animation<double>? maybeAnimationOf(BuildContext context) {
     return context
-        .findAncestorStateOfType<TvNavigationDrawerState>()
+        .findAncestorStateOfType<OneUiTvNavigationDrawerState>()
         ?.expandAnimation;
   }
 
@@ -84,10 +82,10 @@ final class TvNavigationDrawer extends StatefulWidget {
       maybeAnimationOf(context)!;
 
   @override
-  State<StatefulWidget> createState() => TvNavigationDrawerState();
+  State<StatefulWidget> createState() => OneUiTvNavigationDrawerState();
 }
 
-final class TvNavigationDrawerState extends State<TvNavigationDrawer>
+final class OneUiTvNavigationDrawerState extends State<OneUiTvNavigationDrawer>
     with SingleTickerProviderStateMixin {
   late AnimationController _expandController;
   late Animation<double> _expandAnimation;
@@ -125,7 +123,7 @@ final class TvNavigationDrawerState extends State<TvNavigationDrawer>
   }
 
   @override
-  void didUpdateWidget(covariant TvNavigationDrawer oldWidget) {
+  void didUpdateWidget(covariant OneUiTvNavigationDrawer oldWidget) {
     final passedController = widget.controller;
 
     if (passedController != null && oldWidget.controller != passedController) {
@@ -140,7 +138,6 @@ final class TvNavigationDrawerState extends State<TvNavigationDrawer>
     }
 
     if (oldWidget.drawerExpandDuration != widget.drawerExpandDuration) {
-      _expandController.removeListener(_animationListener);
       _expandController.dispose();
       _initExpandAnimation();
     }
@@ -152,7 +149,7 @@ final class TvNavigationDrawerState extends State<TvNavigationDrawer>
     _expandController = AnimationController(
       vsync: this,
       duration: widget.drawerExpandDuration,
-    )..addListener(_animationListener);
+    );
 
     _expandAnimation = Tween<double>(
       begin: 0,
@@ -162,11 +159,8 @@ final class TvNavigationDrawerState extends State<TvNavigationDrawer>
 
   void _controllerListener() => setState(() {});
 
-  void _animationListener() => setState(() {});
-
   @override
   void dispose() {
-    _expandController.removeListener(_animationListener);
     _controller.removeListener(_controllerListener);
 
     if (_ownsController) {
@@ -180,69 +174,18 @@ final class TvNavigationDrawerState extends State<TvNavigationDrawer>
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: widget.backgroundColor,
-      child: switch (widget.mode) {
-        TvNavigationDrawerMode.standard => _buildStandard(),
-        TvNavigationDrawerMode.modal => _buildModal(),
-      },
+    return _AnimatedContent(
+      expandAnimation: _expandAnimation,
+      controller: _controller,
+      backgroundColor: widget.backgroundColor,
+      constraints: widget.constraints,
+      alignment: widget.alignment,
+      drawerBuilder: (_, animation) => _buildContent(animation),
+      builder: widget.builder,
     );
   }
 
-  Widget _buildStandard() {
-    return Row(
-      children: [
-        if (widget.alignment == TvNavigationMenuAlignment.start)
-          _buildContent(),
-
-        Expanded(
-          child: widget.builder(
-            context,
-            _expandAnimation,
-            _controller.selectedEntry,
-          ),
-        ),
-
-        if (widget.alignment == TvNavigationMenuAlignment.end) _buildContent(),
-      ],
-    );
-  }
-
-  Widget _buildModal() {
-    return switch (widget.alignment) {
-      TvNavigationMenuAlignment.start => Stack(
-        children: [
-          Positioned.fill(
-            left: widget.constraints.minWidth,
-            child: widget.builder(
-              context,
-              _expandAnimation,
-              _controller.selectedEntry,
-            ),
-          ),
-
-          Align(alignment: Alignment.centerLeft, child: _buildContent()),
-        ],
-      ),
-
-      TvNavigationMenuAlignment.end => Stack(
-        children: [
-          Positioned.fill(
-            right: widget.constraints.minWidth,
-            child: widget.builder(
-              context,
-              _expandAnimation,
-              _controller.selectedEntry,
-            ),
-          ),
-
-          Align(alignment: Alignment.centerRight, child: _buildContent()),
-        ],
-      ),
-    };
-  }
-
-  Widget _buildContent() {
+  Widget _buildContent(Animation<double> expandAnimation) {
     final collapsedConstraints = widget.constraints.copyWith(
       maxWidth: widget.constraints.minWidth,
     );
@@ -294,6 +237,88 @@ final class TvNavigationDrawerState extends State<TvNavigationDrawer>
           ),
         ),
       ),
+    );
+  }
+}
+
+final class _AnimatedContent extends AnimatedWidget {
+  const _AnimatedContent({
+    required Animation<double> expandAnimation,
+    required this.controller,
+    required this.backgroundColor,
+    required this.constraints,
+    required this.alignment,
+    required this.drawerBuilder,
+    required this.builder,
+  }) : super(listenable: expandAnimation);
+
+  final TvNavigationMenuController controller;
+  final Color? backgroundColor;
+  final BoxConstraints constraints;
+  final TvNavigationMenuAlignment alignment;
+
+  final Widget Function(BuildContext context, Animation<double> expandAnimation)
+  drawerBuilder;
+
+  final Widget Function(
+    BuildContext context,
+    Animation<double> expandAnimation,
+    TvNavigationMenuEntry? entry,
+  )
+  builder;
+
+  @override
+  Widget build(BuildContext context) {
+    final expandAnimation = listenable as Animation<double>;
+    final expandOffset = lerpDouble(
+      0,
+      constraints.maxWidth,
+      expandAnimation.value,
+    );
+
+    return Material(
+      color: backgroundColor,
+      child: switch (alignment) {
+        TvNavigationMenuAlignment.start => Stack(
+          children: [
+            Positioned.fill(
+              left: expandOffset,
+              child: builder(
+                context,
+                expandAnimation,
+                controller.selectedEntry,
+              ),
+            ),
+
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Builder(
+                builder: (context) => drawerBuilder(context, expandAnimation),
+              ),
+            ),
+          ],
+        ),
+
+        TvNavigationMenuAlignment.end => Stack(
+          children: [
+            Positioned.fill(
+              right: expandOffset,
+              child: builder(
+                context,
+                expandAnimation,
+                controller.selectedEntry,
+              ),
+            ),
+
+            Align(
+              alignment: Alignment.centerRight,
+              child: Builder(
+                builder: (context) => drawerBuilder(context, expandAnimation),
+              ),
+            ),
+          ],
+        ),
+      },
     );
   }
 }

@@ -8,6 +8,7 @@ final class CupertinoTvSidebar extends StatefulWidget {
     this.footer,
     this.backgroundColor,
     this.constraints = const BoxConstraints(minWidth: 90, maxWidth: 200),
+    this.floatingHeaderIconSpacing = 12,
     this.drawerMargin = const EdgeInsets.all(16),
     required this.drawerAnimationsDuration,
     this.alignment = TvNavigationMenuAlignment.start,
@@ -22,6 +23,8 @@ final class CupertinoTvSidebar extends StatefulWidget {
     this.onDown,
     this.onLeft,
     this.onRight,
+    this.collapsedHeaderIconBuilder,
+    this.collapsedHeaderItemBuilder,
     this.collapsedHeaderBuilder,
     required this.sidebarBuilder,
     required this.builder,
@@ -33,6 +36,7 @@ final class CupertinoTvSidebar extends StatefulWidget {
   final TvNavigationMenuItem? footer;
   final Color? backgroundColor;
   final BoxConstraints constraints;
+  final double floatingHeaderIconSpacing;
   final EdgeInsets drawerMargin;
   final Duration drawerAnimationsDuration;
   final TvNavigationMenuAlignment alignment;
@@ -47,6 +51,18 @@ final class CupertinoTvSidebar extends StatefulWidget {
   final DpadScopeEventCallback? onDown;
   final DpadScopeEventCallback? onLeft;
   final DpadScopeEventCallback? onRight;
+  final WidgetStateProperty<Widget> Function(
+    BuildContext context,
+    TvNavigationMenuItem selectedItem,
+  )?
+  collapsedHeaderIconBuilder;
+  final Widget Function(
+    BuildContext context,
+    BoxConstraints constraints,
+    Set<WidgetState> itemsStates,
+    TvNavigationMenuItem selectedItem,
+  )?
+  collapsedHeaderItemBuilder;
   final Widget Function(
     BuildContext context,
     TvNavigationMenuEntry? selectedEntry,
@@ -206,9 +222,6 @@ final class _CupertinoTvSidebarState extends State<CupertinoTvSidebar> {
                   controller: widget.controller,
                   header: widget.header,
                   footer: widget.footer,
-                  constraints: widget.constraints,
-                  animateDrawerExpansion: false,
-                  drawerAnimationsDuration: widget.drawerAnimationsDuration,
                   menuItems: widget.menuItems,
                   separatorBuilder: widget.separatorBuilder,
                   policy: widget.policy,
@@ -229,10 +242,27 @@ final class _CupertinoTvSidebarState extends State<CupertinoTvSidebar> {
                 _controller.selectedEntry,
                 _buildSidebarMenuItem(),
               ) ??
-              CupertinoTvSidebarFloatingHeader(
-                controller: _controller,
-                selectedItem: _buildSidebarMenuItem(),
-              ),
+              _buildDefaultFloatingHeader(),
+        );
+      },
+    );
+  }
+
+  Widget _buildDefaultFloatingHeader() {
+    final item = _buildSidebarMenuItem();
+
+    return CupertinoTvSidebarFloatingHeader(
+      controller: _controller,
+      iconSpacing: widget.floatingHeaderIconSpacing,
+      iconBuilder: (context) {
+        return widget.collapsedHeaderIconBuilder!(context, item);
+      },
+      itemBuilder: (context, constraints, states) {
+        return widget.collapsedHeaderItemBuilder!(
+          context,
+          constraints,
+          states,
+          item,
         );
       },
     );

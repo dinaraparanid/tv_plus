@@ -13,7 +13,7 @@ final class TvTabBar extends StatefulWidget {
     this.mainAxisSize = MainAxisSize.max,
     this.mainAxisAlignment = MainAxisAlignment.spaceAround,
     this.crossAxisAlignment = CrossAxisAlignment.center,
-    this.spacing = 0.0,
+    this.separatorBuilder,
     this.focusScopeNode,
     this.parentNode,
     this.autofocus = false,
@@ -43,7 +43,7 @@ final class TvTabBar extends StatefulWidget {
     this.mainAxisSize = MainAxisSize.max,
     this.mainAxisAlignment = MainAxisAlignment.spaceAround,
     this.crossAxisAlignment = CrossAxisAlignment.center,
-    this.spacing = 0.0,
+    this.separatorBuilder,
     this.focusScopeNode,
     this.parentNode,
     this.autofocus = false,
@@ -72,7 +72,7 @@ final class TvTabBar extends StatefulWidget {
   final MainAxisSize mainAxisSize;
   final MainAxisAlignment mainAxisAlignment;
   final CrossAxisAlignment crossAxisAlignment;
-  final double spacing;
+  final Widget Function(BuildContext, int)? separatorBuilder;
   final FocusScopeNode? focusScopeNode;
   final FocusNode? parentNode;
   final bool autofocus;
@@ -93,8 +93,8 @@ final class TvTabBar extends StatefulWidget {
 }
 
 final class TvTabBarState extends State<TvTabBar> {
-  static final _tabBarKey = GlobalKey();
-  static final _indicatorKey = GlobalKey();
+  final _tabBarKey = GlobalKey();
+  final _indicatorKey = GlobalKey();
 
   late TvTabBarController _controller;
   var _ownsController = false;
@@ -291,7 +291,7 @@ final class TvTabBarState extends State<TvTabBar> {
           : widget.mainAxisSize,
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: widget.crossAxisAlignment,
-      spacing: widget.spacing,
+      separatorBuilder: widget.separatorBuilder,
       focusScopeNode: _focusScopeNode,
       parentNode: widget.parentNode,
       autofocus: widget.autofocus,

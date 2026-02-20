@@ -51,7 +51,7 @@ final class DpadFocusScope extends StatefulWidget {
   final KeyEventResult Function(FocusNode, KeyEvent)? onKeyEvent;
   final void Function(FocusScopeNode, bool)? onFocusChanged;
   final void Function(FocusScopeNode)? onFocusDisabledWhenWasFocused;
-  final Widget Function(FocusScopeNode) builder;
+  final Widget Function(BuildContext, FocusScopeNode) builder;
 
   @override
   State<StatefulWidget> createState() => _DpadFocusScopeState();
@@ -240,7 +240,9 @@ final class _DpadFocusScopeState extends State<DpadFocusScope>
             _ => widget.onKeyEvent?.call(node, event) ?? KeyEventResult.ignored,
           };
         },
-        child: widget.builder(_focusScopeNode),
+        child: Builder(
+          builder: (context) => widget.builder(context, _focusScopeNode),
+        ),
       ),
     );
   }

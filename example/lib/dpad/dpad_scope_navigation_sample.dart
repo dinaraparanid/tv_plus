@@ -123,7 +123,7 @@ final class _DpadScopeNavigationSampleState
                       child: DpadFocusScope(
                         focusScopeNode: _focusScopeNode,
                         policy: ReadingOrderTraversalPolicy(),
-                        builder: (_) => GridView.count(
+                        builder: (_, _) => GridView.count(
                           crossAxisCount: 3,
                           mainAxisSpacing: 12,
                           crossAxisSpacing: 12,

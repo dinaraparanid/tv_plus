@@ -8,7 +8,7 @@ final class TvTabBarFoundation extends StatefulWidget {
     this.mainAxisSize = MainAxisSize.max,
     this.mainAxisAlignment = MainAxisAlignment.spaceAround,
     this.crossAxisAlignment = CrossAxisAlignment.center,
-    this.spacing = 0.0,
+    this.separatorBuilder,
     this.focusScopeNode,
     this.parentNode,
     this.autofocus = false,
@@ -30,7 +30,7 @@ final class TvTabBarFoundation extends StatefulWidget {
   final MainAxisSize mainAxisSize;
   final MainAxisAlignment mainAxisAlignment;
   final CrossAxisAlignment crossAxisAlignment;
-  final double spacing;
+  final Widget Function(BuildContext, int)? separatorBuilder;
   final FocusScopeNode? focusScopeNode;
   final FocusNode? parentNode;
   final bool autofocus;
@@ -176,15 +176,19 @@ final class _TvTabBarFoundationState extends State<TvTabBarFoundation>
       onBack: widget.onBack,
       onFocusChanged: widget.onFocusChanged,
       onFocusDisabledWhenWasFocused: widget.onFocusDisabledWhenWasFocused,
-      builder: (_) {
-        return Row(
-          mainAxisSize: widget.mainAxisSize,
-          mainAxisAlignment: widget.mainAxisAlignment,
-          crossAxisAlignment: widget.crossAxisAlignment,
-          spacing: widget.spacing,
-          children: widget.tabs,
-        );
-      },
+      builder: (context, _) => Row(
+        mainAxisSize: widget.mainAxisSize,
+        mainAxisAlignment: widget.mainAxisAlignment,
+        crossAxisAlignment: widget.crossAxisAlignment,
+        children: [
+          for (final (index, tab) in widget.tabs.indexed) ...[
+            tab,
+            ?index != widget.tabs.length - 1
+                ? widget.separatorBuilder?.call(context, index)
+                : null,
+          ],
+        ],
+      ),
     );
   }
 }

@@ -3,23 +3,16 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:tv_plus/tv_plus.dart';
-import 'package:tv_plus_example/material/navigation/navigation_drawer_sample.dart';
+import 'package:tv_plus_example/one_ui/navigation_drawer_sample.dart';
 
 import 'utils.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  group('Material navigation drawer tests', () {
-    testWidgets('Modal', (tester) async {
-      await tester.pumpWidget(const NavigationDrawerSample());
-      await tester.testScenario();
-    });
-
+  group('One Ui navigation drawer tests', () {
     testWidgets('Standard', (tester) async {
-      await tester.pumpWidget(
-        const NavigationDrawerSample(mode: TvNavigationDrawerMode.standard),
-      );
+      await tester.pumpWidget(const OneUiNavigationDrawerSample());
       await tester.testScenario();
     });
   });
@@ -90,7 +83,7 @@ extension NavigationDrawerTest on WidgetTester {
   }
 
   void testContent({required bool focused, required int selectedIndex}) {
-    final contentFinder = find.byKey(NavigationDrawerSample.contentKey);
+    final contentFinder = find.byKey(OneUiNavigationDrawerSample.contentKey);
     final contentDpadFocus = firstWidget<DpadFocus>(contentFinder);
     expect(contentDpadFocus.autofocus, true);
     expect(contentDpadFocus.canRequestFocus, true);
@@ -105,7 +98,7 @@ extension NavigationDrawerTest on WidgetTester {
 
     expect(
       contentText.data,
-      '${ItemEntry(key: ValueKey(NavigationDrawerSample.items[selectedIndex].$1))} content',
+      '${ItemEntry(key: ValueKey(OneUiNavigationDrawerSample.items[selectedIndex].$1))} content',
     );
   }
 
@@ -114,8 +107,8 @@ extension NavigationDrawerTest on WidgetTester {
     required int focusedIndex,
     required bool drawerExpanded,
   }) {
-    for (int i = 0; i < NavigationDrawerSample.items.length; ++i) {
-      final (title, iconData) = NavigationDrawerSample.items[i];
+    for (int i = 0; i < OneUiNavigationDrawerSample.items.length; ++i) {
+      final (title, iconData) = OneUiNavigationDrawerSample.items[i];
 
       final itemFinder = find.byKey(ValueKey(title));
       expect(itemFinder, findsOneWidget);
@@ -135,7 +128,7 @@ extension NavigationDrawerTest on WidgetTester {
 
       expect(
         container.decoration! as BoxDecoration,
-        NavigationDrawerSample.buildDecoration().resolve(states),
+        OneUiNavigationDrawerSample.buildDecoration().resolve(states),
       );
 
       // check title
@@ -159,7 +152,7 @@ extension NavigationDrawerTest on WidgetTester {
         expect(titleWidget.maxLines, 1);
         expect(
           titleWidget.style?.color,
-          NavigationDrawerSample.buildContentColor(states),
+          OneUiNavigationDrawerSample.buildContentColor(states),
         );
       }
     }
