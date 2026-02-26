@@ -234,7 +234,7 @@ final class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final entry = const HeaderEntry();
+    const entry = HeaderEntry();
     final isSelected = controller.selectedEntry == entry;
 
     return _TvNavigationDrawerItem(
@@ -313,7 +313,7 @@ final class _Footer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final entry = const FooterEntry();
+    const entry = FooterEntry();
     final isSelected = controller.selectedEntry == entry;
 
     return _TvNavigationDrawerItem(

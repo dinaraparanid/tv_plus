@@ -28,8 +28,20 @@ final class CupertinoTvSidebar extends StatefulWidget {
     this.collapsedHeaderBuilder,
     required this.sidebarBuilder,
     required this.builder,
-  }) : assert(menuItems.isNotEmpty),
-       policy = policy ?? ReadingOrderTraversalPolicy();
+  }) : policy = policy ?? ReadingOrderTraversalPolicy() {
+    if (menuItems.isEmpty) {
+      throw ArgumentError.value(menuItems, 'menuItems', 'Cannot be empty');
+    }
+
+    if ((collapsedHeaderIconBuilder == null ||
+            collapsedHeaderItemBuilder == null) &&
+        collapsedHeaderBuilder == null) {
+      throw ArgumentError(
+        'Either collapsedHeaderIconBuilder and collapsedHeaderItemBuilder '
+        'or collapsedHeaderBuilder must be provided',
+      );
+    }
+  }
 
   final TvNavigationMenuController? controller;
   final TvNavigationMenuItem? header;

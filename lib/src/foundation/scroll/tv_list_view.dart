@@ -58,7 +58,6 @@ final class TvListView extends BoxScrollView {
     this.prototypeItem,
     required TvScrollItemBuilder itemBuilder,
     int? Function(Key)? findChildIndexCallback,
-    required Widget Function(BuildContext, int) separatorBuilder,
     required int itemCount,
     this.focusScopeNode,
     FocusTraversalPolicy? policy,

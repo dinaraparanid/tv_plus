@@ -23,14 +23,14 @@ final class TvCarouselController with ChangeNotifier {
     if (newSelectedIndex != null) {
       if (newSelectedIndex >= count || newSelectedIndex < 0) {
         throw ArgumentError(
-          "New selected index $newSelectedIndex is out of bounds [0; $count)",
+          'New selected index $newSelectedIndex is out of bounds [0; $count)',
         );
       }
 
       _selectedIndex = newSelectedIndex;
     } else if (selectedIndex >= count) {
       throw ArgumentError(
-        "Current selected index $selectedIndex is out of new bounds $count, "
+        'Current selected index $selectedIndex is out of new bounds $count, '
         "provide new selected index via 'newSelectedIndex' parameter",
       );
     }
@@ -41,7 +41,7 @@ final class TvCarouselController with ChangeNotifier {
 
   void select(int index) {
     if (index >= itemCount || index < 0) {
-      throw ArgumentError("Index $index is out of bounds [0; $itemCount)");
+      throw ArgumentError('Index $index is out of bounds [0; $itemCount)');
     }
 
     _selectedIndex = index;

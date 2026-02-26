@@ -1,7 +1,7 @@
 part of 'tab.dart';
 
-const double _kTabHeight = 46.0;
-const double _kTextAndIconTabHeight = 72.0;
+const double _kTabHeight = 46;
+const double _kTextAndIconTabHeight = 72;
 
 final class TvTab extends StatelessWidget implements PreferredSizeWidget {
   const TvTab({
@@ -74,7 +74,7 @@ final class TvTab extends StatelessWidget implements PreferredSizeWidget {
 
     return SizedBox(
       height: height ?? calculatedHeight,
-      child: Center(widthFactor: 1.0, child: label),
+      child: Center(widthFactor: 1, child: label),
     );
   }
 

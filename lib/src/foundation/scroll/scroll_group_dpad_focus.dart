@@ -62,7 +62,7 @@ final class _ScrollGroupDpadFocusState extends State<ScrollGroupDpadFocus> {
   @override
   void didUpdateWidget(covariant ScrollGroupDpadFocus oldWidget) {
     if (widget.canRequestFocus != oldWidget.canRequestFocus) {
-      if (_focusNode.hasFocus && widget.canRequestFocus == false) {
+      if (_focusNode.hasFocus && !widget.canRequestFocus) {
         widget.onFocusDisabledWhenWasFocused?.call();
       }
 
