@@ -26,6 +26,7 @@ final class TvGridView extends BoxScrollView {
     this.onDown,
     this.onLeft,
     this.onRight,
+    this.onKeyEvent,
     this.onFocusChanged,
     this.onFocusDisabledWhenWasFocused,
     super.dragStartBehavior,
@@ -64,6 +65,7 @@ final class TvGridView extends BoxScrollView {
     this.onDown,
     this.onLeft,
     this.onRight,
+    this.onKeyEvent,
     this.onFocusChanged,
     this.onFocusDisabledWhenWasFocused,
     bool addAutomaticKeepAlives = true,
@@ -98,6 +100,7 @@ final class TvGridView extends BoxScrollView {
   final DpadScopeEventCallback? onDown;
   final DpadScopeEventCallback? onLeft;
   final DpadScopeEventCallback? onRight;
+  final KeyEventResult Function(FocusNode, KeyEvent)? onKeyEvent;
   final void Function(FocusScopeNode, bool)? onFocusChanged;
   final void Function(FocusScopeNode)? onFocusDisabledWhenWasFocused;
 
@@ -118,6 +121,7 @@ final class TvGridView extends BoxScrollView {
       onDown: onDown,
       onLeft: onLeft,
       onRight: onRight,
+      onKeyEvent: onKeyEvent,
       onFocusChanged: onFocusChanged,
       onFocusDisabledWhenWasFocused: onFocusDisabledWhenWasFocused,
       builder: (context, _) => super.build(context),

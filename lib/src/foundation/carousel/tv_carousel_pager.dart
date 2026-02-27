@@ -59,6 +59,9 @@ final class TvCarouselPager extends StatefulWidget {
   )
   itemBuilder;
 
+  static TvCarouselController of(BuildContext context) =>
+      context.findAncestorStateOfType<_TvCarouselPagerState>()!._controller;
+
   @override
   State<StatefulWidget> createState() => _TvCarouselPagerState();
 }
@@ -168,6 +171,10 @@ final class _TvCarouselPagerState extends State<TvCarouselPager>
 
     if (_ownsController) {
       _controller.dispose();
+    }
+
+    if (_ownsNode) {
+      _focusNode.dispose();
     }
 
     super.dispose();
