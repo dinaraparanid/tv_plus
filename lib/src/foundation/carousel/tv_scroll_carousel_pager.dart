@@ -7,6 +7,7 @@ final class TvScrollCarouselPager extends StatefulWidget {
     this.itemCount,
     this.initialActiveIndex,
     this.capacity,
+    this.viewportAlignment,
     this.controller,
     this.scrollController,
     this.focusScopeNode,
@@ -28,6 +29,12 @@ final class TvScrollCarouselPager extends StatefulWidget {
   final int? itemCount;
   final int? initialActiveIndex;
   final int? capacity;
+  final double? Function(
+    BuildContext context,
+    int index,
+    (int, int) visibleIndices,
+  )?
+  viewportAlignment;
   final TvCarouselController? controller;
   final ScrollController? scrollController;
   final FocusScopeNode? focusScopeNode;
@@ -257,7 +264,11 @@ final class _TvScrollCarouselPager extends State<TvScrollCarouselPager>
         shrinkWrap: true,
         separatorBuilder: (_, _) => SizedBox(width: widget.spacing),
         itemBuilder: (context, index) => ScrollGroupDpadFocus(
-          viewportAlignment: index == _visibleIndices.$1 ? 0.0 : null,
+          viewportAlignment: widget.viewportAlignment?.call(
+            context,
+            index,
+            _visibleIndices,
+          ),
           builder: (context, node) => widget.itemBuilder(
             context,
             index,

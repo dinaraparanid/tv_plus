@@ -121,6 +121,12 @@ final class _ScrollCarouselPagerSampleState
                     autofocus: true,
                     spacing: 8,
                     capacity: 8,
+                    viewportAlignment:
+                        (context, selectedIndex, visibleIndices) {
+                          return selectedIndex == visibleIndices.$1
+                              ? 0.0
+                              : null;
+                        },
                     itemBuilder:
                         (
                           context,
