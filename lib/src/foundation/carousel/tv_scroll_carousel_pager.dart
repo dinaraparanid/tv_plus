@@ -21,6 +21,7 @@ final class TvScrollCarouselPager extends StatefulWidget {
     this.onKeyEvent,
     this.onFocusChanged,
     this.onFocusDisabledWhenWasFocused,
+    this.padding,
     this.separatorBuilder,
     required this.itemBuilder,
   });
@@ -48,6 +49,7 @@ final class TvScrollCarouselPager extends StatefulWidget {
   final KeyEventResult Function(FocusNode, KeyEvent)? onKeyEvent;
   final void Function(FocusNode, bool)? onFocusChanged;
   final void Function(FocusScopeNode)? onFocusDisabledWhenWasFocused;
+  final EdgeInsetsGeometry? padding;
   final Widget Function(
     BuildContext context,
     int index,
@@ -268,6 +270,7 @@ final class _TvScrollCarouselPager extends State<TvScrollCarouselPager>
         controller: _scrollController,
         scrollDirection: Axis.horizontal,
         shrinkWrap: true,
+        padding: widget.padding,
         separatorBuilder: (context, index) =>
             widget.separatorBuilder?.call(
               context,
