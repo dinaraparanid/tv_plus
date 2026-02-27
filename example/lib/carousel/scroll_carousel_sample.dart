@@ -119,7 +119,10 @@ final class _ScrollCarouselPagerSampleState
                     controller: _controller,
                     focusScopeNode: _focusScopeNode,
                     autofocus: true,
-                    spacing: 8,
+                    separatorBuilder:
+                        (context, index, selectedIndex, visibleIndices) {
+                          return const SizedBox(width: 8);
+                        },
                     capacity: 8,
                     viewportAlignment:
                         (context, selectedIndex, visibleIndices) {

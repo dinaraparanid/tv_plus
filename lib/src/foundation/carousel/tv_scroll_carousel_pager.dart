@@ -21,7 +21,7 @@ final class TvScrollCarouselPager extends StatefulWidget {
     this.onKeyEvent,
     this.onFocusChanged,
     this.onFocusDisabledWhenWasFocused,
-    this.spacing = 0,
+    this.separatorBuilder,
     required this.itemBuilder,
   });
 
@@ -48,7 +48,13 @@ final class TvScrollCarouselPager extends StatefulWidget {
   final KeyEventResult Function(FocusNode, KeyEvent)? onKeyEvent;
   final void Function(FocusNode, bool)? onFocusChanged;
   final void Function(FocusScopeNode)? onFocusDisabledWhenWasFocused;
-  final double spacing;
+  final Widget Function(
+    BuildContext context,
+    int index,
+    int selectedIndex,
+    (int, int) visibleIndices,
+  )?
+  separatorBuilder;
   final Widget Function(
     BuildContext context,
     int index,
@@ -262,7 +268,14 @@ final class _TvScrollCarouselPager extends State<TvScrollCarouselPager>
         controller: _scrollController,
         scrollDirection: Axis.horizontal,
         shrinkWrap: true,
-        separatorBuilder: (_, _) => SizedBox(width: widget.spacing),
+        separatorBuilder: (context, index) =>
+            widget.separatorBuilder?.call(
+              context,
+              index,
+              _controller.selectedIndex,
+              _visibleIndices,
+            ) ??
+            const SizedBox(),
         itemBuilder: (context, index) => ScrollGroupDpadFocus(
           viewportAlignment: widget.viewportAlignment?.call(
             context,
