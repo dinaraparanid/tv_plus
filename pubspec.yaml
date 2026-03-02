@@ -28,18 +28,11 @@ dev_dependencies:
 
 flutter:
   generate: true
-  assets:
-    - assets/icons/
   plugin:
     platforms:
       android:
         package: com.paranid5.tv_plus
         pluginClass: TvPlusPlugin
-
-flutter_gen:
-  output: lib/assets/
-  integrations:
-    flutter_svg: true
 
 dependency_overrides:
   tv_plus_foundation:
