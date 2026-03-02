@@ -1,3 +1,9 @@
+# 0.4.0
+* feat: scrollable carousel pager
+* feat: added onKeyEvent parameter for TvListView & TvGridView
+* chore: multi-modularity support for different design systems
+* chore: multiple improvements related to stability, performance, and code quality
+
 ## 0.3.0
 * fix: select key for Tizen TV
 * feat: added hasFocus flag to onFocusChanged() of ScrollGroupDpadFocus & TvTab
