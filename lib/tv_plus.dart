@@ -1,4 +1,4 @@
-export 'src/cupertino/cupertino.dart' hide CupertinoTvConstants;
-export 'src/foundation/foundation.dart';
-export 'src/material/material.dart';
-export 'src/one_ui/one_ui.dart';
+export 'package:tv_plus_cupertino/cupertino.dart';
+export 'package:tv_plus_foundation/foundation.dart';
+export 'package:tv_plus_material/material.dart';
+export 'package:tv_plus_one_ui/one_ui.dart';

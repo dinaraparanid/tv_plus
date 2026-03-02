@@ -29,3 +29,13 @@ dev_dependencies:
 flutter:
   generate: true
   uses-material-design: true
+
+dependency_overrides:
+  tv_plus_foundation:
+    path: ../foundation
+  tv_plus_cupertino:
+    path: ../cupertino
+  tv_plus_material:
+    path: ../material
+  tv_plus_one_ui:
+    path: ../one_ui

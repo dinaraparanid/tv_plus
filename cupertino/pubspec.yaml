@@ -1,4 +1,4 @@
-name: tv_plus
+name: tv_plus_cupertino
 description: "Smart TV toolkit"
 version: 0.4.0
 repository: https://github.com/dinaraparanid/tv_plus
@@ -10,13 +10,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  plugin_platform_interface: ^2.0.2
   flutter_svg: ^2.1.0
   vector_graphics: ^1.1.19
   tv_plus_foundation: ^0.4.0
-  tv_plus_cupertino: ^0.4.0
-  tv_plus_material: ^0.4.0
-  tv_plus_one_ui: ^0.4.0
 
 dev_dependencies:
   flutter_test:
@@ -29,12 +25,7 @@ dev_dependencies:
 flutter:
   generate: true
   assets:
-    - assets/icons/
-  plugin:
-    platforms:
-      android:
-        package: com.paranid5.tv_plus
-        pluginClass: TvPlusPlugin
+    - ../assets/icons/
 
 flutter_gen:
   output: lib/assets/
@@ -43,10 +34,4 @@ flutter_gen:
 
 dependency_overrides:
   tv_plus_foundation:
-    path: foundation
-  tv_plus_cupertino:
-    path: cupertino
-  tv_plus_material:
-    path: material
-  tv_plus_one_ui:
-    path: one_ui
+    path: ../foundation
