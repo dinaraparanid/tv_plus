@@ -186,6 +186,10 @@ final class CupertinoTvTabBarState extends State<CupertinoTvTabBar> {
   void _tabListener() {
     if (_currentIndex != _controller.selectedIndex) {
       setState(() => _currentIndex = _controller.selectedIndex);
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _updateSelectionConstraints();
+      });
     }
   }
 
@@ -288,18 +292,10 @@ final class CupertinoTvTabBarState extends State<CupertinoTvTabBar> {
           onUp: widget.onUp,
           onDown: widget.onDown,
           onLeft: (node, event, isOutOfScope) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              _updateSelectionConstraints();
-            });
-
             return widget.onLeft?.call(node, event, isOutOfScope) ??
                 KeyEventResult.handled;
           },
           onRight: (node, event, isOutOfScope) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              _updateSelectionConstraints();
-            });
-
             return widget.onRight?.call(node, event, isOutOfScope) ??
                 KeyEventResult.handled;
           },
