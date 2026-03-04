@@ -11,6 +11,9 @@ final class CarouselPagerSample extends StatefulWidget {
   static const animationDuration = Duration(milliseconds: 300);
   static const initialSelectedIndex = 1;
 
+  static final contentKey = GlobalKey();
+  static final pagerKey = GlobalKey();
+
   static const items = [
     Colors.red,
     Colors.green,
@@ -73,6 +76,7 @@ final class _CarouselPagerSampleState extends State<CarouselPagerSample> {
                 spacing: 16,
                 children: [
                   AnimatedContainer(
+                    key: CarouselPagerSample.contentKey,
                     duration: CarouselPagerSample.animationDuration,
                     height: 200,
                     width: 600,
@@ -83,12 +87,15 @@ final class _CarouselPagerSampleState extends State<CarouselPagerSample> {
                   ),
 
                   TvCarouselPager(
+                    key: CarouselPagerSample.pagerKey,
                     controller: _controller,
                     focusNode: _focusNode,
                     autofocus: true,
-                    spacing: 8,
+                    separatorBuilder: (_, _, _) => const SizedBox(width: 8),
                     itemBuilder: (context, index, isSelected, isFocused) {
-                      return Container(
+                      return AnimatedContainer(
+                        key: ValueKey(index),
+                        duration: CarouselPagerSample.animationDuration,
                         width: 8,
                         height: 8,
                         decoration: BoxDecoration(

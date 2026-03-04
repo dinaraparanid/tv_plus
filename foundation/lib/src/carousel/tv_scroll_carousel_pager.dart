@@ -169,7 +169,7 @@ final class _TvScrollCarouselPager extends State<TvScrollCarouselPager>
 
   void _setVisibleIndices() {
     final start = math.max(0, _controller.selectedIndex - _capacity ~/ 2);
-    final end = math.min(_controller.itemCount, start + _capacity);
+    final end = math.min(_controller.itemCount, start + _capacity - 1);
     _visibleIndices = (start, end);
   }
 
@@ -285,12 +285,12 @@ final class _TvScrollCarouselPager extends State<TvScrollCarouselPager>
             index,
             _visibleIndices,
           ),
-          builder: (context, node) => widget.itemBuilder(
+          builder: (context, _) => widget.itemBuilder(
             context,
             index,
             _controller.selectedIndex,
             _visibleIndices,
-            node.hasFocus,
+            _focusScopeNode.hasFocus,
           ),
         ),
       ),

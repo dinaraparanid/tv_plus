@@ -10,7 +10,10 @@ final class ScrollCarouselPagerSample extends StatefulWidget {
   static const unselectedIndicatorColor = Color(0x33FFFFFF);
   static const animationDuration = Duration(milliseconds: 300);
   static const initialSelectedIndex = 1;
-  static const capacity = 8;
+  static const capacity = 5;
+
+  static final contentKey = GlobalKey();
+  static final pagerKey = GlobalKey();
 
   static final items = [
     CupertinoColors.systemRed,
@@ -25,18 +28,7 @@ final class ScrollCarouselPagerSample extends StatefulWidget {
     CupertinoColors.systemGrey,
   ];
 
-  @override
-  State<StatefulWidget> createState() => _ScrollCarouselPagerSampleState();
-}
-
-final class _ScrollCarouselPagerSampleState
-    extends State<ScrollCarouselPagerSample> {
-  late final TvCarouselController _controller;
-  late final FocusScopeNode _focusScopeNode;
-
-  var _selectedIndex = ScrollCarouselPagerSample.initialSelectedIndex;
-
-  static double _itemSize({
+  static double dotSize({
     required int index,
     required int selectedIndex,
     required (int, int) visibleIndices,
@@ -45,8 +37,19 @@ final class _ScrollCarouselPagerSampleState
       return 0;
     }
 
+    final mid = (visibleIndices.$1 + visibleIndices.$2) ~/ 2;
+
+    if ((visibleIndices.$1 == 0 && index < mid) ||
+        (visibleIndices.$2 == items.length - 1 && index > mid)) {
+      return 8;
+    }
+
     if (index == visibleIndices.$1 && selectedIndex > visibleIndices.$1 + 1) {
       return 4;
+    }
+
+    if (index == visibleIndices.$1 && selectedIndex > visibleIndices.$1) {
+      return 6;
     }
 
     if (index == visibleIndices.$1 + 1 &&
@@ -58,6 +61,10 @@ final class _ScrollCarouselPagerSampleState
       return 4;
     }
 
+    if (index == visibleIndices.$2 && selectedIndex < visibleIndices.$2) {
+      return 6;
+    }
+
     if (index == visibleIndices.$2 - 1 &&
         selectedIndex < visibleIndices.$2 - 1) {
       return 6;
@@ -65,6 +72,17 @@ final class _ScrollCarouselPagerSampleState
 
     return 8;
   }
+
+  @override
+  State<StatefulWidget> createState() => _ScrollCarouselPagerSampleState();
+}
+
+final class _ScrollCarouselPagerSampleState
+    extends State<ScrollCarouselPagerSample> {
+  late final TvCarouselController _controller;
+  late final FocusScopeNode _focusScopeNode;
+
+  var _selectedIndex = ScrollCarouselPagerSample.initialSelectedIndex;
 
   @override
   void initState() {
@@ -105,6 +123,7 @@ final class _ScrollCarouselPagerSampleState
                 spacing: 16,
                 children: [
                   AnimatedContainer(
+                    key: ScrollCarouselPagerSample.contentKey,
                     duration: ScrollCarouselPagerSample.animationDuration,
                     height: 200,
                     width: 600,
@@ -115,6 +134,7 @@ final class _ScrollCarouselPagerSampleState
                   ),
 
                   TvScrollCarouselPager(
+                    key: ScrollCarouselPagerSample.pagerKey,
                     height: 20,
                     controller: _controller,
                     focusScopeNode: _focusScopeNode,
@@ -123,7 +143,7 @@ final class _ScrollCarouselPagerSampleState
                         (context, index, selectedIndex, visibleIndices) {
                           return const SizedBox(width: 8);
                         },
-                    capacity: 8,
+                    capacity: ScrollCarouselPagerSample.capacity,
                     viewportAlignment:
                         (context, selectedIndex, visibleIndices) {
                           return selectedIndex == visibleIndices.$1
@@ -138,7 +158,7 @@ final class _ScrollCarouselPagerSampleState
                           visibleIndices,
                           isFocused,
                         ) {
-                          final size = _itemSize(
+                          final size = ScrollCarouselPagerSample.dotSize(
                             index: index,
                             selectedIndex: selectedIndex,
                             visibleIndices: visibleIndices,
@@ -147,25 +167,16 @@ final class _ScrollCarouselPagerSampleState
                           final isSelected = index == selectedIndex;
 
                           return AnimatedContainer(
+                            key: ValueKey(index),
                             duration:
                                 ScrollCarouselPagerSample.animationDuration,
                             width: size,
                             height: size,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: switch ((isSelected, isFocused)) {
-                                (false, _) =>
-                                  ScrollCarouselPagerSample
-                                      .unselectedIndicatorColor,
-
-                                (true, true) =>
-                                  ScrollCarouselPagerSample
-                                      .selectedFocusedIndicatorColor,
-
-                                (true, false) =>
-                                  ScrollCarouselPagerSample
-                                      .selectedUnfocusedIndicatorColor,
-                              },
+                              color: isSelected
+                                  ? ScrollCarouselPagerSample.selectedFocusedIndicatorColor
+                                  : ScrollCarouselPagerSample.unselectedIndicatorColor,
                             ),
                           );
                         },
