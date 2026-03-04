@@ -232,6 +232,7 @@ final class TabItem extends StatelessWidget {
 
     return TvTab(
       autofocus: index == currentIndex,
+      onSelected: () => TvTabBarFoundation.of(context).select(index),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         spacing: 8,

@@ -46,6 +46,11 @@ final class TvTabBarFoundation extends StatefulWidget {
   final void Function(FocusScopeNode, bool)? onFocusChanged;
   final void Function(FocusScopeNode)? onFocusDisabledWhenWasFocused;
 
+  static TvTabBarController? maybeOf(BuildContext context) =>
+      context.findAncestorStateOfType<_TvTabBarFoundationState>()?._controller;
+
+  static TvTabBarController of(BuildContext context) => maybeOf(context)!;
+
   @override
   State<StatefulWidget> createState() => _TvTabBarFoundationState();
 }
@@ -182,7 +187,7 @@ final class _TvTabBarFoundationState extends State<TvTabBarFoundation>
         crossAxisAlignment: widget.crossAxisAlignment,
         children: [
           for (final (index, tab) in widget.tabs.indexed) ...[
-            tab,
+            GestureDetector(onTap: () => _controller.select(index), child: tab),
             ?index != widget.tabs.length - 1
                 ? widget.separatorBuilder?.call(context, index)
                 : null,
