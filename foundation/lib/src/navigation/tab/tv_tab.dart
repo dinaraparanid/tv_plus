@@ -16,6 +16,7 @@ final class TvTab extends StatelessWidget implements PreferredSizeWidget {
     this.autofocus = false,
     this.canRequestFocus = true,
     this.viewportAlignment = 0.5,
+    required this.onSelected,
     this.onLeft,
     this.onRight,
     this.onSelect,
@@ -36,6 +37,7 @@ final class TvTab extends StatelessWidget implements PreferredSizeWidget {
   final bool autofocus;
   final bool canRequestFocus;
   final double? viewportAlignment;
+  final VoidCallback onSelected;
   final DpadEventCallback? onLeft;
   final DpadEventCallback? onRight;
   final DpadEventCallback? onSelect;
@@ -105,7 +107,13 @@ final class TvTab extends StatelessWidget implements PreferredSizeWidget {
       onFocusChanged: onFocusChanged,
       onFocusDisabledWhenWasFocused: onFocusDisabledWhenWasFocused,
       scrollToNextNodeDuration: scrollToNextNodeDuration,
-      builder: (context, focusNode) => _buildTab(),
+      builder: (context, focusNode) => GestureDetector(
+        onTap: () {
+          focusNode.requestFocus();
+          onSelected();
+        },
+        child: _buildTab(),
+      ),
     );
   }
 }

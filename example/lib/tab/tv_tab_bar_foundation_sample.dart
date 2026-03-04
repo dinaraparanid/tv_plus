@@ -329,6 +329,7 @@ final class TabItem extends StatelessWidget {
       child: TvTab(
         autofocus: index == currentIndex,
         onFocusChanged: onFocusChanged,
+        onSelected: () => TvTabBarFoundation.of(context).select(index),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Row(
