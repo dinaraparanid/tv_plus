@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'carousel/scroll_carousel_sample.dart';
+import 'carousel/scroll_carousel_pager_sample.dart';
 
 final class App extends StatelessWidget {
   const App({super.key});

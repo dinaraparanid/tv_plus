@@ -28,7 +28,7 @@ final class TvCarouselPager extends StatefulWidget {
     this.onKeyEvent,
     this.onFocusChanged,
     this.onFocusDisabledWhenWasFocused,
-    this.spacing = 0,
+    this.separatorBuilder,
     required this.itemBuilder,
   });
 
@@ -50,7 +50,8 @@ final class TvCarouselPager extends StatefulWidget {
   final KeyEventResult Function(FocusNode, KeyEvent)? onKeyEvent;
   final void Function(FocusNode, bool)? onFocusChanged;
   final void Function()? onFocusDisabledWhenWasFocused;
-  final double spacing;
+  final Widget Function(BuildContext context, int index, int selectedIndex)?
+  separatorBuilder;
   final Widget Function(
     BuildContext context,
     int index,
@@ -198,15 +199,18 @@ final class _TvCarouselPagerState extends State<TvCarouselPager>
       onFocusDisabledWhenWasFocused: widget.onFocusDisabledWhenWasFocused,
       builder: (context, node) => Row(
         mainAxisSize: MainAxisSize.min,
-        spacing: widget.spacing,
         children: [
-          for (var i = 0; i < _controller.itemCount; ++i)
+          for (var i = 0; i < _controller.itemCount; ++i) ...[
             widget.itemBuilder(
               context,
               i,
               _controller.selectedIndex == i,
               node.hasFocus,
             ),
+
+            if (widget.separatorBuilder != null)
+              widget.separatorBuilder!(context, i, _controller.selectedIndex),
+          ],
         ],
       ),
     );
