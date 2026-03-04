@@ -236,23 +236,37 @@ final class _Header extends StatelessWidget {
   Widget build(BuildContext context) {
     const entry = HeaderEntry();
     final isSelected = controller.selectedEntry == entry;
+    final focusNode = controller.headerNode!;
 
-    return _TvNavigationDrawerItem(
-      item: item,
-      focusNode: controller.headerNode!,
-      canRequestFocus: item.canRequestFocus,
-      isSelected: isSelected,
-      autofocus: drawerAutofocus && isSelected,
-      viewportAlignment: viewportAlignment,
-      onSelect: (_, _) {
-        if (!item.isSelectable) {
-          return KeyEventResult.ignored;
-        }
+    return GestureDetector(
+      onTap: !item.isSelectable
+          ? null
+          : () {
+              if (!controller.focusScopeNode.hasFocus) {
+                controller.focusScopeNode.requestFocus();
+              } else {
+                focusNode.requestFocus();
+                controller.select(entry);
+                item.onSelect?.call();
+              }
+            },
+      child: _TvNavigationDrawerItem(
+        item: item,
+        focusNode: focusNode,
+        canRequestFocus: item.canRequestFocus,
+        isSelected: isSelected,
+        autofocus: drawerAutofocus && isSelected,
+        viewportAlignment: viewportAlignment,
+        onSelect: (_, _) {
+          if (!item.isSelectable) {
+            return KeyEventResult.ignored;
+          }
 
-        controller.select(entry);
-        item.onSelect?.call();
-        return KeyEventResult.handled;
-      },
+          controller.select(entry);
+          item.onSelect?.call();
+          return KeyEventResult.handled;
+        },
+      ),
     );
   }
 }
@@ -277,23 +291,37 @@ final class _Item extends StatelessWidget {
     final entryKey = item.key ?? ValueKey(index);
     final entry = ItemEntry(key: entryKey);
     final isSelected = controller.selectedEntry == entry;
+    final focusNode = controller.itemsNodes[entryKey]!;
 
-    return _TvNavigationDrawerItem(
-      item: item,
-      focusNode: controller.itemsNodes[entryKey]!,
-      canRequestFocus: item.canRequestFocus,
-      isSelected: isSelected,
-      autofocus: drawerAutofocus && isSelected,
-      viewportAlignment: viewportAlignment,
-      onSelect: (_, _) {
-        if (!item.isSelectable) {
-          return KeyEventResult.ignored;
-        }
+    return GestureDetector(
+      onTap: !item.isSelectable
+          ? null
+          : () {
+              if (!controller.focusScopeNode.hasFocus) {
+                controller.focusScopeNode.requestFocus();
+              } else {
+                focusNode.requestFocus();
+                controller.select(entry);
+                item.onSelect?.call();
+              }
+            },
+      child: _TvNavigationDrawerItem(
+        item: item,
+        focusNode: focusNode,
+        canRequestFocus: item.canRequestFocus,
+        isSelected: isSelected,
+        autofocus: drawerAutofocus && isSelected,
+        viewportAlignment: viewportAlignment,
+        onSelect: (_, _) {
+          if (!item.isSelectable) {
+            return KeyEventResult.ignored;
+          }
 
-        controller.select(entry);
-        item.onSelect?.call();
-        return KeyEventResult.handled;
-      },
+          controller.select(entry);
+          item.onSelect?.call();
+          return KeyEventResult.handled;
+        },
+      ),
     );
   }
 }
@@ -315,23 +343,37 @@ final class _Footer extends StatelessWidget {
   Widget build(BuildContext context) {
     const entry = FooterEntry();
     final isSelected = controller.selectedEntry == entry;
+    final focusNode = controller.footerNode!;
 
-    return _TvNavigationDrawerItem(
-      item: item,
-      focusNode: controller.footerNode!,
-      canRequestFocus: item.canRequestFocus,
-      isSelected: isSelected,
-      autofocus: drawerAutofocus && isSelected,
-      viewportAlignment: viewportAlignment,
-      onSelect: (_, _) {
-        if (!item.isSelectable) {
-          return KeyEventResult.ignored;
-        }
+    return GestureDetector(
+      onTap: !item.isSelectable
+          ? null
+          : () {
+              if (!controller.focusScopeNode.hasFocus) {
+                controller.focusScopeNode.requestFocus();
+              } else {
+                focusNode.requestFocus();
+                controller.select(entry);
+                item.onSelect?.call();
+              }
+            },
+      child: _TvNavigationDrawerItem(
+        item: item,
+        focusNode: focusNode,
+        canRequestFocus: item.canRequestFocus,
+        isSelected: isSelected,
+        autofocus: drawerAutofocus && isSelected,
+        viewportAlignment: viewportAlignment,
+        onSelect: (_, _) {
+          if (!item.isSelectable) {
+            return KeyEventResult.ignored;
+          }
 
-        controller.select(entry);
-        item.onSelect?.call();
-        return KeyEventResult.handled;
-      },
+          controller.select(entry);
+          item.onSelect?.call();
+          return KeyEventResult.handled;
+        },
+      ),
     );
   }
 }
