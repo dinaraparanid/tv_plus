@@ -32,10 +32,13 @@ flutter:
 
 dependency_overrides:
   tv_plus_foundation:
-    path: ../foundation
+    path: ../packages/foundation
   tv_plus_cupertino:
-    path: ../cupertino
+    path: ../packages/cupertino
   tv_plus_material:
-    path: ../material
+    path: ../packages/material
   tv_plus_one_ui:
-    path: ../one_ui
+    path: ../packages/one_ui
+
+melos:
+  useRootAsPackage: true

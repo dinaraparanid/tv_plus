@@ -1,7 +1,8 @@
-name: tv_plus_one_ui
+name: tv_plus_foundation
 description: "Smart TV toolkit"
 version: 0.4.0
 repository: https://github.com/dinaraparanid/tv_plus
+resolution: workspace
 
 environment:
   sdk: ^3.9.2
@@ -10,7 +11,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  tv_plus_foundation: ^0.4.0
 
 dev_dependencies:
   flutter_test:
@@ -20,6 +20,5 @@ dev_dependencies:
   flutter_gen_runner: ^5.11.0
   flutter_pre_commit: ^0.2.4
 
-dependency_overrides:
-  tv_plus_foundation:
-    path: ../foundation
+melos:
+  useRootAsPackage: true

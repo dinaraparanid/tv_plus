@@ -7,6 +7,12 @@ environment:
   sdk: ^3.9.2
   flutter: '>=3.3.0'
 
+workspace:
+  - packages/cupertino
+  - packages/foundation
+  - packages/material
+  - packages/one_ui
+
 dependencies:
   flutter:
     sdk: flutter
@@ -26,6 +32,7 @@ dev_dependencies:
   flutter_gen_runner: ^5.11.0
   flutter_pre_commit: ^0.2.4
   test: ^1.29.0
+  melos: ^7.4.0
 
 flutter:
   generate: true
@@ -34,13 +41,3 @@ flutter:
       android:
         package: com.paranid5.tv_plus
         pluginClass: TvPlusPlugin
-
-dependency_overrides:
-  tv_plus_foundation:
-    path: foundation
-  tv_plus_cupertino:
-    path: cupertino
-  tv_plus_material:
-    path: material
-  tv_plus_one_ui:
-    path: one_ui
