@@ -625,28 +625,28 @@ packages:
   tv_plus_cupertino:
     dependency: "direct overridden"
     description:
-      path: "../cupertino"
+      path: "../packages/cupertino"
       relative: true
     source: path
     version: "0.4.0"
   tv_plus_foundation:
     dependency: "direct overridden"
     description:
-      path: "../foundation"
+      path: "../packages/foundation"
       relative: true
     source: path
     version: "0.4.0"
   tv_plus_material:
     dependency: "direct overridden"
     description:
-      path: "../material"
+      path: "../packages/material"
       relative: true
     source: path
     version: "0.4.0"
   tv_plus_one_ui:
     dependency: "direct overridden"
     description:
-      path: "../one_ui"
+      path: "../packages/one_ui"
       relative: true
     source: path
     version: "0.4.0"
