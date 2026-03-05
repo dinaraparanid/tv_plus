@@ -39,6 +39,3 @@ dependency_overrides:
     path: ../packages/material
   tv_plus_one_ui:
     path: ../packages/one_ui
-
-melos:
-  useRootAsPackage: true
