@@ -243,7 +243,7 @@ final class _Header extends StatelessWidget {
           ? null
           : () {
               if (!controller.focusScopeNode.hasFocus) {
-                controller.focusScopeNode.requestFocus();
+                controller.requestFocusOnMenu();
               } else {
                 focusNode.requestFocus();
                 controller.select(entry);
@@ -298,7 +298,7 @@ final class _Item extends StatelessWidget {
           ? null
           : () {
               if (!controller.focusScopeNode.hasFocus) {
-                controller.focusScopeNode.requestFocus();
+                controller.requestFocusOnMenu();
               } else {
                 focusNode.requestFocus();
                 controller.select(entry);
@@ -350,7 +350,7 @@ final class _Footer extends StatelessWidget {
           ? null
           : () {
               if (!controller.focusScopeNode.hasFocus) {
-                controller.focusScopeNode.requestFocus();
+                controller.requestFocusOnMenu();
               } else {
                 focusNode.requestFocus();
                 controller.select(entry);

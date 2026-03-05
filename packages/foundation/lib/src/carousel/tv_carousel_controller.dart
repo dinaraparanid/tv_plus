@@ -5,11 +5,15 @@ final class TvCarouselController with ChangeNotifier {
     : _itemCount = itemCount,
       _selectedIndex = initialActiveIndex {
     if (itemCount <= 0) {
-      throw ArgumentError('Item count must be > 0');
+      throw ArgumentError.value(itemCount, 'itemCount', 'must be > 0');
     }
 
     if (initialActiveIndex < 0 || initialActiveIndex >= itemCount) {
-      throw ArgumentError('Initial index is out of bounds: [0, $itemCount)');
+      throw ArgumentError.value(
+        initialActiveIndex,
+        'initialActiveIndex',
+        'must be in range [0, $itemCount)',
+      );
     }
   }
 
@@ -24,13 +28,15 @@ final class TvCarouselController with ChangeNotifier {
 
   void reset({required int count, int? newSelectedIndex}) {
     if (count <= 0) {
-      throw ArgumentError('Item count must be > 0');
+      throw ArgumentError.value(count, 'count', 'must be > 0');
     }
 
     if (newSelectedIndex != null) {
       if (newSelectedIndex >= count || newSelectedIndex < 0) {
-        throw ArgumentError(
-          'New selected index $newSelectedIndex is out of bounds [0; $count)',
+        throw ArgumentError.value(
+          newSelectedIndex,
+          'newSelectedIndex',
+          'must be in range [0, $count)',
         );
       }
 
@@ -47,8 +53,16 @@ final class TvCarouselController with ChangeNotifier {
   }
 
   void select(int index) {
+    if (index == _selectedIndex) {
+      return;
+    }
+
     if (index >= itemCount || index < 0) {
-      throw ArgumentError('Index $index is out of bounds [0; $itemCount)');
+      throw ArgumentError.value(
+        index,
+        'index',
+        'must be in range [0, $itemCount)',
+      );
     }
 
     _selectedIndex = index;

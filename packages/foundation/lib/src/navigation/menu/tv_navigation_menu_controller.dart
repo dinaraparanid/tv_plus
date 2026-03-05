@@ -42,6 +42,10 @@ final class TvNavigationMenuController with ChangeNotifier {
   FocusNode get selectedFocusNode => selectedFocusNodeOrNull!;
 
   void select(TvNavigationMenuEntry entry) {
+    if (entry == selectedEntry) {
+      return;
+    }
+
     _entry = entry;
     notifyListeners();
   }
