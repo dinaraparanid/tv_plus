@@ -1,6 +1,6 @@
 # tv_plus
 
-[![Unit Tests](https://github.com/dinaraparanid/tv_plus/actions/workflows/unit_test.yml/badge.svg)](https://github.com/dinaraparanid/tv_plus/actions/workflows/unit_test.yml)
+[![Unit Tests](https://github.com/dinaraparanid/tv_plus/actions/workflows/unit_test.yml/badge.svg)](https://github.com/dinaraparanid/tv_plus/actions/workflows/unit_test.yml) [![SonarQube](https://github.com/dinaraparanid/tv_plus/actions/workflows/sonar_qube.yml/badge.svg)](https://github.com/dinaraparanid/tv_plus/actions/workflows/sonar_qube.yml)
 
 ### Smart TV toolkit
 
