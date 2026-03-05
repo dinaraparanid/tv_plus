@@ -175,8 +175,10 @@ final class _ScrollCarouselPagerSampleState
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: isSelected
-                                  ? ScrollCarouselPagerSample.selectedFocusedIndicatorColor
-                                  : ScrollCarouselPagerSample.unselectedIndicatorColor,
+                                  ? ScrollCarouselPagerSample
+                                        .selectedFocusedIndicatorColor
+                                  : ScrollCarouselPagerSample
+                                        .unselectedIndicatorColor,
                             ),
                           );
                         },
