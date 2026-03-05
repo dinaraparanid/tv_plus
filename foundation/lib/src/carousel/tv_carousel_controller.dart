@@ -2,13 +2,16 @@ part of 'carousel.dart';
 
 final class TvCarouselController with ChangeNotifier {
   TvCarouselController({required int itemCount, int initialActiveIndex = 0})
-    : assert(
-        itemCount > 0 &&
-            initialActiveIndex < itemCount &&
-            initialActiveIndex >= 0,
-      ),
-      _itemCount = itemCount,
-      _selectedIndex = initialActiveIndex;
+    : _itemCount = itemCount,
+      _selectedIndex = initialActiveIndex {
+    if (itemCount <= 0) {
+      throw ArgumentError('Item count must be > 0');
+    }
+
+    if (initialActiveIndex < 0 || initialActiveIndex >= itemCount) {
+      throw ArgumentError('Initial index is out of bounds: [0, $itemCount)');
+    }
+  }
 
   int _itemCount;
   int get itemCount => _itemCount;
@@ -20,6 +23,10 @@ final class TvCarouselController with ChangeNotifier {
   bool get canScrollRight => selectedIndex < itemCount - 1;
 
   void reset({required int count, int? newSelectedIndex}) {
+    if (count <= 0) {
+      throw ArgumentError('Item count must be > 0');
+    }
+
     if (newSelectedIndex != null) {
       if (newSelectedIndex >= count || newSelectedIndex < 0) {
         throw ArgumentError(
@@ -30,8 +37,8 @@ final class TvCarouselController with ChangeNotifier {
       _selectedIndex = newSelectedIndex;
     } else if (selectedIndex >= count) {
       throw ArgumentError(
-        'Current selected index $selectedIndex is out of new bounds $count, '
-        "provide new selected index via 'newSelectedIndex' parameter",
+        'Current selected index $selectedIndex is out of new bounds [0; $count)'
+        ", provide new selected index via 'newSelectedIndex' parameter",
       );
     }
 
