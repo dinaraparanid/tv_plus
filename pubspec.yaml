@@ -41,3 +41,33 @@ flutter:
       android:
         package: com.paranid5.tv_plus
         pluginClass: TvPlusPlugin
+
+melos:
+  command:
+    bootstrap:
+      environment:
+        sdk: ^3.9.2
+        flutter: '>=3.3.0'
+      usePubspecOverrides: true
+      hooks:
+        post: melos build_runner
+
+    version:
+      message: "chore(release): publish packages"
+      branch: master
+      linkToCommits: true
+      workspaceChangelog: true
+      updateGitTagRefs: true
+
+  scripts:
+    build_runner:
+      run: dart run build_runner build
+      description: Code generation
+      exec:
+        concurrency: 1
+
+    clean:
+      run: flutter clean
+      description: Clean all Flutter packages
+      exec:
+        concurrency: 1
