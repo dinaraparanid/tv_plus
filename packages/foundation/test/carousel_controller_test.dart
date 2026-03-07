@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:tv_plus/tv_plus.dart';
+import 'package:tv_plus_foundation/tv_plus_foundation.dart';
 
 void main() {
   group('Carousel controller tests', () {

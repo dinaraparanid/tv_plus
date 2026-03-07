@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:tv_plus/tv_plus.dart';
+import 'package:tv_plus_foundation/tv_plus_foundation.dart';
 
 final class ScrollCarouselPagerSample extends StatefulWidget {
   const ScrollCarouselPagerSample({super.key});
