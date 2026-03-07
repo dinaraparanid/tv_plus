@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tv_plus/tv_plus.dart';
 import 'package:tv_plus_example/scroll/sliver_tv_grid_sample.dart';
+import 'package:tv_plus_foundation/tv_plus_foundation.dart';
 
 import 'utils.dart';
 
@@ -46,7 +46,9 @@ extension SliverGridTest on WidgetTester {
     await testButton(key: SliverTvGridSample.rightButtonKey, isFocused: false);
 
     await sendDpadEventAndSettle(LogicalKeyboardKey.arrowDown);
-    await testGrid(focusedIndex: _fallbackIndex); // returned to previous position
+    await testGrid(
+      focusedIndex: _fallbackIndex,
+    ); // returned to previous position
     await testButton(key: SliverTvGridSample.upButtonKey, isFocused: false);
     await testButton(key: SliverTvGridSample.downButtonKey, isVisible: false);
     await testButton(key: SliverTvGridSample.leftButtonKey, isFocused: false);

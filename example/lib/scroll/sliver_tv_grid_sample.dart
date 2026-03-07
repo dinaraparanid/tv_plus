@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tv_plus/tv_plus.dart';
+import 'package:tv_plus_foundation/tv_plus_foundation.dart';
 
 final class SliverTvGridSample extends StatefulWidget {
   const SliverTvGridSample({super.key, this.fallbackIndex = 0});
