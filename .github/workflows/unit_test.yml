@@ -15,11 +15,13 @@ jobs:
         with:
           flutter-version: 3.41.2
 
-      - name: Get Dependencies
-        run: flutter pub get
+      - name: Setup Melos
+        uses: bluefireteam/melos-action@v3
+        with:
+          run-bootstrap: true
 
       - name: Perform code generation
-        run: flutter pub run build_runner build --delete-conflicting-outputs
+        run: melos run build_runner
 
       - name: Run Tests
-        run: flutter test
+        run: melos run test --no-select

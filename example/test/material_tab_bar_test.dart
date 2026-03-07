@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:integration_test/integration_test.dart';
 import 'package:tv_plus/tv_plus.dart';
 import 'package:tv_plus_example/material/navigation/tab_bar_primary_sample.dart';
 import 'package:tv_plus_example/material/navigation/tab_bar_secondary_sample.dart';
@@ -10,8 +9,6 @@ import 'package:tv_plus_example/material/navigation/tab_item_sample.dart';
 import 'utils.dart';
 
 void main() {
-  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-
   group('Material tab bar tests', () {
     testWidgets('Primary', (tester) async {
       await tester.pumpWidget(const TvTabBarPrimarySample());

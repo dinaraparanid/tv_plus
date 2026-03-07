@@ -44,7 +44,6 @@ final class CupertinoTvSidebarFloatingHeader extends StatelessWidget {
         Assets.icons.chevronRight.svg(
           width: 17,
           height: 24,
-          package: 'tv_plus',
           colorFilter: ColorFilter.mode(switch (brightness) {
             Brightness.dark => CupertinoColors.white,
             Brightness.light => CupertinoColors.black,

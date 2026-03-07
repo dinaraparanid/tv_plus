@@ -1,6 +1,7 @@
 name: tv_plus_example
 description: "Demonstrates how to use the tv_plus plugin."
 publish_to: 'none'
+resolution: workspace
 
 environment:
   sdk: ^3.9.2
@@ -9,15 +10,15 @@ dependencies:
   flutter:
     sdk: flutter
 
-  tv_plus:
-    path: ../
+  tv_plus_cupertino: ^0.4.0
+  tv_plus_foundation: ^0.4.0
+  tv_plus_material: ^0.4.0
+  tv_plus_one_ui: ^0.4.0
 
   cupertino_icons: ^1.0.8
   flutter_svg: ^2.1.0
 
 dev_dependencies:
-  integration_test:
-    sdk: flutter
   flutter_test:
     sdk: flutter
 
@@ -29,13 +30,3 @@ dev_dependencies:
 flutter:
   generate: true
   uses-material-design: true
-
-dependency_overrides:
-  tv_plus_foundation:
-    path: ../packages/foundation
-  tv_plus_cupertino:
-    path: ../packages/cupertino
-  tv_plus_material:
-    path: ../packages/material
-  tv_plus_one_ui:
-    path: ../packages/one_ui

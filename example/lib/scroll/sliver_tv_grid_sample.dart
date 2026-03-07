@@ -143,8 +143,8 @@ final class _SliverTvGridSampleState extends State<SliverTvGridSample> {
                         key: SliverTvGridSample.gridKey,
                         itemCount: SliverTvGridSample.itemCount,
                         gridDelegate:
-                            const SliverGridDelegateWithMaxCrossAxisExtent(
-                              maxCrossAxisExtent: 250,
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
                               mainAxisSpacing: 12,
                               crossAxisSpacing: 12,
                               mainAxisExtent: 80,

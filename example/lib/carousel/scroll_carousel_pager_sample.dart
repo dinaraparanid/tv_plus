@@ -5,8 +5,7 @@ final class ScrollCarouselPagerSample extends StatefulWidget {
   const ScrollCarouselPagerSample({super.key});
 
   static const backgroundColor = Color(0xFF131314);
-  static const selectedFocusedIndicatorColor = Color(0xFFFFFFFF);
-  static const selectedUnfocusedIndicatorColor = Color(0x80FFFFFF);
+  static const selectedIndicatorColor = Color(0xFFFFFFFF);
   static const unselectedIndicatorColor = Color(0x33FFFFFF);
   static const animationDuration = Duration(milliseconds: 300);
   static const initialSelectedIndex = 1;
@@ -176,7 +175,7 @@ final class _ScrollCarouselPagerSampleState
                               shape: BoxShape.circle,
                               color: isSelected
                                   ? ScrollCarouselPagerSample
-                                        .selectedFocusedIndicatorColor
+                                        .selectedIndicatorColor
                                   : ScrollCarouselPagerSample
                                         .unselectedIndicatorColor,
                             ),

@@ -5,8 +5,7 @@ final class CarouselPagerSample extends StatefulWidget {
   const CarouselPagerSample({super.key});
 
   static const backgroundColor = Color(0xFF131314);
-  static const selectedFocusedIndicatorColor = Color(0xFFFFFFFF);
-  static const selectedUnfocusedIndicatorColor = Color(0x80FFFFFF);
+  static const selectedIndicatorColor = Color(0xFFFFFFFF);
   static const unselectedIndicatorColor = Color(0x33FFFFFF);
   static const animationDuration = Duration(milliseconds: 300);
   static const initialSelectedIndex = 1;
@@ -100,17 +99,9 @@ final class _CarouselPagerSampleState extends State<CarouselPagerSample> {
                         height: 8,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: switch ((isSelected, isFocused)) {
-                            (false, _) =>
-                              CarouselPagerSample.unselectedIndicatorColor,
-
-                            (true, true) =>
-                              CarouselPagerSample.selectedFocusedIndicatorColor,
-
-                            (true, false) =>
-                              CarouselPagerSample
-                                  .selectedUnfocusedIndicatorColor,
-                          },
+                          color: isSelected
+                              ? CarouselPagerSample.selectedIndicatorColor
+                              : CarouselPagerSample.unselectedIndicatorColor,
                         ),
                       );
                     },

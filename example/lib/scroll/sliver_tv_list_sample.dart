@@ -188,6 +188,7 @@ final class TvListItem extends StatelessWidget {
 @visibleForTesting
 final class TvListButtonItem extends StatelessWidget {
   const TvListButtonItem({super.key, required this.node, required this.text});
+
   final FocusNode node;
   final String text;
 

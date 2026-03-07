@@ -1,15 +1,12 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:integration_test/integration_test.dart';
 import 'package:tv_plus_example/carousel/carousel_pager_sample.dart';
 import 'package:tv_plus_example/carousel/scroll_carousel_pager_sample.dart';
 
 import 'utils.dart';
 
 void main() {
-  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-
   group('Carousel pager test', () {
     testWidgets('...', (tester) async {
       await tester.pumpWidget(const CarouselPagerSample());
@@ -18,7 +15,7 @@ void main() {
         contentKey: CarouselPagerSample.contentKey,
         pagerKey: CarouselPagerSample.pagerKey,
         items: CarouselPagerSample.items,
-        selectedDotColor: CarouselPagerSample.selectedFocusedIndicatorColor,
+        selectedDotColor: CarouselPagerSample.selectedIndicatorColor,
         unselectedDotColor: CarouselPagerSample.unselectedIndicatorColor,
       );
     });
@@ -34,7 +31,7 @@ void main() {
         pagerKey: ScrollCarouselPagerSample.pagerKey,
         items: ScrollCarouselPagerSample.items,
         selectedDotColor:
-            ScrollCarouselPagerSample.selectedFocusedIndicatorColor,
+            ScrollCarouselPagerSample.selectedIndicatorColor,
         unselectedDotColor: ScrollCarouselPagerSample.unselectedIndicatorColor,
       );
     });

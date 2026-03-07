@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:integration_test/integration_test.dart';
 import 'package:tv_plus/tv_plus.dart';
 import 'package:tv_plus_example/scroll/tv_grid_view_sample.dart';
 
@@ -10,8 +9,6 @@ import 'utils.dart';
 const _fallbackIndex = 0;
 
 void main() {
-  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-
   group('Grid tests', () {
     testWidgets('...', (tester) async {
       await tester.pumpWidget(

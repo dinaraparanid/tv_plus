@@ -8,6 +8,7 @@ environment:
   flutter: '>=3.3.0'
 
 workspace:
+  - example
   - packages/cupertino
   - packages/foundation
   - packages/material
@@ -71,3 +72,27 @@ melos:
       description: Clean all Flutter packages
       exec:
         concurrency: 1
+
+    test:
+      run: flutter test
+      description: Run tests
+      packageFilters:
+        dirExists: test
+      exec:
+        concurrency: 4
+        failFast: true
+
+    test_coverage:
+      run: flutter test --coverage
+      description: Check test coverage
+      packageFilters:
+        dirExists: test
+      exec:
+        concurrency: 4
+        failFast: true
+
+    combine_coverage:
+      run: melos exec -- "\$MELOS_ROOT_PATH/scripts/combine_coverage.sh"
+      description: Generate full coverage report
+      packageFilters:
+        dirExists: test
