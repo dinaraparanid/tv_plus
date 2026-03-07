@@ -8,6 +8,7 @@ environment:
   flutter: '>=3.3.0'
 
 workspace:
+  - example
   - packages/cupertino
   - packages/foundation
   - packages/material
@@ -41,3 +42,57 @@ flutter:
       android:
         package: com.paranid5.tv_plus
         pluginClass: TvPlusPlugin
+
+melos:
+  command:
+    bootstrap:
+      environment:
+        sdk: ^3.9.2
+        flutter: '>=3.3.0'
+      usePubspecOverrides: true
+      hooks:
+        post: melos build_runner
+
+    version:
+      message: "chore(release): publish packages"
+      branch: master
+      linkToCommits: true
+      workspaceChangelog: true
+      updateGitTagRefs: true
+
+  scripts:
+    build_runner:
+      run: dart run build_runner build
+      description: Code generation
+      exec:
+        concurrency: 1
+
+    clean:
+      run: flutter clean
+      description: Clean all Flutter packages
+      exec:
+        concurrency: 1
+
+    test:
+      run: flutter test
+      description: Run tests
+      packageFilters:
+        dirExists: test
+      exec:
+        concurrency: 4
+        failFast: true
+
+    test_coverage:
+      run: flutter test --coverage
+      description: Check test coverage
+      packageFilters:
+        dirExists: test
+      exec:
+        concurrency: 4
+        failFast: true
+
+    combine_coverage:
+      run: melos exec -- "\$MELOS_ROOT_PATH/scripts/combine_coverage.sh"
+      description: Generate full coverage report
+      packageFilters:
+        dirExists: test

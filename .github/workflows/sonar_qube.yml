@@ -25,14 +25,16 @@ jobs:
         with:
           flutter-version: 3.41.2
 
-      - name: Get Dependencies
-        run: flutter pub get
-
-      - name: Perform code generation
-        run: flutter pub run build_runner build --delete-conflicting-outputs
+      - name: Setup Melos
+        uses: bluefireteam/melos-action@v3
+        with:
+          run-bootstrap: true
 
       - name: Generate Test Coverage
-        run: flutter test --coverage
+        run: melos run test_coverage --no-select
+
+      - name: Combine Test Coverage
+        run: melos run combine_coverage --no-select
 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v6
