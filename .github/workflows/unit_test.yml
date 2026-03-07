@@ -20,8 +20,5 @@ jobs:
         with:
           run-bootstrap: true
 
-      - name: Perform code generation
-        run: melos run build_runner
-
       - name: Run Tests
         run: melos run test --no-select

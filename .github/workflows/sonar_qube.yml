@@ -30,9 +30,6 @@ jobs:
         with:
           run-bootstrap: true
 
-      - name: Perform code generation
-        run: melos run build_runner
-
       - name: Generate Test Coverage
         run: melos run test_coverage --no-select
 
