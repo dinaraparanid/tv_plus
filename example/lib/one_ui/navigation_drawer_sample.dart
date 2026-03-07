@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tv_plus/tv_plus.dart';
+import 'package:tv_plus_one_ui/tv_plus_one_ui.dart';
 
 const _animationDuration = Duration(milliseconds: 350);
 

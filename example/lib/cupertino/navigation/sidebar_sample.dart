@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
-import 'package:tv_plus/tv_plus.dart';
+import 'package:tv_plus_cupertino/tv_plus_cupertino.dart';
 
 final class CupertinoSidebarSample extends StatefulWidget {
   const CupertinoSidebarSample({super.key});

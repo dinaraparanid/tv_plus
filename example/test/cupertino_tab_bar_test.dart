@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tv_plus/tv_plus.dart';
+import 'package:tv_plus_cupertino/tv_plus_cupertino.dart';
 import 'package:tv_plus_example/cupertino/navigation/tab_bar_sample.dart';
 
 import 'utils.dart';

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tv_plus/tv_plus.dart';
 import 'package:tv_plus_example/tab/tv_tab_bar_foundation_sample.dart';
+import 'package:tv_plus_foundation/tv_plus_foundation.dart';
 
 import 'utils.dart';
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tv_plus/tv_plus.dart';
+import 'package:tv_plus_material/tv_plus_material.dart';
 
 import 'tab_item_sample.dart';
 
