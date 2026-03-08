@@ -5,7 +5,7 @@ import 'package:tv_plus_example/dpad/dpad_navigation_sample.dart';
 import 'package:tv_plus_example/dpad/sample_dpad_focus.dart';
 import 'package:tv_plus_foundation/tv_plus_foundation.dart';
 
-import 'utils.dart';
+import '../../packages/foundation/test/utils.dart';
 
 final class SampleDpadData {
   SampleDpadData({

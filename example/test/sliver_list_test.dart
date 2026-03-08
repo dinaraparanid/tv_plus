@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tv_plus_example/scroll/sliver_tv_list_sample.dart';
 import 'package:tv_plus_foundation/tv_plus_foundation.dart';
 
-import 'utils.dart';
+import '../../packages/foundation/test/utils.dart';
 
 void main() {
   group('Sliver List tests', () {

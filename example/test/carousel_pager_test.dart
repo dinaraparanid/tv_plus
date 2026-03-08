@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tv_plus_example/carousel/carousel_pager_sample.dart';
 import 'package:tv_plus_example/carousel/scroll_carousel_pager_sample.dart';
 
-import 'utils.dart';
+import '../../packages/foundation/test/utils.dart';
 
 void main() {
   group('Carousel pager test', () {
@@ -30,8 +30,7 @@ void main() {
         contentKey: ScrollCarouselPagerSample.contentKey,
         pagerKey: ScrollCarouselPagerSample.pagerKey,
         items: ScrollCarouselPagerSample.items,
-        selectedDotColor:
-            ScrollCarouselPagerSample.selectedIndicatorColor,
+        selectedDotColor: ScrollCarouselPagerSample.selectedIndicatorColor,
         unselectedDotColor: ScrollCarouselPagerSample.unselectedIndicatorColor,
       );
     });

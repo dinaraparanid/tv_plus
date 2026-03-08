@@ -6,7 +6,7 @@ import 'package:tv_plus_example/material/navigation/tab_bar_secondary_sample.dar
 import 'package:tv_plus_example/material/navigation/tab_item_sample.dart';
 import 'package:tv_plus_material/tv_plus_material.dart';
 
-import 'utils.dart';
+import '../../packages/foundation/test/utils.dart';
 
 void main() {
   group('Material tab bar tests', () {

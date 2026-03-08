@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tv_plus_example/material/navigation/navigation_drawer_sample.dart';
 import 'package:tv_plus_material/tv_plus_material.dart';
 
-import 'utils.dart';
+import '../../packages/foundation/test/utils.dart';
 
 void main() {
   group('Material navigation drawer tests', () {

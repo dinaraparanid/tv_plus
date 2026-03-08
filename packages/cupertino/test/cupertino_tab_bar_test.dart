@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tv_plus_cupertino/src/example/navigation/tab_bar_sample.dart';
 import 'package:tv_plus_cupertino/tv_plus_cupertino.dart';
-import 'package:tv_plus_example/cupertino/navigation/tab_bar_sample.dart';
 
-import 'utils.dart';
+import '../../foundation/test/utils.dart';
 
 void main() {
   group('Tab bar foundation tests', () {
