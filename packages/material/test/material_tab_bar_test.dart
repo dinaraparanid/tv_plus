@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tv_plus_example/material/navigation/tab_bar_primary_sample.dart';
-import 'package:tv_plus_example/material/navigation/tab_bar_secondary_sample.dart';
-import 'package:tv_plus_example/material/navigation/tab_item_sample.dart';
+import 'package:tv_plus_material/src/example/navigation/tab_bar_primary_sample.dart';
+import 'package:tv_plus_material/src/example/navigation/tab_bar_secondary_sample.dart';
+import 'package:tv_plus_material/src/example/navigation/tab_item_sample.dart';
 import 'package:tv_plus_material/tv_plus_material.dart';
 
-import '../../packages/foundation/test/utils.dart';
+import '../../foundation/test/utils.dart';
 
 void main() {
   group('Material tab bar tests', () {

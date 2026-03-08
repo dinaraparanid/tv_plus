@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tv_plus_example/scroll/tv_list_view_sample.dart';
+import 'package:tv_plus_foundation/src/example/scroll/tv_list_view_sample.dart';
 import 'package:tv_plus_foundation/tv_plus_foundation.dart';
 
-import '../../packages/foundation/test/utils.dart';
+import 'utils.dart';
 
 void main() {
   group('List tests', () {

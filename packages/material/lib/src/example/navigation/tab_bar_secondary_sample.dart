@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:tv_plus_material/src/example/navigation/tab_item_sample.dart';
 import 'package:tv_plus_material/tv_plus_material.dart';
-
-import 'tab_item_sample.dart';
 
 final class TvTabBarSecondarySample extends StatefulWidget {
   const TvTabBarSecondarySample({super.key});

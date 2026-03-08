@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tv_plus_example/tab/tv_tab_bar_foundation_sample.dart';
+import 'package:tv_plus_foundation/src/example/tab/tv_tab_bar_foundation_sample.dart';
 import 'package:tv_plus_foundation/tv_plus_foundation.dart';
 
-import '../../packages/foundation/test/utils.dart';
+import 'utils.dart';
 
 void main() {
   group('Tab bar foundation tests', () {

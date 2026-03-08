@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'material/navigation/navigation_drawer_sample.dart';
+import 'package:tv_plus_material/src/example/navigation/navigation_drawer_sample.dart';
 
 final class App extends StatelessWidget {
   const App({super.key});

@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'sample_dpad_focus.dart';
+import 'package:tv_plus_foundation/src/example/dpad/sample_dpad_focus.dart';
 
 final class DpadNavigationSample extends StatefulWidget {
   const DpadNavigationSample({super.key, this.isReverseTimerEnabled = false});

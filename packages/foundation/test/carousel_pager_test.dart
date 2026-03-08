@@ -1,10 +1,10 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tv_plus_example/carousel/carousel_pager_sample.dart';
-import 'package:tv_plus_example/carousel/scroll_carousel_pager_sample.dart';
+import 'package:tv_plus_foundation/src/example/carousel/carousel_pager_sample.dart';
+import 'package:tv_plus_foundation/src/example/carousel/scroll_carousel_pager_sample.dart';
 
-import '../../packages/foundation/test/utils.dart';
+import 'utils.dart';
 
 void main() {
   group('Carousel pager test', () {

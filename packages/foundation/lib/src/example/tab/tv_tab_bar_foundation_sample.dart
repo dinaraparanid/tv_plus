@@ -9,7 +9,7 @@ final class TvTabBarFoundationSample extends StatefulWidget {
   static const selectedColor = Colors.green;
   static const contentColor = Colors.white;
   static const contentSelectedColor = Colors.black;
-  static const radius = BorderRadius.all(Radius.circular(16.0));
+  static const radius = BorderRadius.all(Radius.circular(16));
   static const animationDuration = Duration(milliseconds: 300);
   static const tabBarHeight = 20.0;
   static const initialIndex = 1;

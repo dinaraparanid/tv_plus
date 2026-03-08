@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:tv_plus_foundation/src/example/dpad/sample_dpad_focus.dart';
 import 'package:tv_plus_foundation/tv_plus_foundation.dart';
-import 'sample_dpad_focus.dart';
 
 final class DpadScopeNavigationSample extends StatefulWidget {
   const DpadScopeNavigationSample({
