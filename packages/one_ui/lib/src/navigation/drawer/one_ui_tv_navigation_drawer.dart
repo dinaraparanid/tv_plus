@@ -234,6 +234,9 @@ final class OneUiTvNavigationDrawerState extends State<OneUiTvNavigationDrawer>
               widget.onFocusChanged?.call(node, hasFocus);
             },
             onFocusDisabledWhenWasFocused: widget.onFocusDisabledWhenWasFocused,
+            menuItemsBuilder: (context, menu) {
+              return Expanded(child: SingleChildScrollView(child: menu));
+            },
           ),
         ),
       ),

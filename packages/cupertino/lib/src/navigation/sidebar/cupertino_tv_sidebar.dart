@@ -244,6 +244,9 @@ final class _CupertinoTvSidebarState extends State<CupertinoTvSidebar> {
                   onDown: widget.onDown,
                   onLeft: widget.onLeft,
                   onRight: widget.onRight,
+                  menuItemsBuilder: (context, menu) {
+                    return Expanded(child: SingleChildScrollView(child: menu));
+                  },
                 ),
               ),
             ),
