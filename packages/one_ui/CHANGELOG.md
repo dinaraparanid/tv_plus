@@ -1,3 +1,9 @@
+# 0.5.0
+* feat: click selection for tabs & navigation menus
+* feat: navigation menu specify mainAxisSize, crossAxisAlignment & menuItemsBuilder
+* fix: carousel controller triggered listeners on same selection
+* chore: melos & SonarQube integrations; tests improvements
+
 # 0.4.0
 * feat: scrollable carousel pager
 * feat: added onKeyEvent parameter for TvListView & TvGridView
