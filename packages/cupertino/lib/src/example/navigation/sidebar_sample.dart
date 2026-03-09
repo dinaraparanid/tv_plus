@@ -63,11 +63,11 @@ final class CupertinoSidebarSample extends StatefulWidget {
     });
   }
 
-  static TvNavigationMenuItem buildItem({
+  static CupertinoTvSidebarItem buildItem({
     required String title,
     required IconData icon,
   }) {
-    return TvNavigationMenuItem(
+    return CupertinoTvSidebarItem(
       key: ValueKey(title),
       iconBuilder: (_) => CupertinoSidebarSample.buildIcon(icon),
       builder: (_, constraints, states, icon) => Container(
@@ -265,8 +265,8 @@ final class _CupertinoSidebarSampleState extends State<CupertinoSidebarSample> {
     );
   }
 
-  static TvNavigationMenuItem _buildHeader() {
-    return TvNavigationMenuItem(
+  static CupertinoTvSidebarItem _buildHeader() {
+    return CupertinoTvSidebarItem(
       key: UniqueKey(),
       iconBuilder: (_) {
         return CupertinoSidebarSample.buildIcon(CupertinoIcons.profile_circled);
@@ -321,7 +321,7 @@ final class _CupertinoSidebarSampleState extends State<CupertinoSidebarSample> {
     );
   }
 
-  static TvNavigationMenuItem _buildFooter() {
+  static CupertinoTvSidebarItem _buildFooter() {
     return CupertinoSidebarSample.buildItem(
       title: 'Settings',
       icon: CupertinoIcons.settings,

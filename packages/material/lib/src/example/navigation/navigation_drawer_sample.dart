@@ -66,11 +66,11 @@ final class NavigationDrawerSample extends StatefulWidget {
     });
   }
 
-  static TvNavigationMenuItem buildItem({
+  static TvNavigationDrawerItem buildItem({
     required String title,
     required IconData icon,
   }) {
-    return TvNavigationMenuItem(
+    return TvNavigationDrawerItem(
       key: ValueKey(title),
       iconBuilder: (_) => NavigationDrawerSample.buildIcon(icon),
       builder: (context, constraints, states, icon) {
@@ -267,8 +267,8 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
     );
   }
 
-  TvNavigationMenuItem _buildHeader() {
-    return TvNavigationMenuItem(
+  TvNavigationDrawerItem _buildHeader() {
+    return TvNavigationDrawerItem(
       iconBuilder: (_) =>
           NavigationDrawerSample.buildIcon(Icons.account_circle),
       builder: (context, constraints, states, icon) {
@@ -319,7 +319,7 @@ final class _NavigationDrawerSampleState extends State<NavigationDrawerSample> {
     );
   }
 
-  TvNavigationMenuItem _buildFooter() {
+  TvNavigationDrawerItem _buildFooter() {
     return NavigationDrawerSample.buildItem(
       title: 'Settings',
       icon: Icons.settings,

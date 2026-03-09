@@ -1,9 +1,7 @@
 library;
 
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:tv_plus_foundation/tv_plus_foundation.dart';
 
-part 'one_ui_tv_navigation_drawer.dart';
-part 'one_ui_tv_navigation_drawer_item.dart';
+part 'sandstone_vertical_tab_layout.dart';
+part 'sandstone_vertical_tab.dart';

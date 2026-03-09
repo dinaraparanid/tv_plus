@@ -78,12 +78,12 @@ final class OneUiNavigationDrawerSample extends StatefulWidget {
     });
   }
 
-  static TvNavigationMenuItem buildItem({
+  static OneUiTvNavigationDrawerItem buildItem({
     required String title,
     required IconData icon,
     required bool Function() isDrawerExpanded,
   }) {
-    return TvNavigationMenuItem(
+    return OneUiTvNavigationDrawerItem(
       key: ValueKey(title),
       iconBuilder: (_) => OneUiNavigationDrawerSample.buildIcon(icon),
       builder: (context, constraints, states, icon) {
@@ -172,9 +172,10 @@ final class _OneUiNavigationDrawerSampleState
 
             return const SizedBox(height: 12);
           },
-          menuItems: _items.map((item) {
-            return _buildItem(title: item.$1, icon: item.$2);
-          }).toList(),
+          menuItems: [
+            for (final (title, icon) in _items)
+              _buildItem(title: title, icon: icon),
+          ],
           onRight: (_, _, isOutOfScope) {
             if (isOutOfScope) {
               _contentFocusNode.requestFocus();
@@ -238,8 +239,8 @@ final class _OneUiNavigationDrawerSampleState
     );
   }
 
-  TvNavigationMenuItem _buildHeader() {
-    return TvNavigationMenuItem(
+  OneUiTvNavigationDrawerItem _buildHeader() {
+    return OneUiTvNavigationDrawerItem(
       iconBuilder: (_) {
         return OneUiNavigationDrawerSample.buildIcon(Icons.account_circle);
       },
@@ -300,7 +301,7 @@ final class _OneUiNavigationDrawerSampleState
     );
   }
 
-  TvNavigationMenuItem _buildItem({
+  OneUiTvNavigationDrawerItem _buildItem({
     required String title,
     required IconData icon,
   }) {
@@ -311,7 +312,7 @@ final class _OneUiNavigationDrawerSampleState
     );
   }
 
-  TvNavigationMenuItem _buildFooter() {
+  OneUiTvNavigationDrawerItem _buildFooter() {
     return _buildItem(title: 'Settings', icon: Icons.settings);
   }
 

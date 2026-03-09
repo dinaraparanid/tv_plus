@@ -44,8 +44,8 @@ final class CupertinoTvSidebar extends StatefulWidget {
   }
 
   final TvNavigationMenuController? controller;
-  final TvNavigationMenuItem? header;
-  final TvNavigationMenuItem? footer;
+  final CupertinoTvSidebarItem? header;
+  final CupertinoTvSidebarItem? footer;
   final Color? backgroundColor;
   final BoxConstraints constraints;
   final double floatingHeaderIconSpacing;
@@ -53,7 +53,7 @@ final class CupertinoTvSidebar extends StatefulWidget {
   final Duration drawerAnimationsDuration;
   final TvNavigationMenuAlignment alignment;
   final TvNavigationMenuEntry? initialEntry;
-  final List<TvNavigationMenuItem> menuItems;
+  final List<CupertinoTvSidebarItem> menuItems;
   final Widget Function(TvNavigationMenuEntry)? separatorBuilder;
   final FocusTraversalPolicy policy;
   final bool descendantsAreFocusable;
@@ -65,20 +65,20 @@ final class CupertinoTvSidebar extends StatefulWidget {
   final DpadScopeEventCallback? onRight;
   final WidgetStateProperty<Widget> Function(
     BuildContext context,
-    TvNavigationMenuItem selectedItem,
+    CupertinoTvSidebarItem selectedItem,
   )?
   collapsedHeaderIconBuilder;
   final Widget Function(
     BuildContext context,
     BoxConstraints constraints,
     Set<WidgetState> itemsStates,
-    TvNavigationMenuItem selectedItem,
+    CupertinoTvSidebarItem selectedItem,
   )?
   collapsedHeaderItemBuilder;
   final Widget Function(
     BuildContext context,
     TvNavigationMenuEntry? selectedEntry,
-    TvNavigationMenuItem selectedItem,
+    CupertinoTvSidebarItem selectedItem,
   )?
   collapsedHeaderBuilder;
   final Widget Function(BuildContext context, Widget child) sidebarBuilder;
@@ -232,9 +232,11 @@ final class _CupertinoTvSidebarState extends State<CupertinoTvSidebar> {
                 context,
                 TvNavigationMenuContent(
                   controller: widget.controller,
-                  header: widget.header,
-                  footer: widget.footer,
-                  menuItems: widget.menuItems,
+                  header: widget.header?.toMenuItem(),
+                  footer: widget.footer?.toMenuItem(),
+                  menuItems: [
+                    for (final item in widget.menuItems) item.toMenuItem(),
+                  ],
                   separatorBuilder: widget.separatorBuilder,
                   policy: widget.policy,
                   descendantsAreFocusable: widget.descendantsAreFocusable,
@@ -283,7 +285,7 @@ final class _CupertinoTvSidebarState extends State<CupertinoTvSidebar> {
     );
   }
 
-  TvNavigationMenuItem _buildSidebarMenuItem() {
+  CupertinoTvSidebarItem _buildSidebarMenuItem() {
     return switch (_controller.selectedEntry) {
       HeaderEntry() => widget.header!,
 
