@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:tv_plus_foundation/tv_plus_foundation.dart';
 
 void main() {
