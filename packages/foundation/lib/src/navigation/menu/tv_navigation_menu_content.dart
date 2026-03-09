@@ -7,9 +7,12 @@ final class TvNavigationMenuContent extends StatefulWidget {
     this.controller,
     this.header,
     this.footer,
+    this.mainAxisSize = MainAxisSize.max,
+    this.crossAxisAlignment = CrossAxisAlignment.stretch,
     this.itemsAlignment = MainAxisAlignment.center,
     required this.menuItems,
     this.separatorBuilder,
+    required this.menuItemsBuilder,
     FocusTraversalPolicy? policy,
     this.descendantsAreFocusable = true,
     this.descendantsAreTraversable = true,
@@ -27,9 +30,12 @@ final class TvNavigationMenuContent extends StatefulWidget {
   final TvNavigationMenuController? controller;
   final TvNavigationMenuItem? header;
   final TvNavigationMenuItem? footer;
+  final MainAxisSize mainAxisSize;
+  final CrossAxisAlignment crossAxisAlignment;
   final MainAxisAlignment itemsAlignment;
   final List<TvNavigationMenuItem> menuItems;
   final Widget Function(TvNavigationMenuEntry)? separatorBuilder;
+  final Widget Function(BuildContext, Widget) menuItemsBuilder;
   final FocusTraversalPolicy policy;
   final bool descendantsAreFocusable;
   final bool descendantsAreTraversable;
@@ -165,7 +171,8 @@ final class _TvNavigationMenuContentState
     final separatorBuilder = widget.separatorBuilder;
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: widget.mainAxisSize,
+      crossAxisAlignment: widget.crossAxisAlignment,
       children: [
         if (header != null) ...[
           _Header(
@@ -178,29 +185,15 @@ final class _TvNavigationMenuContentState
           if (separatorBuilder != null) separatorBuilder(const HeaderEntry()),
         ],
 
-        Expanded(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: widget.itemsAlignment,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                for (final (index, child) in widget.menuItems.indexed) ...[
-                  _Item(
-                    index: index,
-                    item: child,
-                    controller: _controller,
-                    drawerAutofocus: widget.autofocus,
-                    viewportAlignment: widget.viewportAlignment,
-                  ),
-
-                  if (separatorBuilder != null)
-                    separatorBuilder(
-                      ItemEntry(key: child.key ?? ValueKey(index)),
-                    ),
-                ],
-              ],
-            ),
+        widget.menuItemsBuilder(
+          context,
+          _Menu(
+            controller: _controller,
+            menuItems: widget.menuItems,
+            itemsAlignment: widget.itemsAlignment,
+            separatorBuilder: separatorBuilder,
+            autofocus: widget.autofocus,
+            viewportAlignment: widget.viewportAlignment,
           ),
         ),
 
@@ -213,6 +206,46 @@ final class _TvNavigationMenuContentState
             drawerAutofocus: widget.autofocus,
             viewportAlignment: widget.viewportAlignment,
           ),
+        ],
+      ],
+    );
+  }
+}
+
+final class _Menu extends StatelessWidget {
+  const _Menu({
+    required this.controller,
+    required this.menuItems,
+    required this.itemsAlignment,
+    required this.separatorBuilder,
+    required this.autofocus,
+    required this.viewportAlignment,
+  });
+
+  final TvNavigationMenuController controller;
+  final List<TvNavigationMenuItem> menuItems;
+  final MainAxisAlignment itemsAlignment;
+  final Widget Function(TvNavigationMenuEntry)? separatorBuilder;
+  final bool autofocus;
+  final double? viewportAlignment;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: itemsAlignment,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (final (index, child) in menuItems.indexed) ...[
+          _Item(
+            index: index,
+            item: child,
+            controller: controller,
+            drawerAutofocus: autofocus,
+            viewportAlignment: viewportAlignment,
+          ),
+
+          ?separatorBuilder?.call(ItemEntry(key: child.key ?? ValueKey(index))),
         ],
       ],
     );
