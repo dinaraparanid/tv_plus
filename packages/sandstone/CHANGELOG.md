@@ -1,3 +1,7 @@
+## 0.5.1
+
+ - **FEAT**: sandstone tab layouts ([#31](https://github.com/dinaraparanid/tv_plus/issues/31)). ([faf071e5](https://github.com/dinaraparanid/tv_plus/commit/faf071e5f61271b683fc6ac2c1df0672d57d66cf))
+
 # 0.5.0
 * feat: click selection for tabs & navigation menus
 * feat: navigation menu specify mainAxisSize, crossAxisAlignment & menuItemsBuilder

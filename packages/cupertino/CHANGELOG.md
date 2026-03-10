@@ -1,3 +1,10 @@
+## 0.5.1
+
+ - **FIX**: imports ([#29](https://github.com/dinaraparanid/tv_plus/issues/29)). ([4476df00](https://github.com/dinaraparanid/tv_plus/commit/4476df00513bd8ca303b990534c26655607eed31))
+ - **FEAT**: sandstone tab layouts ([#31](https://github.com/dinaraparanid/tv_plus/issues/31)). ([faf071e5](https://github.com/dinaraparanid/tv_plus/commit/faf071e5f61271b683fc6ac2c1df0672d57d66cf))
+ - **FEAT**: navigation menu specify mainAxisSize, crossAxisAlignment & menuItemsBuilder ([#30](https://github.com/dinaraparanid/tv_plus/issues/30)). ([96e1f200](https://github.com/dinaraparanid/tv_plus/commit/96e1f200f223651643861e3038af25af3d15589c))
+ - **FEAT**: melos ([#26](https://github.com/dinaraparanid/tv_plus/issues/26)). ([9788ea88](https://github.com/dinaraparanid/tv_plus/commit/9788ea8890e8c417188bf98f07ba6f993bf33a15))
+
 # 0.5.0
 * feat: click selection for tabs & navigation menus
 * feat: navigation menu specify mainAxisSize, crossAxisAlignment & menuItemsBuilder
