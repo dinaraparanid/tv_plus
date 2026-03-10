@@ -8,7 +8,7 @@ final class TvNavigationMenuItem {
     required this.iconBuilder,
     this.onSelect,
     required this.builder,
-  }) : assert(!isSelectable || iconBuilder != null);
+  });
 
   final Key? key;
   final bool isSelectable;
@@ -19,7 +19,6 @@ final class TvNavigationMenuItem {
 
   final Widget Function(
     BuildContext context,
-    BoxConstraints itemConstraints,
     Set<WidgetState> itemStates,
     Widget? icon,
   )

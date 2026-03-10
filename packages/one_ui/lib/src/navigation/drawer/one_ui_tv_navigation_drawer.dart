@@ -29,14 +29,14 @@ final class OneUiTvNavigationDrawer extends StatefulWidget {
        policy = policy ?? ReadingOrderTraversalPolicy();
 
   final TvNavigationMenuController? controller;
-  final TvNavigationMenuItem? header;
-  final TvNavigationMenuItem? footer;
+  final OneUiTvNavigationDrawerItem? header;
+  final OneUiTvNavigationDrawerItem? footer;
   final Color? backgroundColor;
   final BoxConstraints constraints;
   final Duration drawerExpandDuration;
   final TvNavigationMenuAlignment alignment;
   final TvNavigationMenuEntry? initialEntry;
-  final List<TvNavigationMenuItem> menuItems;
+  final List<OneUiTvNavigationDrawerItem> menuItems;
   final Widget Function(TvNavigationMenuEntry)? separatorBuilder;
   final FocusTraversalPolicy policy;
   final bool descendantsAreFocusable;
@@ -212,9 +212,9 @@ final class OneUiTvNavigationDrawerState extends State<OneUiTvNavigationDrawer>
           expandAnimation,
           TvNavigationMenuContent(
             controller: widget.controller,
-            header: widget.header,
-            footer: widget.footer,
-            menuItems: widget.menuItems,
+            header: widget.header?.toMenuItem(),
+            footer: widget.footer?.toMenuItem(),
+            menuItems: [for (final item in widget.menuItems) item.toMenuItem()],
             separatorBuilder: widget.separatorBuilder,
             policy: widget.policy,
             descendantsAreFocusable: widget.descendantsAreFocusable,

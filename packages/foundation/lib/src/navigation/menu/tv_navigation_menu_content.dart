@@ -450,11 +450,7 @@ final class _TvNavigationDrawerItem extends StatelessWidget {
 
         final icon = item.iconBuilder?.call(context).resolve(widgetState);
 
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            return item.builder(context, constraints, widgetState, icon);
-          },
-        );
+        return item.builder(context, widgetState, icon);
       },
     );
   }

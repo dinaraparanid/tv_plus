@@ -187,7 +187,7 @@ final class _TvTabBarFoundationState extends State<TvTabBarFoundation>
         crossAxisAlignment: widget.crossAxisAlignment,
         children: [
           for (final (index, tab) in widget.tabs.indexed) ...[
-            GestureDetector(onTap: () => _controller.select(index), child: tab),
+            _buildTab(index, tab),
             ?index != widget.tabs.length - 1
                 ? widget.separatorBuilder?.call(context, index)
                 : null,
@@ -195,5 +195,16 @@ final class _TvTabBarFoundationState extends State<TvTabBarFoundation>
         ],
       ),
     );
+  }
+
+  Widget _buildTab(int index, Widget tab) {
+    final child = GestureDetector(
+      onTap: () => _controller.select(index),
+      child: tab,
+    );
+
+    return widget.mainAxisSize == MainAxisSize.min
+        ? child
+        : Expanded(child: child);
   }
 }
