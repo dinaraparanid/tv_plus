@@ -15,7 +15,11 @@ final class SandstoneVerticalTab {
   final bool canRequestFocus;
   final VoidCallback? onSelect;
 
-  final WidgetStateProperty<Widget> Function(BuildContext context)? iconBuilder;
+  final WidgetStateProperty<Widget> Function(
+    BuildContext context,
+    bool isExpanded,
+  )?
+  iconBuilder;
 
   final Widget Function(
     BuildContext context,
@@ -28,12 +32,14 @@ final class SandstoneVerticalTab {
 
 extension _MenuItemMapper on SandstoneVerticalTab {
   TvNavigationMenuItem toMenuItem({required bool isExpanded}) {
+    final ic = iconBuilder;
+
     return TvNavigationMenuItem(
       key: key,
       isSelectable: isSelectable,
       canRequestFocus: canRequestFocus,
       onSelect: onSelect,
-      iconBuilder: iconBuilder,
+      iconBuilder: ic == null ? null : (context) => ic(context, isExpanded),
       builder: (context, states, icon) {
         return builder(context, states, isExpanded, icon);
       },

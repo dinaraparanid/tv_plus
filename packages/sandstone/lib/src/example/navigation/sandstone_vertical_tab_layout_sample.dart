@@ -64,7 +64,7 @@ final class SandstoneVerticalTabLayoutSample extends StatefulWidget {
   }) {
     return SandstoneVerticalTab(
       key: ValueKey(title),
-      iconBuilder: (_) => SandstoneVerticalTabLayoutSample.buildIcon(icon),
+      iconBuilder: (_, _) => SandstoneVerticalTabLayoutSample.buildIcon(icon),
       builder: (context, states, isExpanded, icon) {
         return Container(
           decoration: SandstoneVerticalTabLayoutSample.buildDecoration()
