@@ -9,6 +9,7 @@ final class TvSlider extends StatefulWidget {
     this.onChangeEnd,
     this.min = 0.0,
     this.max = 1.0,
+    this.step,
     this.divisions,
     this.label,
     this.activeColor,
@@ -36,7 +37,7 @@ final class TvSlider extends StatefulWidget {
     this.onKeyEvent,
     this.onFocusChanged,
     this.onFocusDisabledWhenWasFocused,
-  });
+  }) : assert(step == null || step > 0.0, 'step must be positive');
 
   final double value;
   final ValueChanged<double>? onChanged;
@@ -44,6 +45,7 @@ final class TvSlider extends StatefulWidget {
   final ValueChanged<double>? onChangeEnd;
   final double min;
   final double max;
+  final double? step;
   final int? divisions;
   final String? label;
   final Color? activeColor;
@@ -222,7 +224,7 @@ final class _TvSliderState extends State<TvSlider> with DpadEvents {
     final range = widget.max - widget.min;
     final div = widget.divisions;
 
-    final step = range / (div ?? 100);
+    final step = div != null ? range / div : (widget.step ?? range / 100);
 
     final nextValue = (_value + (increase ? step : -step)).clamp(
       widget.min,

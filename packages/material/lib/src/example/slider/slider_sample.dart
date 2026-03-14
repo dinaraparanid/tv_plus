@@ -7,13 +7,26 @@ final class SliderSample extends StatefulWidget {
 
   static const backgroundColor = Color(0xFF131314);
 
+  static const continuousSliderInitialValue = 0.0;
+  static const continuousSliderMin = 0.0;
+  static const continuousSliderMax = 1.0;
+  static const continuousSliderStep = 0.2;
+
+  static const stepSliderInitialValue = 1.0;
+  static const stepSliderMin = 0.5;
+  static const stepSliderMax = 2.0;
+  static const stepSliderDivisions = 5;
+
+  static final continuousSliderKey = GlobalKey();
+  static final stepSliderKey = GlobalKey();
+
   @override
   State<StatefulWidget> createState() => _SliderSampleState();
 }
 
 final class _SliderSampleState extends State<SliderSample> {
-  var _value1 = 0.0;
-  var _value2 = 1.0;
+  var _value1 = SliderSample.continuousSliderInitialValue;
+  var _value2 = SliderSample.stepSliderInitialValue;
 
   late final _node1 = FocusNode();
   late final _node2 = FocusNode();
@@ -41,7 +54,11 @@ final class _SliderSampleState extends State<SliderSample> {
             children: [
               Expanded(
                 child: TvSlider(
+                  key: SliderSample.continuousSliderKey,
                   value: _value1,
+                  min: SliderSample.continuousSliderMin,
+                  max: SliderSample.continuousSliderMax,
+                  step: SliderSample.continuousSliderStep,
                   onChanged: (value) => setState(() => _value1 = value),
                   focusNode: _node1,
                   autofocus: true,
@@ -53,11 +70,12 @@ final class _SliderSampleState extends State<SliderSample> {
               ),
               Expanded(
                 child: TvSlider(
+                  key: SliderSample.stepSliderKey,
                   value: _value2,
                   onChanged: (value) => setState(() => _value2 = value),
-                  min: 0.5,
-                  max: 2,
-                  divisions: 5,
+                  min: SliderSample.stepSliderMin,
+                  max: SliderSample.stepSliderMax,
+                  divisions: SliderSample.stepSliderDivisions,
                   focusNode: _node2,
                   autofocus: true,
                   label: _value2.toStringAsFixed(1),
