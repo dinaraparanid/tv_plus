@@ -1,6 +1,6 @@
 name: tv_plus_cupertino
 description: "Smart TV toolkit"
-version: 0.5.1
+version: 0.6.0
 repository: https://github.com/dinaraparanid/tv_plus
 resolution: workspace
 
@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
   flutter_svg: ^2.1.0
   vector_graphics: ^1.1.19
-  tv_plus_foundation: ^0.5.1
+  tv_plus_foundation: ^0.6.0
 
 dev_dependencies:
   flutter_test:

@@ -10,11 +10,11 @@ dependencies:
   flutter:
     sdk: flutter
 
-  tv_plus_cupertino: ^0.5.1
-  tv_plus_foundation: ^0.5.1
-  tv_plus_material: ^0.5.1
-  tv_plus_one_ui: ^0.5.1
-  tv_plus_sandstone: ^0.5.1
+  tv_plus_cupertino: ^0.6.0
+  tv_plus_foundation: ^0.6.0
+  tv_plus_material: ^0.6.0
+  tv_plus_one_ui: ^0.6.0
+  tv_plus_sandstone: ^0.6.0
 
   cupertino_icons: ^1.0.8
   flutter_svg: ^2.1.0

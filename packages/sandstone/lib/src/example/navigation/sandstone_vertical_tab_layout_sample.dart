@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tv_plus_foundation/tv_plus_foundation.dart';
 import 'package:tv_plus_sandstone/src/navigation/tab/tab.dart';
 
-const _animationDuration = Duration(milliseconds: 350);
+const _animationDuration = Duration(milliseconds: 150);
 
 final class SandstoneVerticalTabLayoutSample extends StatefulWidget {
   const SandstoneVerticalTabLayoutSample({super.key});
@@ -64,7 +64,7 @@ final class SandstoneVerticalTabLayoutSample extends StatefulWidget {
   }) {
     return SandstoneVerticalTab(
       key: ValueKey(title),
-      iconBuilder: (_) => SandstoneVerticalTabLayoutSample.buildIcon(icon),
+      iconBuilder: (_, _) => SandstoneVerticalTabLayoutSample.buildIcon(icon),
       builder: (context, states, isExpanded, icon) {
         return Container(
           decoration: SandstoneVerticalTabLayoutSample.buildDecoration()
@@ -72,21 +72,24 @@ final class SandstoneVerticalTabLayoutSample extends StatefulWidget {
           padding: const EdgeInsets.all(8),
           child: Row(
             mainAxisSize: MainAxisSize.min,
-            spacing: 12,
+            spacing: 8,
             children: [
               if (icon != null) icon,
 
               if (isExpanded)
-                Text(
-                  title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: SandstoneVerticalTabLayoutSample.buildContentColor(
-                      states,
+                Padding(
+                  padding: const EdgeInsets.only(right: 12),
+                  child: Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: SandstoneVerticalTabLayoutSample.buildContentColor(
+                        states,
+                      ),
+                      fontWeight: FontWeight.w600,
                     ),
-                    fontWeight: FontWeight.w600,
                   ),
                 ),
             ],
@@ -128,7 +131,7 @@ final class _SandstoneVerticalTabLayoutSampleState
           controller: _controller,
           backgroundColor: SandstoneVerticalTabLayoutSample.backgroundColor,
           drawerExpandDuration: _animationDuration,
-          separatorBuilder: (i, isExpanded) => const SizedBox(height: 12),
+          separatorBuilder: (_, _, _) => const SizedBox(height: 12),
           tabs: _items.map((item) {
             return SandstoneVerticalTabLayoutSample.buildTab(
               title: item.$1,
@@ -148,7 +151,7 @@ final class _SandstoneVerticalTabLayoutSampleState
               child: child,
             );
           },
-          builder: (context, isExpanded, entry) {
+          builder: (context, animation, entry) {
             return Stack(
               children: [
                 Align(
@@ -163,7 +166,11 @@ final class _SandstoneVerticalTabLayoutSampleState
                     builder: (context, node) {
                       return AnimatedContainer(
                         duration: _animationDuration,
-                        color: isExpanded ? Colors.green : Colors.indigoAccent,
+                        color: Color.lerp(
+                          Colors.indigoAccent,
+                          Colors.green,
+                          animation.value,
+                        ),
                         width: 700,
                         height: 500,
                         alignment: Alignment.center,

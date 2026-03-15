@@ -40,15 +40,23 @@ final class SandstoneVerticalTabLayout extends StatefulWidget {
   final void Function(FocusScopeNode, bool)? onFocusChanged;
   final void Function(FocusScopeNode)? onFocusDisabledWhenWasFocused;
 
-  final Widget Function(TvNavigationMenuEntry item, bool isExpanded)?
+  final Widget Function(
+    BuildContext context,
+    Animation<double> expandAnimation,
+    TvNavigationMenuEntry item,
+  )?
   separatorBuilder;
 
-  final Widget Function(BuildContext context, bool isExpanded, Widget child)
+  final Widget Function(
+    BuildContext context,
+    Animation<double> expandAnimation,
+    Widget child,
+  )
   tabsBuilder;
 
   final Widget Function(
     BuildContext context,
-    bool isExpanded,
+    Animation<double> expandAnimation,
     TvNavigationMenuEntry? entry,
   )
   builder;
@@ -65,7 +73,13 @@ final class SandstoneVerticalTabLayout extends StatefulWidget {
 }
 
 final class SandstoneVerticalTabLayoutState
-    extends State<SandstoneVerticalTabLayout> {
+    extends State<SandstoneVerticalTabLayout>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _expandController;
+  late Animation<double> _expandAnimation;
+
+  Animation<double> get expandAnimation => _expandAnimation;
+
   late TvNavigationMenuController _controller;
   var _ownsController = false;
 
@@ -93,6 +107,8 @@ final class SandstoneVerticalTabLayoutState
         _ownsController = true;
     }
 
+    _initExpandAnimation();
+
     _controller.addListener(_controllerListener);
     super.initState();
   }
@@ -112,18 +128,41 @@ final class SandstoneVerticalTabLayoutState
       _ownsController = false;
     }
 
+    if (oldWidget.drawerExpandDuration != widget.drawerExpandDuration) {
+      _expandController.removeListener(_animationListener);
+      _expandController.dispose();
+      _initExpandAnimation();
+    }
+
     super.didUpdateWidget(oldWidget);
+  }
+
+  void _initExpandAnimation() {
+    _expandController = AnimationController(
+      vsync: this,
+      duration: widget.drawerExpandDuration,
+    )..addListener(_animationListener);
+
+    _expandAnimation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(_expandController);
   }
 
   void _controllerListener() => setState(() {});
 
+  void _animationListener() => setState(() {});
+
   @override
   void dispose() {
+    _expandController.removeListener(_animationListener);
     _controller.removeListener(_controllerListener);
 
     if (_ownsController) {
       _controller.dispose();
     }
+
+    _expandController.dispose();
 
     super.dispose();
   }
@@ -138,7 +177,7 @@ final class SandstoneVerticalTabLayoutState
           Expanded(
             child: widget.builder(
               context,
-              _isExpanded,
+              _expandAnimation,
               _controller.selectedEntry,
             ),
           ),
@@ -159,17 +198,20 @@ final class SandstoneVerticalTabLayoutState
       },
       builder: (context, node) => widget.tabsBuilder(
         context,
-        _isExpanded,
-        AnimatedSwitcher(
+        _expandAnimation,
+        AnimatedSize(
           duration: widget.drawerExpandDuration,
-          transitionBuilder: (child, animation) {
-            final offsetAnimation = animation.drive(
-              Tween(begin: const Offset(-1, 0), end: Offset.zero),
-            );
+          child: AnimatedSwitcher(
+            duration: widget.drawerExpandDuration,
+            transitionBuilder: (child, animation) {
+              final offsetAnimation = animation.drive(
+                Tween(begin: const Offset(-1, 0), end: Offset.zero),
+              );
 
-            return SlideTransition(position: offsetAnimation, child: child);
-          },
-          child: _buildMenu(isExpanded: _isExpanded),
+              return SlideTransition(position: offsetAnimation, child: child);
+            },
+            child: _buildMenu(isExpanded: _isExpanded),
+          ),
         ),
       ),
     );
@@ -191,8 +233,8 @@ final class SandstoneVerticalTabLayoutState
           ],
           separatorBuilder: separator == null
               ? null
-              : (i) {
-                  return separator(i, isExpanded);
+              : (entry) {
+                  return separator(context, _expandAnimation, entry);
                 },
           policy: widget.policy,
           descendantsAreFocusable: widget.descendantsAreFocusable,

@@ -1,6 +1,6 @@
 name: tv_plus_foundation
 description: "Smart TV toolkit"
-version: 0.5.1
+version: 0.6.0
 repository: https://github.com/dinaraparanid/tv_plus
 resolution: workspace
 
