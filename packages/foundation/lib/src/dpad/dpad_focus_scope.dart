@@ -229,7 +229,9 @@ final class _DpadFocusScopeState extends State<DpadFocusScope>
                 !widget.policy.inDirection(node, TraversalDirection.right),
               ),
 
-            KeyDownEvent(logicalKey: LogicalKeyboardKey.select) =>
+            KeyDownEvent(
+              logicalKey: LogicalKeyboardKey.select || LogicalKeyboardKey.enter,
+            ) =>
               onSelectEvent(node, event),
 
             KeyDownEvent(logicalKey: LogicalKeyboardKey.goBack) => onBackEvent(
