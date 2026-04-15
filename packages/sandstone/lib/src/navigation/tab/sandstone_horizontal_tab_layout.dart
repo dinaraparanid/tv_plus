@@ -198,7 +198,16 @@ final class SandstoneHorizontalTabLayoutState
 
         ConstrainedBox(
           constraints: BoxConstraints(minHeight: indicatorSize?.height ?? 0),
-          child: _buildTabBar(),
+          child: NotificationListener<SizeChangedLayoutNotification>(
+            onNotification: (_) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                _updateSelectionConstraints();
+              });
+
+              return true;
+            },
+            child: SizeChangedLayoutNotifier(child: _buildTabBar()),
+          ),
         ),
       ],
     );
