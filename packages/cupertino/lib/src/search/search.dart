@@ -1,0 +1,6 @@
+library;
+
+import 'package:flutter/cupertino.dart';
+import 'package:tv_plus_foundation/tv_plus_foundation.dart';
+
+part 'cupertino_tv_search_bar.dart';
