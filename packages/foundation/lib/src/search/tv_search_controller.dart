@@ -1,7 +1,7 @@
 part of 'search.dart';
 
-final class TVSearchController extends ChangeNotifier {
-  TVSearchController({TextEditingController? textEditingController})
+final class TvSearchController extends ChangeNotifier {
+  TvSearchController({TextEditingController? textEditingController})
     : textEditingController = textEditingController ?? TextEditingController();
 
   late final TextEditingController textEditingController;
@@ -10,6 +10,16 @@ final class TVSearchController extends ChangeNotifier {
 
   set query(String value) {
     textEditingController.text = value;
+    notifyListeners();
+  }
+
+  void append(String letter) {
+    textEditingController.text += letter;
+    notifyListeners();
+  }
+
+  void removeLast() {
+    textEditingController.text = query.substring(0, query.length - 1);
     notifyListeners();
   }
 

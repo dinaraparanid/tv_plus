@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/cupertino.dart';
 import 'package:tv_plus_cupertino/src/search/search.dart';
 import 'package:tv_plus_cupertino/tv_plus_cupertino.dart';
@@ -18,20 +20,103 @@ final class CupertinoSearchBarSample extends StatefulWidget {
     ('Indigo', CupertinoColors.systemIndigo),
   ];
 
+  static final localization = CupertinoTvSearchBarLocalization(
+    supportedAlphabets: LinkedHashMap.of({
+      const Locale('en'): 'abcdefghijklmnopqrstuvwxyz'.split(''),
+      const Locale('ru'): 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя'.split(''),
+    }),
+    spaceTranslation: {
+      const Locale('en'): 'SPACE',
+      const Locale('ru'): 'ПРОБЕЛ',
+    },
+  );
+
+  static const initialLocale = Locale('en');
+
+  static const searchBarTheme = CupertinoTvSearchBarThemeData(
+    queryStyle: TextStyle(
+      fontSize: 32,
+      color: CupertinoColors.systemGrey,
+      fontWeight: FontWeight.w700,
+    ),
+    placeholderStyle: TextStyle(
+      fontSize: 32,
+      color: CupertinoColors.systemGrey,
+      fontWeight: FontWeight.w700,
+    ),
+    letterTextStyle: WidgetStateProperty.fromMap({
+      WidgetState.focused: TextStyle(
+        fontSize: 24,
+        color: CupertinoColors.black,
+        fontWeight: FontWeight.w700,
+      ),
+      WidgetState.any: TextStyle(
+        fontSize: 24,
+        color: CupertinoColors.systemGrey6,
+        fontWeight: FontWeight.w700,
+      ),
+    }),
+    buttonTextStyle: WidgetStateProperty.fromMap({
+      WidgetState.focused: TextStyle(
+        fontSize: 16,
+        color: CupertinoColors.white,
+        fontWeight: FontWeight.w700,
+        height: 1.5,
+      ),
+      WidgetState.any: TextStyle(
+        fontSize: 16,
+        color: CupertinoColors.systemGrey6,
+        fontWeight: FontWeight.w700,
+        height: 1.5,
+      ),
+    }),
+    letterFocusDecoration: WidgetStateProperty.fromMap({
+      WidgetState.focused: BoxDecoration(
+        color: CupertinoColors.white,
+        borderRadius: BorderRadius.all(Radius.circular(12)),
+      ),
+      WidgetState.any: BoxDecoration(),
+    }),
+    buttonContentColor: WidgetStateProperty.fromMap({
+      WidgetState.focused: CupertinoColors.white,
+      WidgetState.any: CupertinoColors.systemGrey6,
+    }),
+    letterFocusPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+    buttonFillPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+    buttonFocusPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+    buttonRadius: BorderRadius.all(Radius.circular(4)),
+    switchLocaleIconSize: 24,
+    spaceBetweenQueryAndInput: 24,
+  );
+
   @override
   State<StatefulWidget> createState() => _CupertinoSearchBarSampleState();
 }
 
 final class _CupertinoSearchBarSampleState
     extends State<CupertinoSearchBarSample> {
-  late final _controller = TVSearchController();
-  late final _searchScopeNode = FocusScopeNode();
+  late final _controller = CupertinoTvSearchController(
+    localization: CupertinoSearchBarSample.localization,
+    currentLocale: CupertinoSearchBarSample.initialLocale,
+  )..addListener(_listener);
+
   late final _gridScopeNode = FocusScopeNode();
+
+  var _items = CupertinoSearchBarSample.items;
+
+  void _listener() {
+    setState(() {
+      _items = _controller.query.isEmpty
+          ? CupertinoSearchBarSample.items
+          : CupertinoSearchBarSample.items.where((x) {
+              return x.$1.toLowerCase().contains(_controller.query);
+            }).toList();
+    });
+  }
 
   @override
   void dispose() {
     _controller.dispose();
-    _searchScopeNode.dispose();
     _gridScopeNode.dispose();
     super.dispose();
   }
@@ -40,15 +125,14 @@ final class _CupertinoSearchBarSampleState
   Widget build(BuildContext context) {
     return CupertinoApp(
       theme: const CupertinoThemeData(brightness: Brightness.dark),
-      builder: (context, _) => CupertinoPageScaffold(
+      home: CupertinoPageScaffold(
         child: CustomScrollView(
           slivers: [
             SliverPadding(
-              padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 80),
+              padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 40),
               sliver: SliverToBoxAdapter(
                 child: CupertinoTvSearchBar(
                   controller: _controller,
-                  focusScopeNode: _searchScopeNode,
                   placeholder: 'Search by color name',
                   searchIcon: const Padding(
                     padding: EdgeInsets.only(right: 20),
@@ -58,16 +142,7 @@ final class _CupertinoSearchBarSampleState
                       color: CupertinoColors.systemGrey,
                     ),
                   ),
-                  placeholderStyle: const TextStyle(
-                    fontSize: 32,
-                    color: CupertinoColors.systemGrey,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  queryStyle: const TextStyle(
-                    fontSize: 32,
-                    color: CupertinoColors.systemGrey6,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  theme: CupertinoSearchBarSample.searchBarTheme,
                   onDown: (_, _, isOutOfScope) {
                     if (isOutOfScope) {
                       _gridScopeNode.requestFocus();
@@ -80,7 +155,7 @@ final class _CupertinoSearchBarSampleState
                     final context = node.context;
 
                     if (context != null && isFocused) {
-                      Scrollable.ensureVisible(context);
+                      Scrollable.ensureVisible(context, alignment: 0.5);
                     }
                   },
                 ),
@@ -96,7 +171,7 @@ final class _CupertinoSearchBarSampleState
                 focusScopeNode: _gridScopeNode,
                 onUp: (_, _, isOutOfScope) {
                   if (isOutOfScope) {
-                    _searchScopeNode.requestFocus();
+                    _controller.requestFocusOnFirstLetter();
                     return KeyEventResult.handled;
                   }
 
@@ -104,17 +179,17 @@ final class _CupertinoSearchBarSampleState
                 },
                 sliver: SliverGrid(
                   gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 400,
-                    mainAxisSpacing: 60,
-                    crossAxisSpacing: 50,
+                    maxCrossAxisExtent: 200,
+                    mainAxisSpacing: 30,
+                    crossAxisSpacing: 20,
                     childAspectRatio: 1.2,
                   ),
                   delegate: SliverChildBuilderDelegate(
-                    childCount: CupertinoSearchBarSample.items.length,
+                    childCount: _items.length,
                     (context, index) => _Item(
                       autofocus: index == 0,
-                      color: CupertinoSearchBarSample.items[index].$2,
-                      name: CupertinoSearchBarSample.items[index].$1,
+                      color: _items[index].$2,
+                      name: _items[index].$1,
                     ),
                   ),
                 ),
@@ -172,7 +247,7 @@ final class _ItemState extends State<_Item> {
                 children: [
                   ColoredBox(
                     color: widget.color,
-                    child: const SizedBox(width: double.infinity, height: 200),
+                    child: const SizedBox(width: double.infinity, height: 100),
                   ),
 
                   Text(widget.name),
