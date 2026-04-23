@@ -22,37 +22,44 @@ final class CupertinoSearchBarSample extends StatefulWidget {
 
   static final localization = CupertinoTvSearchBarLocalization(
     supportedAlphabets: LinkedHashMap.of({
-      const Locale('en'): 'abcdefghijklmnopqrstuvwxyz'.split(''),
+      const Locale('en', 'US'): 'abcdefghijklmnopqrstuvwxyz'.split(''),
+      const Locale('en', 'UK'): 'abcdefghijklmnopqrstuvwxyz'.split(''),
       const Locale('ru'): 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя'.split(''),
     }),
     spaceTranslation: {
-      const Locale('en'): 'SPACE',
+      const Locale('en', 'US'): 'SPACE',
+      const Locale('en', 'UK'): 'SPACE',
       const Locale('ru'): 'ПРОБЕЛ',
+    },
+    keyboardLayoutTranslation: {
+      const Locale('en', 'US'): 'English (US)',
+      const Locale('en', 'UK'): 'English (UK)',
+      const Locale('ru'): 'Русская',
     },
   );
 
-  static const initialLocale = Locale('en');
+  static const initialLocale = Locale('en', 'US');
 
   static const searchBarTheme = CupertinoTvSearchBarThemeData(
     queryStyle: TextStyle(
       fontSize: 32,
-      color: CupertinoColors.systemGrey,
+      color: Color(0xCCFFFFFF),
       fontWeight: FontWeight.w700,
     ),
     placeholderStyle: TextStyle(
       fontSize: 32,
-      color: CupertinoColors.systemGrey,
+      color: Color(0xCCC4C7C5),
       fontWeight: FontWeight.w700,
     ),
     letterTextStyle: WidgetStateProperty.fromMap({
       WidgetState.focused: TextStyle(
         fontSize: 24,
-        color: CupertinoColors.black,
+        color: Color(0xCC000000),
         fontWeight: FontWeight.w700,
       ),
       WidgetState.any: TextStyle(
         fontSize: 24,
-        color: CupertinoColors.systemGrey6,
+        color: Color(0xCCC4C7C5),
         fontWeight: FontWeight.w700,
       ),
     }),
@@ -65,7 +72,7 @@ final class CupertinoSearchBarSample extends StatefulWidget {
       ),
       WidgetState.any: TextStyle(
         fontSize: 16,
-        color: CupertinoColors.systemGrey6,
+        color: Color(0xCCC4C7C5),
         fontWeight: FontWeight.w700,
         height: 1.5,
       ),
@@ -74,12 +81,19 @@ final class CupertinoSearchBarSample extends StatefulWidget {
       WidgetState.focused: BoxDecoration(
         color: CupertinoColors.white,
         borderRadius: BorderRadius.all(Radius.circular(12)),
+        boxShadow: [
+          BoxShadow(
+            offset: Offset(0, 4.8),
+            blurRadius: 4.8,
+            color: Color(0x40000000),
+          ),
+        ],
       ),
       WidgetState.any: BoxDecoration(),
     }),
     buttonContentColor: WidgetStateProperty.fromMap({
       WidgetState.focused: CupertinoColors.white,
-      WidgetState.any: CupertinoColors.systemGrey6,
+      WidgetState.any: Color(0xCCC4C7C5),
     }),
     letterFocusPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
     buttonFillPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),

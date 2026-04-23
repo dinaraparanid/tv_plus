@@ -41,6 +41,9 @@ final class CupertinoTvSearchBarThemeData {
     this.buttonRadius,
     this.switchLocaleIconSize,
     this.spaceBetweenQueryAndInput,
+    this.switchLanguageRadialOpacityAnimationRadius = 8,
+    this.switchLanguageLabelShowDuration = const Duration(milliseconds: 400),
+    this.switchLanguageLabelHideDuration = const Duration(milliseconds: 200),
   });
 
   final TextStyle? queryStyle;
@@ -56,4 +59,7 @@ final class CupertinoTvSearchBarThemeData {
   final BorderRadiusGeometry? buttonRadius;
   final double? switchLocaleIconSize;
   final double? spaceBetweenQueryAndInput;
+  final double switchLanguageRadialOpacityAnimationRadius;
+  final Duration switchLanguageLabelShowDuration;
+  final Duration switchLanguageLabelHideDuration;
 }
