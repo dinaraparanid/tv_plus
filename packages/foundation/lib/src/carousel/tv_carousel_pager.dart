@@ -24,10 +24,12 @@ final class TvCarouselPager extends StatefulWidget {
     this.onLeft,
     this.onRight,
     this.onSelect,
+    this.onLongSelect,
     this.onBack,
     this.onKeyEvent,
     this.onFocusChanged,
     this.onFocusDisabledWhenWasFocused,
+    this.longPressDuration = kLongPressTimeout,
     this.separatorBuilder,
     required this.itemBuilder,
   });
@@ -46,10 +48,12 @@ final class TvCarouselPager extends StatefulWidget {
   final CarouselDpadEventCallback? onLeft;
   final CarouselDpadEventCallback? onRight;
   final DpadEventCallback? onSelect;
+  final DpadEventCallback? onLongSelect;
   final DpadEventCallback? onBack;
   final KeyEventResult Function(FocusNode, KeyEvent)? onKeyEvent;
   final void Function(FocusNode, bool)? onFocusChanged;
   final void Function()? onFocusDisabledWhenWasFocused;
+  final Duration longPressDuration;
   final Widget Function(BuildContext context, int index, int selectedIndex)?
   separatorBuilder;
   final Widget Function(
@@ -194,9 +198,13 @@ final class _TvCarouselPagerState extends State<TvCarouselPager>
       onDown: onDownEvent,
       onLeft: onLeftEvent,
       onRight: onRightEvent,
+      onSelect: widget.onSelect,
+      onLongSelect: widget.onLongSelect,
+      onBack: widget.onBack,
       onKeyEvent: widget.onKeyEvent,
       onFocusChanged: widget.onFocusChanged,
       onFocusDisabledWhenWasFocused: widget.onFocusDisabledWhenWasFocused,
+      longPressDuration: widget.longPressDuration,
       builder: (context, node) => Row(
         mainAxisSize: MainAxisSize.min,
         children: [

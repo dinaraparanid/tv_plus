@@ -20,9 +20,12 @@ final class TvTabBarFoundation extends StatefulWidget {
     this.onDown,
     this.onLeft,
     this.onRight,
+    this.onSelect,
+    this.onLongSelect,
     this.onBack,
     this.onFocusChanged,
     this.onFocusDisabledWhenWasFocused,
+    this.longPressDuration = kLongPressTimeout,
   }) : policy = policy ?? ReadingOrderTraversalPolicy();
 
   final List<Widget> tabs;
@@ -42,9 +45,12 @@ final class TvTabBarFoundation extends StatefulWidget {
   final DpadScopeEventCallback? onDown;
   final DpadScopeEventCallback? onLeft;
   final DpadScopeEventCallback? onRight;
+  final DpadEventCallback? onSelect;
+  final DpadEventCallback? onLongSelect;
   final DpadEventCallback? onBack;
   final void Function(FocusScopeNode, bool)? onFocusChanged;
   final void Function(FocusScopeNode)? onFocusDisabledWhenWasFocused;
+  final Duration longPressDuration;
 
   static TvTabBarController? maybeOf(BuildContext context) =>
       context.findAncestorStateOfType<_TvTabBarFoundationState>()?._controller;
@@ -178,9 +184,12 @@ final class _TvTabBarFoundationState extends State<TvTabBarFoundation>
       onDown: widget.onDown,
       onLeft: onLeftEvent,
       onRight: onRightEvent,
+      onSelect: widget.onSelect,
+      onLongSelect: widget.onLongSelect,
       onBack: widget.onBack,
       onFocusChanged: widget.onFocusChanged,
       onFocusDisabledWhenWasFocused: widget.onFocusDisabledWhenWasFocused,
+      longPressDuration: widget.longPressDuration,
       builder: (context, _) => Row(
         mainAxisSize: widget.mainAxisSize,
         mainAxisAlignment: widget.mainAxisAlignment,

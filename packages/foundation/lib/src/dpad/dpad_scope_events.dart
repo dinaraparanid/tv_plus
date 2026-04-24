@@ -21,7 +21,9 @@ mixin DpadScopeEvents {
     KeyUpEvent event,
     bool isOutOfScope,
   ) => KeyEventResult.ignored;
-  KeyEventResult onSelectEvent(FocusNode node, KeyUpEvent event) =>
+  KeyEventResult onSelectStartEvent(FocusNode node, KeyUpEvent event) =>
+      KeyEventResult.ignored;
+  KeyEventResult onSelectEndEvent(FocusNode node, KeyUpEvent event) =>
       KeyEventResult.ignored;
   KeyEventResult onBackEvent(FocusNode node, KeyUpEvent event) =>
       KeyEventResult.ignored;
