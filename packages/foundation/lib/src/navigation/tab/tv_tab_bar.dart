@@ -126,7 +126,7 @@ final class _TvTabBarFoundationState extends State<TvTabBarFoundation>
   @override
   KeyEventResult onLeftEvent(
     FocusNode node,
-    KeyDownEvent event,
+    KeyEvent event,
     bool isOutOfScope,
   ) {
     if (!isOutOfScope) {
@@ -140,7 +140,7 @@ final class _TvTabBarFoundationState extends State<TvTabBarFoundation>
   @override
   KeyEventResult onRightEvent(
     FocusNode node,
-    KeyDownEvent event,
+    KeyEvent event,
     bool isOutOfScope,
   ) {
     if (!isOutOfScope) {

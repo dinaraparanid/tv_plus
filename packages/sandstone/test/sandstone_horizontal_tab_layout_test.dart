@@ -267,6 +267,9 @@ extension SandstoneHorizontalTabLayoutSampleTest on WidgetTester {
 
     expect(titleFinder, findsOneWidget);
 
+    final title = firstWidget<Text>(titleFinder);
+    expect(title.data, text);
+
     final jumpFinder = find.descendant(
       of: contentFinder,
       matching: find.byKey(contentJumpKey),
