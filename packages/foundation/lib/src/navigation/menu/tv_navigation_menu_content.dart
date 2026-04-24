@@ -428,7 +428,7 @@ final class _TvNavigationDrawerItem extends StatelessWidget {
   final bool isSelected;
   final bool autofocus;
   final double? viewportAlignment;
-  final KeyEventResult Function(FocusNode, KeyDownEvent)? onSelect;
+  final DpadEventCallback? onSelect;
 
   @override
   Widget build(BuildContext context) {

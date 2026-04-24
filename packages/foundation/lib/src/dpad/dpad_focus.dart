@@ -1,6 +1,6 @@
 part of 'dpad.dart';
 
-typedef DpadEventCallback = KeyEventResult Function(FocusNode, KeyDownEvent);
+typedef DpadEventCallback = KeyEventResult Function(FocusNode, KeyEvent);
 
 final class DpadFocus extends StatefulWidget {
   const DpadFocus({
@@ -115,32 +115,32 @@ final class _DpadFocusState extends State<DpadFocus> with DpadEvents {
   }
 
   @override
-  KeyEventResult onUpEvent(FocusNode node, KeyDownEvent event) {
+  KeyEventResult onUpEvent(FocusNode node, KeyEvent event) {
     return widget.onUp?.call(node, event) ?? KeyEventResult.ignored;
   }
 
   @override
-  KeyEventResult onDownEvent(FocusNode node, KeyDownEvent event) {
+  KeyEventResult onDownEvent(FocusNode node, KeyEvent event) {
     return widget.onDown?.call(node, event) ?? KeyEventResult.ignored;
   }
 
   @override
-  KeyEventResult onLeftEvent(FocusNode node, KeyDownEvent event) {
+  KeyEventResult onLeftEvent(FocusNode node, KeyEvent event) {
     return widget.onLeft?.call(node, event) ?? KeyEventResult.ignored;
   }
 
   @override
-  KeyEventResult onRightEvent(FocusNode node, KeyDownEvent event) {
+  KeyEventResult onRightEvent(FocusNode node, KeyEvent event) {
     return widget.onRight?.call(node, event) ?? KeyEventResult.ignored;
   }
 
   @override
-  KeyEventResult onSelectEvent(FocusNode node, KeyDownEvent event) {
+  KeyEventResult onSelectEvent(FocusNode node, KeyEvent event) {
     return widget.onSelect?.call(node, event) ?? KeyEventResult.ignored;
   }
 
   @override
-  KeyEventResult onBackEvent(FocusNode node, KeyDownEvent event) {
+  KeyEventResult onBackEvent(FocusNode node, KeyEvent event) {
     return widget.onBack?.call(node, event) ?? KeyEventResult.ignored;
   }
 
@@ -179,7 +179,7 @@ final class _DpadFocusState extends State<DpadFocus> with DpadEvents {
           KeyDownEvent(logicalKey: LogicalKeyboardKey.arrowRight) =>
             onRightEvent(node, event),
 
-          KeyDownEvent(
+          KeyUpEvent(
             logicalKey: LogicalKeyboardKey.select || LogicalKeyboardKey.enter,
           ) =>
             onSelectEvent(node, event),
