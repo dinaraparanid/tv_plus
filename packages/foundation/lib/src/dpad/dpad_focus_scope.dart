@@ -1,11 +1,7 @@
 part of 'dpad.dart';
 
 typedef DpadScopeEventCallback =
-    KeyEventResult Function(
-      FocusNode node,
-      KeyDownEvent event,
-      bool isOutOfScope,
-    );
+    KeyEventResult Function(FocusNode node, KeyEvent event, bool isOutOfScope);
 
 final class DpadFocusScope extends StatefulWidget {
   DpadFocusScope({
@@ -130,11 +126,7 @@ final class _DpadFocusScopeState extends State<DpadFocusScope>
   }
 
   @override
-  KeyEventResult onUpEvent(
-    FocusNode node,
-    KeyDownEvent event,
-    bool isOutOfScope,
-  ) {
+  KeyEventResult onUpEvent(FocusNode node, KeyEvent event, bool isOutOfScope) {
     return widget.onUp?.call(node, event, isOutOfScope) ??
         (isOutOfScope ? KeyEventResult.ignored : KeyEventResult.handled);
   }
@@ -142,7 +134,7 @@ final class _DpadFocusScopeState extends State<DpadFocusScope>
   @override
   KeyEventResult onDownEvent(
     FocusNode node,
-    KeyDownEvent event,
+    KeyEvent event,
     bool isOutOfScope,
   ) {
     return widget.onDown?.call(node, event, isOutOfScope) ??
@@ -152,7 +144,7 @@ final class _DpadFocusScopeState extends State<DpadFocusScope>
   @override
   KeyEventResult onLeftEvent(
     FocusNode node,
-    KeyDownEvent event,
+    KeyEvent event,
     bool isOutOfScope,
   ) {
     return widget.onLeft?.call(node, event, isOutOfScope) ??
@@ -162,7 +154,7 @@ final class _DpadFocusScopeState extends State<DpadFocusScope>
   @override
   KeyEventResult onRightEvent(
     FocusNode node,
-    KeyDownEvent event,
+    KeyEvent event,
     bool isOutOfScope,
   ) {
     return widget.onRight?.call(node, event, isOutOfScope) ??
@@ -170,12 +162,12 @@ final class _DpadFocusScopeState extends State<DpadFocusScope>
   }
 
   @override
-  KeyEventResult onSelectEvent(FocusNode node, KeyDownEvent event) {
+  KeyEventResult onSelectEvent(FocusNode node, KeyEvent event) {
     return widget.onSelect?.call(node, event) ?? KeyEventResult.ignored;
   }
 
   @override
-  KeyEventResult onBackEvent(FocusNode node, KeyDownEvent event) {
+  KeyEventResult onBackEvent(FocusNode node, KeyEvent event) {
     return widget.onBack?.call(node, event) ?? KeyEventResult.ignored;
   }
 
@@ -229,7 +221,7 @@ final class _DpadFocusScopeState extends State<DpadFocusScope>
                 !widget.policy.inDirection(node, TraversalDirection.right),
               ),
 
-            KeyDownEvent(
+            KeyUpEvent(
               logicalKey: LogicalKeyboardKey.select || LogicalKeyboardKey.enter,
             ) =>
               onSelectEvent(node, event),

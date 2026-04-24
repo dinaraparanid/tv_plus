@@ -175,7 +175,7 @@ final class _TvSliderState extends State<TvSlider> with DpadEvents {
   }
 
   @override
-  KeyEventResult onUpEvent(FocusNode node, KeyDownEvent event) {
+  KeyEventResult onUpEvent(FocusNode node, KeyEvent event) {
     if (widget.onUp != null) {
       return widget.onUp!(node, event);
     }
@@ -185,7 +185,7 @@ final class _TvSliderState extends State<TvSlider> with DpadEvents {
   }
 
   @override
-  KeyEventResult onDownEvent(FocusNode node, KeyDownEvent event) {
+  KeyEventResult onDownEvent(FocusNode node, KeyEvent event) {
     if (widget.onDown != null) {
       return widget.onDown!(node, event);
     }
@@ -195,7 +195,7 @@ final class _TvSliderState extends State<TvSlider> with DpadEvents {
   }
 
   @override
-  KeyEventResult onLeftEvent(FocusNode node, KeyDownEvent event) {
+  KeyEventResult onLeftEvent(FocusNode node, KeyEvent event) {
     if (widget.onLeft != null) {
       return widget.onLeft!(node, event);
     }
@@ -205,7 +205,7 @@ final class _TvSliderState extends State<TvSlider> with DpadEvents {
   }
 
   @override
-  KeyEventResult onRightEvent(FocusNode node, KeyDownEvent event) {
+  KeyEventResult onRightEvent(FocusNode node, KeyEvent event) {
     if (widget.onRight != null) {
       return widget.onRight!(node, event);
     }
