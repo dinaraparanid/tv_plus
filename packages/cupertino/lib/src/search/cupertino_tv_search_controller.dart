@@ -7,8 +7,11 @@ final class CupertinoTvSearchController extends ChangeNotifier {
     FocusScopeNode? lettersScopeNode,
     required this.localization,
     required Locale currentLocale,
+    CupertinoTvSearchBarKeyboardType? initialKeyboardType,
   }) : _controller = controller ?? TvSearchController(),
        _currentLocale = currentLocale,
+       _keyboardType =
+           initialKeyboardType ?? CupertinoTvSearchBarKeyboardType.letters,
        focusScopeNode = focusScopeNode ?? FocusScopeNode(),
        lettersScopeNode = lettersScopeNode ?? FocusScopeNode() {
     if (!localization.supportedAlphabets.containsKey(currentLocale)) {
@@ -21,11 +24,14 @@ final class CupertinoTvSearchController extends ChangeNotifier {
   final TvSearchController _controller;
   final CupertinoTvSearchBarLocalization localization;
   Locale _currentLocale;
+  CupertinoTvSearchBarKeyboardType _keyboardType;
 
   final FocusScopeNode focusScopeNode;
   final FocusScopeNode lettersScopeNode;
 
   Locale get currentLocale => _currentLocale;
+
+  CupertinoTvSearchBarKeyboardType get keyboardType => _keyboardType;
 
   TextEditingController get textEditingController {
     return _controller.textEditingController;
@@ -54,6 +60,21 @@ final class CupertinoTvSearchController extends ChangeNotifier {
       notifyListeners();
       break;
     }
+  }
+
+  void switchToNextKeyboardType() {
+    _keyboardType = switch (_keyboardType) {
+      CupertinoTvSearchBarKeyboardType.letters =>
+        CupertinoTvSearchBarKeyboardType.numbers,
+
+      CupertinoTvSearchBarKeyboardType.numbers =>
+        CupertinoTvSearchBarKeyboardType.special,
+
+      CupertinoTvSearchBarKeyboardType.special =>
+        CupertinoTvSearchBarKeyboardType.letters,
+    };
+
+    notifyListeners();
   }
 
   void requestFocusOnFirstLetter() {

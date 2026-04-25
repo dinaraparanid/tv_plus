@@ -18,16 +18,18 @@ final class _CupertinoTvSearchBarInputState
     ).switchLanguageLabelShowDuration,
   );
 
-  late var _currentLocale = widget.controller._currentLocale;
+  late var _currentLocale = widget.controller.currentLocale;
+  late var _currentKeyboardType = widget.controller.keyboardType;
 
   @override
   void initState() {
-    widget.controller.addListener(_langListener);
+    widget.controller.addListener(_listener);
     super.initState();
   }
 
-  void _langListener() async {
+  void _listener() async {
     final nextLocale = widget.controller._currentLocale;
+    final nextKeyboardType = widget.controller._keyboardType;
 
     if (_currentLocale != nextLocale) {
       final theme = CupertinoTvSearchBarTheme.of(context);
@@ -39,6 +41,10 @@ final class _CupertinoTvSearchBarInputState
         0,
         duration: theme.switchLanguageLabelHideDuration,
       );
+    }
+
+    if (_currentKeyboardType != nextKeyboardType) {
+      setState(() => _currentKeyboardType = nextKeyboardType);
     }
   }
 
@@ -79,7 +85,14 @@ final class _AnimatedContent extends AnimatedWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: theme.letterSpacing ?? 0,
       children: [
-        _LangChanger(onSelect: controller.switchToNextLocale),
+        _LangButton(onSelect: controller.switchToNextLocale),
+
+        _KeyboardTypeButton(
+          keyboardType: controller.keyboardType,
+          localization: localization,
+          currentLocale: currentLocale,
+          onSelect: controller.switchToNextKeyboardType,
+        ),
 
         _Rect(text: space, onSelect: () => controller.append(' ')),
 
@@ -115,99 +128,6 @@ final class _AnimatedContent extends AnimatedWidget {
 
         _Eraser(onSelect: controller.removeLast),
       ],
-    );
-  }
-}
-
-final class _Letters extends StatelessWidget {
-  const _Letters({required this.controller, required this.opacity});
-  final CupertinoTvSearchController controller;
-  final double opacity;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = CupertinoTvSearchBarTheme.of(context);
-    final localization = controller.localization;
-    final currentLocale = controller.currentLocale;
-    final alphabet = localization.supportedAlphabets[currentLocale]!;
-
-    return Opacity(
-      opacity: 1 - opacity / 2,
-      child: ShaderMask(
-        shaderCallback: (bounds) => RadialGradient(
-          center: Alignment.center,
-          radius: theme.switchLanguageRadialOpacityAnimationRadius,
-          stops: const [0, 1],
-          colors: [
-            Color.lerp(
-              CupertinoColors.transparent,
-              CupertinoColors.black,
-              1 - opacity,
-            )!,
-            CupertinoColors.black,
-          ],
-        ).createShader(bounds),
-        blendMode: BlendMode.dstIn,
-        child: DpadFocusScope(
-          focusScopeNode: controller.lettersScopeNode,
-          builder: (_, _) => Wrap(
-            alignment: WrapAlignment.center,
-            spacing: theme.letterSpacing ?? 0,
-            runSpacing: theme.letterSpacing ?? 0,
-            children: [
-              for (final letter in alphabet)
-                _CupertinoTvSearchBarLetter(
-                  letter: letter,
-                  onSelect: () => controller.append(letter),
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-final class _LangChanger extends StatelessWidget {
-  const _LangChanger({required this.onSelect});
-  final VoidCallback onSelect;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = CupertinoTvSearchBarTheme.of(context);
-
-    return _CupertinoTvSearchBarItem(
-      onSelect: onSelect,
-      focusPadding: theme.letterFocusPadding,
-      builder: (context, isFocused) {
-        final Set<WidgetState> states = isFocused ? {WidgetState.focused} : {};
-
-        return Icon(
-          CupertinoIcons.globe,
-          size: theme.switchLocaleIconSize,
-          color: theme.letterTextStyle?.resolve(states).color,
-        );
-      },
-    );
-  }
-}
-
-final class _LangLabel extends StatelessWidget {
-  const _LangLabel({required this.currentLocale, required this.localization});
-
-  final Locale currentLocale;
-  final CupertinoTvSearchBarLocalization localization;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = CupertinoTvSearchBarTheme.of(context);
-    final keyboardLayout =
-        localization.keyboardLayoutTranslation[currentLocale] ??
-        currentLocale.languageCode;
-
-    return Padding(
-      padding: theme.letterFocusPadding ?? EdgeInsets.zero,
-      child: Text(keyboardLayout, style: theme.letterTextStyle?.resolve({})),
     );
   }
 }

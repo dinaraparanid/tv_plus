@@ -36,6 +36,11 @@ final class CupertinoSearchBarSample extends StatefulWidget {
       const Locale('en', 'UK'): 'English (UK)',
       const Locale('ru'): 'Русская',
     },
+    keyboardTypeTranslation: {
+      const Locale('en', 'US'): 'abc',
+      const Locale('en', 'UK'): 'abc',
+      const Locale('ru'): 'абв',
+    },
   );
 
   static const initialLocale = Locale('en', 'US');
