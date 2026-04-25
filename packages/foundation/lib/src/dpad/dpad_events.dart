@@ -9,7 +9,9 @@ mixin DpadEvents {
       KeyEventResult.ignored;
   KeyEventResult onRightEvent(FocusNode node, KeyEvent event) =>
       KeyEventResult.ignored;
-  KeyEventResult onSelectEvent(FocusNode node, KeyEvent event) =>
+  KeyEventResult onSelectStartEvent(FocusNode node, KeyEvent event) =>
+      KeyEventResult.ignored;
+  KeyEventResult onSelectEndEvent(FocusNode node, KeyEvent event) =>
       KeyEventResult.ignored;
   KeyEventResult onBackEvent(FocusNode node, KeyEvent event) =>
       KeyEventResult.ignored;

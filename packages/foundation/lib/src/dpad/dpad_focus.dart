@@ -16,10 +16,12 @@ final class DpadFocus extends StatefulWidget {
     this.onLeft,
     this.onRight,
     this.onSelect,
+    this.onLongSelect,
     this.onBack,
     this.onKeyEvent,
     this.onFocusChanged,
     this.onFocusDisabledWhenWasFocused,
+    this.longPressDuration = kLongPressTimeout,
     required this.builder,
   });
 
@@ -34,10 +36,12 @@ final class DpadFocus extends StatefulWidget {
   final DpadEventCallback? onLeft;
   final DpadEventCallback? onRight;
   final DpadEventCallback? onSelect;
+  final DpadEventCallback? onLongSelect;
   final DpadEventCallback? onBack;
   final KeyEventResult Function(FocusNode, KeyEvent)? onKeyEvent;
   final void Function(FocusNode, bool)? onFocusChanged;
   final void Function()? onFocusDisabledWhenWasFocused;
+  final Duration longPressDuration;
   final Widget Function(BuildContext, FocusNode) builder;
 
   @override
@@ -50,6 +54,8 @@ final class _DpadFocusState extends State<DpadFocus> with DpadEvents {
   bool _ownsFocusNode = false;
   bool _canRequestFocus = false;
   bool _hasFocus = false;
+
+  Duration? _lastSelectEventStartTimestamp;
 
   @override
   void initState() {
@@ -135,7 +141,25 @@ final class _DpadFocusState extends State<DpadFocus> with DpadEvents {
   }
 
   @override
-  KeyEventResult onSelectEvent(FocusNode node, KeyEvent event) {
+  KeyEventResult onSelectStartEvent(FocusNode node, KeyEvent event) {
+    if (widget.onLongSelect == null) {
+      return KeyEventResult.ignored;
+    }
+
+    _lastSelectEventStartTimestamp = event.timeStamp;
+
+    Future.delayed(widget.longPressDuration, () {
+      if (_lastSelectEventStartTimestamp == event.timeStamp) {
+        widget.onLongSelect?.call(node, event);
+      }
+    });
+
+    return KeyEventResult.handled;
+  }
+
+  @override
+  KeyEventResult onSelectEndEvent(FocusNode node, KeyEvent event) {
+    _lastSelectEventStartTimestamp = null;
     return widget.onSelect?.call(node, event) ?? KeyEventResult.ignored;
   }
 
@@ -179,10 +203,15 @@ final class _DpadFocusState extends State<DpadFocus> with DpadEvents {
           KeyDownEvent(logicalKey: LogicalKeyboardKey.arrowRight) =>
             onRightEvent(node, event),
 
+          KeyDownEvent(
+            logicalKey: LogicalKeyboardKey.select || LogicalKeyboardKey.enter,
+          ) =>
+            onSelectStartEvent(node, event),
+
           KeyUpEvent(
             logicalKey: LogicalKeyboardKey.select || LogicalKeyboardKey.enter,
           ) =>
-            onSelectEvent(node, event),
+            onSelectEndEvent(node, event),
 
           KeyDownEvent(logicalKey: LogicalKeyboardKey.goBack) => onBackEvent(
             node,

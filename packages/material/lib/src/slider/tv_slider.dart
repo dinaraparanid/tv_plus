@@ -33,10 +33,12 @@ final class TvSlider extends StatefulWidget {
     this.onLeft,
     this.onRight,
     this.onSelect,
+    this.onLongSelect,
     this.onBack,
     this.onKeyEvent,
     this.onFocusChanged,
     this.onFocusDisabledWhenWasFocused,
+    this.longPressDuration = kLongPressTimeout,
   }) : assert(step == null || step > 0.0, 'step must be positive');
 
   final double value;
@@ -70,10 +72,12 @@ final class TvSlider extends StatefulWidget {
   final DpadEventCallback? onLeft;
   final DpadEventCallback? onRight;
   final DpadEventCallback? onSelect;
+  final DpadEventCallback? onLongSelect;
   final DpadEventCallback? onBack;
   final KeyEventResult Function(FocusNode, KeyEvent)? onKeyEvent;
   final void Function(FocusNode, bool)? onFocusChanged;
   final void Function()? onFocusDisabledWhenWasFocused;
+  final Duration longPressDuration;
 
   @override
   State<StatefulWidget> createState() => _TvSliderState();
@@ -143,10 +147,12 @@ final class _TvSliderState extends State<TvSlider> with DpadEvents {
       onLeft: onLeftEvent,
       onRight: onRightEvent,
       onSelect: widget.onSelect,
+      onLongSelect: widget.onLongSelect,
       onBack: widget.onBack,
       onKeyEvent: widget.onKeyEvent,
       onFocusChanged: widget.onFocusChanged,
       onFocusDisabledWhenWasFocused: widget.onFocusDisabledWhenWasFocused,
+      longPressDuration: widget.longPressDuration,
       builder: (context, _) => SliderTheme(
         data: SliderTheme.of(
           context,

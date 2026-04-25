@@ -12,6 +12,7 @@ final class SampleDpadFocus extends StatefulWidget {
     this.onLeft,
     this.onRight,
     this.onSelect,
+    this.onLongSelect,
     this.onBack,
     this.onFocusChanged,
     this.onFocusDisabledWhenWasFocused,
@@ -34,6 +35,7 @@ final class SampleDpadFocus extends StatefulWidget {
   final DpadEventCallback? onLeft;
   final DpadEventCallback? onRight;
   final DpadEventCallback? onSelect;
+  final DpadEventCallback? onLongSelect;
   final DpadEventCallback? onBack;
   final void Function(FocusNode)? onFocusChanged;
   final void Function()? onFocusDisabledWhenWasFocused;
@@ -118,6 +120,7 @@ final class _SampleDpadFocusState extends State<SampleDpadFocus> {
       onLeft: widget.onLeft,
       onRight: widget.onRight,
       onSelect: widget.onSelect,
+      onLongSelect: widget.onLongSelect,
       onBack: widget.onBack,
       onFocusDisabledWhenWasFocused: widget.onFocusDisabledWhenWasFocused,
       builder: (context, node) {

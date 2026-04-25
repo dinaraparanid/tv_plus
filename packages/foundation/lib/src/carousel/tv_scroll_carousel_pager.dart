@@ -16,8 +16,6 @@ final class TvScrollCarouselPager extends StatefulWidget {
     this.onDown,
     this.onLeft,
     this.onRight,
-    this.onSelect,
-    this.onBack,
     this.onKeyEvent,
     this.onFocusChanged,
     this.onFocusDisabledWhenWasFocused,
@@ -44,8 +42,6 @@ final class TvScrollCarouselPager extends StatefulWidget {
   final DpadEventCallback? onDown;
   final CarouselDpadEventCallback? onLeft;
   final CarouselDpadEventCallback? onRight;
-  final DpadEventCallback? onSelect;
-  final DpadEventCallback? onBack;
   final KeyEventResult Function(FocusNode, KeyEvent)? onKeyEvent;
   final void Function(FocusNode, bool)? onFocusChanged;
   final void Function(FocusScopeNode)? onFocusDisabledWhenWasFocused;
