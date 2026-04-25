@@ -133,10 +133,11 @@ final class _AnimatedContent extends AnimatedWidget {
 }
 
 final class _Rect extends StatelessWidget {
-  const _Rect({required this.text, required this.onSelect});
+  const _Rect({required this.text, required this.onSelect, this.onLongSelect});
 
   final String text;
   final VoidCallback onSelect;
+  final VoidCallback? onLongSelect;
 
   @override
   Widget build(BuildContext context) {
@@ -144,6 +145,7 @@ final class _Rect extends StatelessWidget {
 
     return _CupertinoTvSearchBarItem(
       onSelect: onSelect,
+      onLongSelect: onLongSelect,
       focusPadding: theme.buttonFocusPadding,
       builder: (context, isFocused) {
         final theme = CupertinoTvSearchBarTheme.of(context);

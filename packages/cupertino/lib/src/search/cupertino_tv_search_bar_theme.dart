@@ -32,13 +32,17 @@ final class CupertinoTvSearchBarThemeData {
     this.placeholderStyle,
     this.letterTextStyle,
     this.buttonTextStyle,
-    this.letterFocusDecoration,
+    this.keyboardTypeExpandedTextStyle,
+    this.letterDecoration,
+    this.keyboardTypeExpandedDecoration,
     this.buttonContentColor,
+    this.keyboardTypeExpandedBackgroundColor,
     this.letterFocusPadding,
     this.buttonFillPadding,
     this.buttonFocusPadding,
     this.letterSpacing,
     this.buttonRadius,
+    this.keyboardTypeExpandedRadius,
     this.switchLocaleIconSize,
     this.spaceBetweenQueryAndInput,
     this.switchLanguageRadialOpacityAnimationRadius = 8,
@@ -50,13 +54,17 @@ final class CupertinoTvSearchBarThemeData {
   final TextStyle? placeholderStyle;
   final WidgetStateProperty<TextStyle>? letterTextStyle;
   final WidgetStateProperty<TextStyle>? buttonTextStyle;
-  final WidgetStateProperty<Decoration>? letterFocusDecoration;
+  final WidgetStateProperty<TextStyle>? keyboardTypeExpandedTextStyle;
+  final WidgetStateProperty<Decoration>? letterDecoration;
+  final WidgetStateProperty<Decoration>? keyboardTypeExpandedDecoration;
   final WidgetStateProperty<Color>? buttonContentColor;
+  final Color? keyboardTypeExpandedBackgroundColor;
   final EdgeInsetsGeometry? letterFocusPadding;
   final EdgeInsetsGeometry? buttonFillPadding;
   final EdgeInsetsGeometry? buttonFocusPadding;
   final double? letterSpacing;
   final BorderRadiusGeometry? buttonRadius;
+  final BorderRadiusGeometry? keyboardTypeExpandedRadius;
   final double? switchLocaleIconSize;
   final double? spaceBetweenQueryAndInput;
   final double switchLanguageRadialOpacityAnimationRadius;

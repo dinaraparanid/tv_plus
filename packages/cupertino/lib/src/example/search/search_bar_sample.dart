@@ -82,7 +82,21 @@ final class CupertinoSearchBarSample extends StatefulWidget {
         height: 1.5,
       ),
     }),
-    letterFocusDecoration: WidgetStateProperty.fromMap({
+    keyboardTypeExpandedTextStyle: WidgetStateProperty.fromMap({
+      WidgetState.focused: TextStyle(
+        fontSize: 16,
+        color: CupertinoColors.white,
+        fontWeight: FontWeight.w700,
+        height: 1.5,
+      ),
+      WidgetState.any: TextStyle(
+        fontSize: 16,
+        color: Color(0xCCFFFFFF),
+        fontWeight: FontWeight.w700,
+        height: 1.5,
+      ),
+    }),
+    letterDecoration: WidgetStateProperty.fromMap({
       WidgetState.focused: BoxDecoration(
         color: CupertinoColors.white,
         borderRadius: BorderRadius.all(Radius.circular(12)),
@@ -96,14 +110,26 @@ final class CupertinoSearchBarSample extends StatefulWidget {
       ),
       WidgetState.any: BoxDecoration(),
     }),
+    keyboardTypeExpandedDecoration: WidgetStateProperty.fromMap({
+      WidgetState.focused: BoxDecoration(
+        color: Color(0xCC000000),
+        borderRadius: BorderRadius.all(Radius.circular(4)),
+      ),
+      WidgetState.any: BoxDecoration(
+        color: Color(0x99000000),
+        borderRadius: BorderRadius.all(Radius.circular(4)),
+      ),
+    }),
     buttonContentColor: WidgetStateProperty.fromMap({
       WidgetState.focused: CupertinoColors.white,
       WidgetState.any: Color(0xCCC4C7C5),
     }),
+    keyboardTypeExpandedBackgroundColor: Color(0xFFC4C7C5),
     letterFocusPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
     buttonFillPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
     buttonFocusPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
     buttonRadius: BorderRadius.all(Radius.circular(4)),
+    keyboardTypeExpandedRadius: BorderRadius.all(Radius.circular(12)),
     switchLocaleIconSize: 24,
     spaceBetweenQueryAndInput: 24,
   );

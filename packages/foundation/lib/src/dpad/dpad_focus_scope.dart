@@ -66,6 +66,7 @@ final class _DpadFocusScopeState extends State<DpadFocusScope>
   bool _hasFocus = false;
 
   Duration? _lastSelectEventStartTimestamp;
+  bool _isLongPressing = false;
 
   @override
   void initState() {
@@ -169,14 +170,17 @@ final class _DpadFocusScopeState extends State<DpadFocusScope>
 
   @override
   KeyEventResult onSelectStartEvent(FocusNode node, KeyEvent event) {
+    _isLongPressing = false;
+
     if (widget.onLongSelect == null) {
-      return KeyEventResult.ignored;
+      return widget.onSelect?.call(node, event) ?? KeyEventResult.ignored;
     }
 
     _lastSelectEventStartTimestamp = event.timeStamp;
 
     Future.delayed(widget.longPressDuration, () {
       if (_lastSelectEventStartTimestamp == event.timeStamp) {
+        _isLongPressing = true;
         widget.onLongSelect?.call(node, event);
       }
     });
@@ -186,6 +190,14 @@ final class _DpadFocusScopeState extends State<DpadFocusScope>
 
   @override
   KeyEventResult onSelectEndEvent(FocusNode node, KeyEvent event) {
+    if (_isLongPressing) {
+      return KeyEventResult.handled;
+    }
+
+    if (widget.onLongSelect != null) {
+      return KeyEventResult.ignored;
+    }
+
     _lastSelectEventStartTimestamp = null;
     return widget.onSelect?.call(node, event) ?? KeyEventResult.ignored;
   }
