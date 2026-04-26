@@ -3,26 +3,28 @@ part of 'dpad.dart';
 mixin DpadScopeEvents {
   KeyEventResult onUpEvent(
     FocusNode node,
-    KeyDownEvent event,
+    KeyUpEvent event,
     bool isOutOfScope,
   ) => KeyEventResult.ignored;
   KeyEventResult onDownEvent(
     FocusNode node,
-    KeyDownEvent event,
+    KeyUpEvent event,
     bool isOutOfScope,
   ) => KeyEventResult.ignored;
   KeyEventResult onLeftEvent(
     FocusNode node,
-    KeyDownEvent event,
+    KeyUpEvent event,
     bool isOutOfScope,
   ) => KeyEventResult.ignored;
   KeyEventResult onRightEvent(
     FocusNode node,
-    KeyDownEvent event,
+    KeyUpEvent event,
     bool isOutOfScope,
   ) => KeyEventResult.ignored;
-  KeyEventResult onSelectEvent(FocusNode node, KeyDownEvent event) =>
+  KeyEventResult onSelectStartEvent(FocusNode node, KeyUpEvent event) =>
       KeyEventResult.ignored;
-  KeyEventResult onBackEvent(FocusNode node, KeyDownEvent event) =>
+  KeyEventResult onSelectEndEvent(FocusNode node, KeyUpEvent event) =>
+      KeyEventResult.ignored;
+  KeyEventResult onBackEvent(FocusNode node, KeyUpEvent event) =>
       KeyEventResult.ignored;
 }

@@ -33,10 +33,12 @@ final class TvSlider extends StatefulWidget {
     this.onLeft,
     this.onRight,
     this.onSelect,
+    this.onLongSelect,
     this.onBack,
     this.onKeyEvent,
     this.onFocusChanged,
     this.onFocusDisabledWhenWasFocused,
+    this.longPressDuration = kLongPressTimeout,
   }) : assert(step == null || step > 0.0, 'step must be positive');
 
   final double value;
@@ -70,10 +72,12 @@ final class TvSlider extends StatefulWidget {
   final DpadEventCallback? onLeft;
   final DpadEventCallback? onRight;
   final DpadEventCallback? onSelect;
+  final DpadEventCallback? onLongSelect;
   final DpadEventCallback? onBack;
   final KeyEventResult Function(FocusNode, KeyEvent)? onKeyEvent;
   final void Function(FocusNode, bool)? onFocusChanged;
   final void Function()? onFocusDisabledWhenWasFocused;
+  final Duration longPressDuration;
 
   @override
   State<StatefulWidget> createState() => _TvSliderState();
@@ -143,35 +147,41 @@ final class _TvSliderState extends State<TvSlider> with DpadEvents {
       onLeft: onLeftEvent,
       onRight: onRightEvent,
       onSelect: widget.onSelect,
+      onLongSelect: widget.onLongSelect,
       onBack: widget.onBack,
       onKeyEvent: widget.onKeyEvent,
       onFocusChanged: widget.onFocusChanged,
       onFocusDisabledWhenWasFocused: widget.onFocusDisabledWhenWasFocused,
-      builder: (context, _) => Slider(
-        value: widget.value,
-        onChanged: _onChanged,
-        onChangeStart: widget.onChangeStart,
-        onChangeEnd: widget.onChangeEnd,
-        min: widget.min,
-        max: widget.max,
-        divisions: widget.divisions,
-        label: widget.label,
-        activeColor: widget.activeColor,
-        inactiveColor: widget.inactiveColor,
-        secondaryActiveColor: widget.secondaryActiveColor,
-        thumbColor: widget.thumbColor,
-        overlayColor: widget.overlayColor,
-        mouseCursor: widget.mouseCursor,
-        semanticFormatterCallback: widget.semanticFormatterCallback,
-        allowedInteraction: widget.allowedInteraction,
-        padding: widget.padding,
-        showValueIndicator: _showValueIndicator,
+      longPressDuration: widget.longPressDuration,
+      builder: (context, _) => SliderTheme(
+        data: SliderTheme.of(
+          context,
+        ).copyWith(showValueIndicator: _showValueIndicator),
+        child: Slider(
+          value: widget.value,
+          onChanged: _onChanged,
+          onChangeStart: widget.onChangeStart,
+          onChangeEnd: widget.onChangeEnd,
+          min: widget.min,
+          max: widget.max,
+          divisions: widget.divisions,
+          label: widget.label,
+          activeColor: widget.activeColor,
+          inactiveColor: widget.inactiveColor,
+          secondaryActiveColor: widget.secondaryActiveColor,
+          thumbColor: widget.thumbColor,
+          overlayColor: widget.overlayColor,
+          mouseCursor: widget.mouseCursor,
+          semanticFormatterCallback: widget.semanticFormatterCallback,
+          allowedInteraction: widget.allowedInteraction,
+          padding: widget.padding,
+        ),
       ),
     );
   }
 
   @override
-  KeyEventResult onUpEvent(FocusNode node, KeyDownEvent event) {
+  KeyEventResult onUpEvent(FocusNode node, KeyEvent event) {
     if (widget.onUp != null) {
       return widget.onUp!(node, event);
     }
@@ -181,7 +191,7 @@ final class _TvSliderState extends State<TvSlider> with DpadEvents {
   }
 
   @override
-  KeyEventResult onDownEvent(FocusNode node, KeyDownEvent event) {
+  KeyEventResult onDownEvent(FocusNode node, KeyEvent event) {
     if (widget.onDown != null) {
       return widget.onDown!(node, event);
     }
@@ -191,7 +201,7 @@ final class _TvSliderState extends State<TvSlider> with DpadEvents {
   }
 
   @override
-  KeyEventResult onLeftEvent(FocusNode node, KeyDownEvent event) {
+  KeyEventResult onLeftEvent(FocusNode node, KeyEvent event) {
     if (widget.onLeft != null) {
       return widget.onLeft!(node, event);
     }
@@ -201,7 +211,7 @@ final class _TvSliderState extends State<TvSlider> with DpadEvents {
   }
 
   @override
-  KeyEventResult onRightEvent(FocusNode node, KeyDownEvent event) {
+  KeyEventResult onRightEvent(FocusNode node, KeyEvent event) {
     if (widget.onRight != null) {
       return widget.onRight!(node, event);
     }

@@ -280,7 +280,7 @@ final class _DpadNavigationSampleState extends State<DpadNavigationSample> {
                       child: SampleDpadFocus(
                         key: DpadNavigationSample.keyReverseButton,
                         focusNode: _reverseFn,
-                        onSelect: (_, _) {
+                        onLongSelect: (_, _) {
                           setState(() => _isOddFocusable = !_isOddFocusable);
 
                           WidgetsBinding.instance.addPostFrameCallback((_) {

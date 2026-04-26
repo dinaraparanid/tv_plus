@@ -1,11 +1,7 @@
 part of 'dpad.dart';
 
 typedef DpadScopeEventCallback =
-    KeyEventResult Function(
-      FocusNode node,
-      KeyDownEvent event,
-      bool isOutOfScope,
-    );
+    KeyEventResult Function(FocusNode node, KeyEvent event, bool isOutOfScope);
 
 final class DpadFocusScope extends StatefulWidget {
   DpadFocusScope({
@@ -25,10 +21,12 @@ final class DpadFocusScope extends StatefulWidget {
     this.onLeft,
     this.onRight,
     this.onSelect,
+    this.onLongSelect,
     this.onBack,
     this.onKeyEvent,
     this.onFocusChanged,
     this.onFocusDisabledWhenWasFocused,
+    this.longPressDuration = kLongPressTimeout,
     required this.builder,
   }) : policy = policy ?? ReadingOrderTraversalPolicy();
 
@@ -47,10 +45,12 @@ final class DpadFocusScope extends StatefulWidget {
   final DpadScopeEventCallback? onLeft;
   final DpadScopeEventCallback? onRight;
   final DpadEventCallback? onSelect;
+  final DpadEventCallback? onLongSelect;
   final DpadEventCallback? onBack;
   final KeyEventResult Function(FocusNode, KeyEvent)? onKeyEvent;
   final void Function(FocusScopeNode, bool)? onFocusChanged;
   final void Function(FocusScopeNode)? onFocusDisabledWhenWasFocused;
+  final Duration longPressDuration;
   final Widget Function(BuildContext, FocusScopeNode) builder;
 
   @override
@@ -64,6 +64,9 @@ final class _DpadFocusScopeState extends State<DpadFocusScope>
   bool _ownsFocusNode = false;
   bool _canRequestFocus = false;
   bool _hasFocus = false;
+
+  Duration? _lastSelectEventStartTimestamp;
+  bool _isLongPressing = false;
 
   @override
   void initState() {
@@ -130,11 +133,7 @@ final class _DpadFocusScopeState extends State<DpadFocusScope>
   }
 
   @override
-  KeyEventResult onUpEvent(
-    FocusNode node,
-    KeyDownEvent event,
-    bool isOutOfScope,
-  ) {
+  KeyEventResult onUpEvent(FocusNode node, KeyEvent event, bool isOutOfScope) {
     return widget.onUp?.call(node, event, isOutOfScope) ??
         (isOutOfScope ? KeyEventResult.ignored : KeyEventResult.handled);
   }
@@ -142,7 +141,7 @@ final class _DpadFocusScopeState extends State<DpadFocusScope>
   @override
   KeyEventResult onDownEvent(
     FocusNode node,
-    KeyDownEvent event,
+    KeyEvent event,
     bool isOutOfScope,
   ) {
     return widget.onDown?.call(node, event, isOutOfScope) ??
@@ -152,7 +151,7 @@ final class _DpadFocusScopeState extends State<DpadFocusScope>
   @override
   KeyEventResult onLeftEvent(
     FocusNode node,
-    KeyDownEvent event,
+    KeyEvent event,
     bool isOutOfScope,
   ) {
     return widget.onLeft?.call(node, event, isOutOfScope) ??
@@ -162,7 +161,7 @@ final class _DpadFocusScopeState extends State<DpadFocusScope>
   @override
   KeyEventResult onRightEvent(
     FocusNode node,
-    KeyDownEvent event,
+    KeyEvent event,
     bool isOutOfScope,
   ) {
     return widget.onRight?.call(node, event, isOutOfScope) ??
@@ -170,12 +169,41 @@ final class _DpadFocusScopeState extends State<DpadFocusScope>
   }
 
   @override
-  KeyEventResult onSelectEvent(FocusNode node, KeyDownEvent event) {
+  KeyEventResult onSelectStartEvent(FocusNode node, KeyEvent event) {
+    _isLongPressing = false;
+
+    if (widget.onLongSelect == null) {
+      return widget.onSelect?.call(node, event) ?? KeyEventResult.ignored;
+    }
+
+    _lastSelectEventStartTimestamp = event.timeStamp;
+
+    Future.delayed(widget.longPressDuration, () {
+      if (_lastSelectEventStartTimestamp == event.timeStamp) {
+        _isLongPressing = true;
+        widget.onLongSelect?.call(node, event);
+      }
+    });
+
+    return KeyEventResult.handled;
+  }
+
+  @override
+  KeyEventResult onSelectEndEvent(FocusNode node, KeyEvent event) {
+    if (_isLongPressing) {
+      return KeyEventResult.handled;
+    }
+
+    if (widget.onLongSelect != null) {
+      return KeyEventResult.ignored;
+    }
+
+    _lastSelectEventStartTimestamp = null;
     return widget.onSelect?.call(node, event) ?? KeyEventResult.ignored;
   }
 
   @override
-  KeyEventResult onBackEvent(FocusNode node, KeyDownEvent event) {
+  KeyEventResult onBackEvent(FocusNode node, KeyEvent event) {
     return widget.onBack?.call(node, event) ?? KeyEventResult.ignored;
   }
 
@@ -229,8 +257,15 @@ final class _DpadFocusScopeState extends State<DpadFocusScope>
                 !widget.policy.inDirection(node, TraversalDirection.right),
               ),
 
-            KeyDownEvent(logicalKey: LogicalKeyboardKey.select) =>
-              onSelectEvent(node, event),
+            KeyDownEvent(
+              logicalKey: LogicalKeyboardKey.select || LogicalKeyboardKey.enter,
+            ) =>
+              onSelectStartEvent(node, event),
+
+            KeyUpEvent(
+              logicalKey: LogicalKeyboardKey.select || LogicalKeyboardKey.enter,
+            ) =>
+              onSelectEndEvent(node, event),
 
             KeyDownEvent(logicalKey: LogicalKeyboardKey.goBack) => onBackEvent(
               node,

@@ -309,7 +309,7 @@ final class _DpadScopeNavigationSampleState
                           _focusScopeNode.requestFocus();
                           return KeyEventResult.handled;
                         },
-                        onSelect: (_, _) {
+                        onLongSelect: (_, _) {
                           setState(() => _isOddFocusable = !_isOddFocusable);
 
                           WidgetsBinding.instance.addPostFrameCallback((_) {

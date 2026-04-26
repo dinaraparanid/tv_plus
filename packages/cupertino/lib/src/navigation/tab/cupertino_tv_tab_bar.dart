@@ -261,7 +261,18 @@ final class CupertinoTvTabBarState extends State<CupertinoTvTabBar> {
                     controller: _scrollController,
                     child: _buildTabBar(context),
                   )
-                : _buildTabBar(context),
+                : NotificationListener<SizeChangedLayoutNotification>(
+                    onNotification: (_) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        _updateSelectionConstraints();
+                      });
+
+                      return true;
+                    },
+                    child: SizeChangedLayoutNotifier(
+                      child: _buildTabBar(context),
+                    ),
+                  ),
           ),
         ],
       ),

@@ -16,8 +16,6 @@ final class TvScrollCarouselPager extends StatefulWidget {
     this.onDown,
     this.onLeft,
     this.onRight,
-    this.onSelect,
-    this.onBack,
     this.onKeyEvent,
     this.onFocusChanged,
     this.onFocusDisabledWhenWasFocused,
@@ -44,8 +42,6 @@ final class TvScrollCarouselPager extends StatefulWidget {
   final DpadEventCallback? onDown;
   final CarouselDpadEventCallback? onLeft;
   final CarouselDpadEventCallback? onRight;
-  final DpadEventCallback? onSelect;
-  final DpadEventCallback? onBack;
   final KeyEventResult Function(FocusNode, KeyEvent)? onKeyEvent;
   final void Function(FocusNode, bool)? onFocusChanged;
   final void Function(FocusScopeNode)? onFocusDisabledWhenWasFocused;
@@ -176,18 +172,14 @@ final class _TvScrollCarouselPager extends State<TvScrollCarouselPager>
   void _listener() => setState(() {});
 
   @override
-  KeyEventResult onUpEvent(
-    FocusNode node,
-    KeyDownEvent event,
-    bool isOutOfScope,
-  ) {
+  KeyEventResult onUpEvent(FocusNode node, KeyEvent event, bool isOutOfScope) {
     return widget.onUp?.call(node, event) ?? KeyEventResult.ignored;
   }
 
   @override
   KeyEventResult onDownEvent(
     FocusNode node,
-    KeyDownEvent event,
+    KeyEvent event,
     bool isOutOfScope,
   ) {
     return widget.onDown?.call(node, event) ?? KeyEventResult.ignored;
@@ -196,7 +188,7 @@ final class _TvScrollCarouselPager extends State<TvScrollCarouselPager>
   @override
   KeyEventResult onLeftEvent(
     FocusNode node,
-    KeyDownEvent event,
+    KeyEvent event,
     bool isOutOfScope,
   ) {
     if (_controller.canScrollLeft) {
@@ -216,7 +208,7 @@ final class _TvScrollCarouselPager extends State<TvScrollCarouselPager>
   @override
   KeyEventResult onRightEvent(
     FocusNode node,
-    KeyDownEvent event,
+    KeyEvent event,
     bool isOutOfScope,
   ) {
     if (_controller.canScrollRight) {

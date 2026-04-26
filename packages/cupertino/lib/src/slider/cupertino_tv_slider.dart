@@ -24,10 +24,12 @@ final class CupertinoTvSlider extends StatefulWidget {
     this.onLeft,
     this.onRight,
     this.onSelect,
+    this.onLongSelect,
     this.onBack,
     this.onKeyEvent,
     this.onFocusChanged,
     this.onFocusDisabledWhenWasFocused,
+    this.longPressDuration = kLongPressTimeout,
   }) : assert(step == null || step > 0.0, 'step must be positive');
 
   final double value;
@@ -52,10 +54,12 @@ final class CupertinoTvSlider extends StatefulWidget {
   final DpadEventCallback? onLeft;
   final DpadEventCallback? onRight;
   final DpadEventCallback? onSelect;
+  final DpadEventCallback? onLongSelect;
   final DpadEventCallback? onBack;
   final KeyEventResult Function(FocusNode, KeyEvent)? onKeyEvent;
   final void Function(FocusNode, bool)? onFocusChanged;
   final void Function()? onFocusDisabledWhenWasFocused;
+  final Duration longPressDuration;
 
   @override
   State<StatefulWidget> createState() => _CupertinoTvSliderState();
@@ -121,10 +125,12 @@ final class _CupertinoTvSliderState extends State<CupertinoTvSlider>
       onLeft: onLeftEvent,
       onRight: onRightEvent,
       onSelect: widget.onSelect,
+      onLongSelect: widget.onLongSelect,
       onBack: widget.onBack,
       onKeyEvent: widget.onKeyEvent,
       onFocusChanged: widget.onFocusChanged,
       onFocusDisabledWhenWasFocused: widget.onFocusDisabledWhenWasFocused,
+      longPressDuration: widget.longPressDuration,
       builder: (context, _) => CupertinoSlider(
         value: widget.value,
         onChanged: _onChanged,
@@ -140,7 +146,7 @@ final class _CupertinoTvSliderState extends State<CupertinoTvSlider>
   }
 
   @override
-  KeyEventResult onUpEvent(FocusNode node, KeyDownEvent event) {
+  KeyEventResult onUpEvent(FocusNode node, KeyEvent event) {
     if (widget.onUp != null) {
       return widget.onUp!(node, event);
     }
@@ -150,7 +156,7 @@ final class _CupertinoTvSliderState extends State<CupertinoTvSlider>
   }
 
   @override
-  KeyEventResult onDownEvent(FocusNode node, KeyDownEvent event) {
+  KeyEventResult onDownEvent(FocusNode node, KeyEvent event) {
     if (widget.onDown != null) {
       return widget.onDown!(node, event);
     }
@@ -160,7 +166,7 @@ final class _CupertinoTvSliderState extends State<CupertinoTvSlider>
   }
 
   @override
-  KeyEventResult onLeftEvent(FocusNode node, KeyDownEvent event) {
+  KeyEventResult onLeftEvent(FocusNode node, KeyEvent event) {
     if (widget.onLeft != null) {
       return widget.onLeft!(node, event);
     }
@@ -170,7 +176,7 @@ final class _CupertinoTvSliderState extends State<CupertinoTvSlider>
   }
 
   @override
-  KeyEventResult onRightEvent(FocusNode node, KeyDownEvent event) {
+  KeyEventResult onRightEvent(FocusNode node, KeyEvent event) {
     if (widget.onRight != null) {
       return widget.onRight!(node, event);
     }

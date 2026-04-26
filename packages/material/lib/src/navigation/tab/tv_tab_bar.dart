@@ -280,7 +280,16 @@ final class TvTabBarState extends State<TvTabBar> {
                   controller: _scrollController,
                   child: _buildTabBar(),
                 )
-              : _buildTabBar(),
+              : NotificationListener<SizeChangedLayoutNotification>(
+                  onNotification: (_) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      _updateSelectionConstraints();
+                    });
+
+                    return true;
+                  },
+                  child: SizeChangedLayoutNotifier(child: _buildTabBar()),
+                ),
         ),
       ],
     );

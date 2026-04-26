@@ -1,14 +1,26 @@
+## 0.7.0
+* feat: CupertinoTvSearchBar & TvSearchController
+* feat: support for long select event handling
+* feat: 'enter' key handling support for DpadFocusScope
+* fix: recalculation of tabs size on layout size change (e.g. windows size change)
+
+## 0.6.0
+* feat: tv slider (material & cupertino)
+* feat: improve sandstone vertical tab animation
+* feat: sandstone vertical tab isExpanded for iconBuilder
+
 ## 0.5.1
+- feat: sandstone tab layouts
+- feat: navigation menu specify mainAxisSize, crossAxisAlignment & menuItemsBuilder
+- feat: melos
 
- - **FEAT**: sandstone tab layouts ([#31](https://github.com/dinaraparanid/tv_plus/issues/31)). ([faf071e5](https://github.com/dinaraparanid/tv_plus/commit/faf071e5f61271b683fc6ac2c1df0672d57d66cf))
-
-# 0.5.0
+## 0.5.0
 * feat: click selection for tabs & navigation menus
 * feat: navigation menu specify mainAxisSize, crossAxisAlignment & menuItemsBuilder
 * fix: carousel controller triggered listeners on same selection
 * chore: melos & SonarQube integrations; tests improvements
 
-# 0.4.0
+## 0.4.0
 * feat: scrollable carousel pager
 * feat: added onKeyEvent parameter for TvListView & TvGridView
 * chore: multi-modularity support for different design systems

@@ -1,6 +1,6 @@
 part of 'dpad.dart';
 
-typedef DpadEventCallback = KeyEventResult Function(FocusNode, KeyDownEvent);
+typedef DpadEventCallback = KeyEventResult Function(FocusNode, KeyEvent);
 
 final class DpadFocus extends StatefulWidget {
   const DpadFocus({
@@ -16,10 +16,12 @@ final class DpadFocus extends StatefulWidget {
     this.onLeft,
     this.onRight,
     this.onSelect,
+    this.onLongSelect,
     this.onBack,
     this.onKeyEvent,
     this.onFocusChanged,
     this.onFocusDisabledWhenWasFocused,
+    this.longPressDuration = kLongPressTimeout,
     required this.builder,
   });
 
@@ -34,10 +36,12 @@ final class DpadFocus extends StatefulWidget {
   final DpadEventCallback? onLeft;
   final DpadEventCallback? onRight;
   final DpadEventCallback? onSelect;
+  final DpadEventCallback? onLongSelect;
   final DpadEventCallback? onBack;
   final KeyEventResult Function(FocusNode, KeyEvent)? onKeyEvent;
   final void Function(FocusNode, bool)? onFocusChanged;
   final void Function()? onFocusDisabledWhenWasFocused;
+  final Duration longPressDuration;
   final Widget Function(BuildContext, FocusNode) builder;
 
   @override
@@ -51,8 +55,13 @@ final class _DpadFocusState extends State<DpadFocus> with DpadEvents {
   bool _canRequestFocus = false;
   bool _hasFocus = false;
 
+  Duration? _lastSelectEventStartTimestamp;
+  bool _isLongPressing = false;
+
   @override
   void initState() {
+    _isLongPressing = false;
+
     _focusNode =
         widget.focusNode ?? FocusNode(canRequestFocus: widget.canRequestFocus);
 
@@ -115,32 +124,62 @@ final class _DpadFocusState extends State<DpadFocus> with DpadEvents {
   }
 
   @override
-  KeyEventResult onUpEvent(FocusNode node, KeyDownEvent event) {
+  KeyEventResult onUpEvent(FocusNode node, KeyEvent event) {
     return widget.onUp?.call(node, event) ?? KeyEventResult.ignored;
   }
 
   @override
-  KeyEventResult onDownEvent(FocusNode node, KeyDownEvent event) {
+  KeyEventResult onDownEvent(FocusNode node, KeyEvent event) {
     return widget.onDown?.call(node, event) ?? KeyEventResult.ignored;
   }
 
   @override
-  KeyEventResult onLeftEvent(FocusNode node, KeyDownEvent event) {
+  KeyEventResult onLeftEvent(FocusNode node, KeyEvent event) {
     return widget.onLeft?.call(node, event) ?? KeyEventResult.ignored;
   }
 
   @override
-  KeyEventResult onRightEvent(FocusNode node, KeyDownEvent event) {
+  KeyEventResult onRightEvent(FocusNode node, KeyEvent event) {
     return widget.onRight?.call(node, event) ?? KeyEventResult.ignored;
   }
 
   @override
-  KeyEventResult onSelectEvent(FocusNode node, KeyDownEvent event) {
+  KeyEventResult onSelectStartEvent(FocusNode node, KeyEvent event) {
+    _isLongPressing = false;
+
+    if (widget.onLongSelect == null) {
+      return widget.onSelect?.call(node, event) ?? KeyEventResult.ignored;
+    }
+
+    _lastSelectEventStartTimestamp = event.timeStamp;
+
+    Future.delayed(widget.longPressDuration, () {
+      if (_lastSelectEventStartTimestamp == event.timeStamp) {
+        _isLongPressing = true;
+        widget.onLongSelect?.call(node, event);
+      }
+    });
+
+    return KeyEventResult.handled;
+  }
+
+  @override
+  KeyEventResult onSelectEndEvent(FocusNode node, KeyEvent event) {
+    if (widget.onLongSelect == null) {
+      return KeyEventResult.ignored;
+    }
+
+    _lastSelectEventStartTimestamp = null;
+
+    if (_isLongPressing) {
+      return KeyEventResult.handled;
+    }
+
     return widget.onSelect?.call(node, event) ?? KeyEventResult.ignored;
   }
 
   @override
-  KeyEventResult onBackEvent(FocusNode node, KeyDownEvent event) {
+  KeyEventResult onBackEvent(FocusNode node, KeyEvent event) {
     return widget.onBack?.call(node, event) ?? KeyEventResult.ignored;
   }
 
@@ -182,7 +221,12 @@ final class _DpadFocusState extends State<DpadFocus> with DpadEvents {
           KeyDownEvent(
             logicalKey: LogicalKeyboardKey.select || LogicalKeyboardKey.enter,
           ) =>
-            onSelectEvent(node, event),
+            onSelectStartEvent(node, event),
+
+          KeyUpEvent(
+            logicalKey: LogicalKeyboardKey.select || LogicalKeyboardKey.enter,
+          ) =>
+            onSelectEndEvent(node, event),
 
           KeyDownEvent(logicalKey: LogicalKeyboardKey.goBack) => onBackEvent(
             node,

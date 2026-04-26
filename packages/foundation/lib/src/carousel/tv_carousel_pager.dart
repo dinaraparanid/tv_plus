@@ -3,7 +3,7 @@ part of 'carousel.dart';
 typedef CarouselDpadEventCallback =
     KeyEventResult Function(
       FocusNode node,
-      KeyDownEvent event,
+      KeyEvent event,
       bool hasReachedBoundary,
     );
 
@@ -24,10 +24,12 @@ final class TvCarouselPager extends StatefulWidget {
     this.onLeft,
     this.onRight,
     this.onSelect,
+    this.onLongSelect,
     this.onBack,
     this.onKeyEvent,
     this.onFocusChanged,
     this.onFocusDisabledWhenWasFocused,
+    this.longPressDuration = kLongPressTimeout,
     this.separatorBuilder,
     required this.itemBuilder,
   });
@@ -46,10 +48,12 @@ final class TvCarouselPager extends StatefulWidget {
   final CarouselDpadEventCallback? onLeft;
   final CarouselDpadEventCallback? onRight;
   final DpadEventCallback? onSelect;
+  final DpadEventCallback? onLongSelect;
   final DpadEventCallback? onBack;
   final KeyEventResult Function(FocusNode, KeyEvent)? onKeyEvent;
   final void Function(FocusNode, bool)? onFocusChanged;
   final void Function()? onFocusDisabledWhenWasFocused;
+  final Duration longPressDuration;
   final Widget Function(BuildContext context, int index, int selectedIndex)?
   separatorBuilder;
   final Widget Function(
@@ -137,17 +141,17 @@ final class _TvCarouselPagerState extends State<TvCarouselPager>
   }
 
   @override
-  KeyEventResult onUpEvent(FocusNode node, KeyDownEvent event) {
+  KeyEventResult onUpEvent(FocusNode node, KeyEvent event) {
     return widget.onUp?.call(node, event) ?? KeyEventResult.ignored;
   }
 
   @override
-  KeyEventResult onDownEvent(FocusNode node, KeyDownEvent event) {
+  KeyEventResult onDownEvent(FocusNode node, KeyEvent event) {
     return widget.onDown?.call(node, event) ?? KeyEventResult.ignored;
   }
 
   @override
-  KeyEventResult onLeftEvent(FocusNode node, KeyDownEvent event) {
+  KeyEventResult onLeftEvent(FocusNode node, KeyEvent event) {
     if (_controller.canScrollLeft) {
       _controller.scrollLeft();
       return widget.onLeft?.call(node, event, false) ?? KeyEventResult.handled;
@@ -157,7 +161,7 @@ final class _TvCarouselPagerState extends State<TvCarouselPager>
   }
 
   @override
-  KeyEventResult onRightEvent(FocusNode node, KeyDownEvent event) {
+  KeyEventResult onRightEvent(FocusNode node, KeyEvent event) {
     if (_controller.canScrollRight) {
       _controller.scrollRight();
       return widget.onRight?.call(node, event, false) ?? KeyEventResult.handled;
@@ -194,9 +198,13 @@ final class _TvCarouselPagerState extends State<TvCarouselPager>
       onDown: onDownEvent,
       onLeft: onLeftEvent,
       onRight: onRightEvent,
+      onSelect: widget.onSelect,
+      onLongSelect: widget.onLongSelect,
+      onBack: widget.onBack,
       onKeyEvent: widget.onKeyEvent,
       onFocusChanged: widget.onFocusChanged,
       onFocusDisabledWhenWasFocused: widget.onFocusDisabledWhenWasFocused,
+      longPressDuration: widget.longPressDuration,
       builder: (context, node) => Row(
         mainAxisSize: MainAxisSize.min,
         children: [

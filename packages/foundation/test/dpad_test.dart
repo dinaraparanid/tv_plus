@@ -147,7 +147,7 @@ void main() {
       //    | $ | * | $ |
       //
       // ( F - reverse buttons )
-      await tester.sendDpadEventAndSettle(LogicalKeyboardKey.select);
+      await tester.sendLongDpadEventAndSettle(LogicalKeyboardKey.select);
       testAllWidgets(
         _buildSampleDataList(isOddEnabled: false, focusedIndex: 10),
       );
@@ -209,7 +209,7 @@ void main() {
       //    | * | $ | * |
       //
       // ( reverse buttons )
-      await tester.sendDpadEventAndSettle(LogicalKeyboardKey.select);
+      await tester.sendLongDpadEventAndSettle(LogicalKeyboardKey.select);
       testAllWidgets(_buildSampleDataList(isOddEnabled: true, focusedIndex: 5));
 
       // ( F - only from center )

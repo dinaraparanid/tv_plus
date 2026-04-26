@@ -2,7 +2,7 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter/services.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:tv_plus_foundation/src/dpad/dpad.dart';

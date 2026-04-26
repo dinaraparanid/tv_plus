@@ -1,16 +1,18 @@
 part of 'dpad.dart';
 
 mixin DpadEvents {
-  KeyEventResult onUpEvent(FocusNode node, KeyDownEvent event) =>
+  KeyEventResult onUpEvent(FocusNode node, KeyEvent event) =>
       KeyEventResult.ignored;
-  KeyEventResult onDownEvent(FocusNode node, KeyDownEvent event) =>
+  KeyEventResult onDownEvent(FocusNode node, KeyEvent event) =>
       KeyEventResult.ignored;
-  KeyEventResult onLeftEvent(FocusNode node, KeyDownEvent event) =>
+  KeyEventResult onLeftEvent(FocusNode node, KeyEvent event) =>
       KeyEventResult.ignored;
-  KeyEventResult onRightEvent(FocusNode node, KeyDownEvent event) =>
+  KeyEventResult onRightEvent(FocusNode node, KeyEvent event) =>
       KeyEventResult.ignored;
-  KeyEventResult onSelectEvent(FocusNode node, KeyDownEvent event) =>
+  KeyEventResult onSelectStartEvent(FocusNode node, KeyEvent event) =>
       KeyEventResult.ignored;
-  KeyEventResult onBackEvent(FocusNode node, KeyDownEvent event) =>
+  KeyEventResult onSelectEndEvent(FocusNode node, KeyEvent event) =>
+      KeyEventResult.ignored;
+  KeyEventResult onBackEvent(FocusNode node, KeyEvent event) =>
       KeyEventResult.ignored;
 }
