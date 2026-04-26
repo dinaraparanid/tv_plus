@@ -53,6 +53,7 @@ final class _CupertinoTvSearchFieldState
             style: theme.queryStyle,
             readOnly: true,
             showCursor: false,
+            enabled: false,
             textAlignVertical: TextAlignVertical.center,
           ),
         ),
