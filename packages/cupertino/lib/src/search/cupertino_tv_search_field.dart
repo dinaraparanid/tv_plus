@@ -46,7 +46,7 @@ final class _CupertinoTvSearchFieldState
           child: CupertinoTextField(
             controller: widget.controller.textEditingController,
             focusNode: _inputNode,
-            decoration: null,
+            decoration: const BoxDecoration(color: CupertinoColors.transparent),
             padding: EdgeInsets.zero,
             placeholder: widget.placeholder,
             placeholderStyle: theme.placeholderStyle,
