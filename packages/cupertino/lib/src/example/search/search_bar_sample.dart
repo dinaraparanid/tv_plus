@@ -1,7 +1,6 @@
 import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
-import 'package:tv_plus_cupertino/src/search/search.dart';
 import 'package:tv_plus_cupertino/tv_plus_cupertino.dart';
 
 final class CupertinoSearchBarSample extends StatefulWidget {
@@ -70,30 +69,30 @@ final class CupertinoSearchBarSample extends StatefulWidget {
     }),
     buttonTextStyle: WidgetStateProperty.fromMap({
       WidgetState.focused: TextStyle(
-        fontSize: 16,
+        fontSize: 18,
         color: CupertinoColors.white,
         fontWeight: FontWeight.w700,
-        height: 1.5,
+        height: 1.55,
       ),
       WidgetState.any: TextStyle(
-        fontSize: 16,
+        fontSize: 18,
         color: Color(0xCCC4C7C5),
         fontWeight: FontWeight.w700,
-        height: 1.5,
+        height: 1.55,
       ),
     }),
     keyboardTypeExpandedTextStyle: WidgetStateProperty.fromMap({
       WidgetState.focused: TextStyle(
-        fontSize: 16,
+        fontSize: 18,
         color: CupertinoColors.white,
         fontWeight: FontWeight.w700,
-        height: 1.5,
+        height: 1.55,
       ),
       WidgetState.any: TextStyle(
-        fontSize: 16,
+        fontSize: 18,
         color: Color(0xCCFFFFFF),
         fontWeight: FontWeight.w700,
-        height: 1.5,
+        height: 1.55,
       ),
     }),
     letterDecoration: WidgetStateProperty.fromMap({
@@ -125,6 +124,10 @@ final class CupertinoSearchBarSample extends StatefulWidget {
       WidgetState.any: Color(0xCCC4C7C5),
     }),
     keyboardTypeExpandedBackgroundColor: Color(0xFFC4C7C5),
+    switchLocaleIconFocusPadding: EdgeInsets.symmetric(
+      vertical: 12,
+      horizontal: 8,
+    ),
     letterFocusPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
     buttonFillPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
     buttonFocusPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),

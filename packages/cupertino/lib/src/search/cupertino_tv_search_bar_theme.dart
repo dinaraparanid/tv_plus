@@ -37,6 +37,7 @@ final class CupertinoTvSearchBarThemeData {
     this.keyboardTypeExpandedDecoration,
     this.buttonContentColor,
     this.keyboardTypeExpandedBackgroundColor,
+    this.switchLocaleIconFocusPadding,
     this.letterFocusPadding,
     this.buttonFillPadding,
     this.buttonFocusPadding,
@@ -59,6 +60,7 @@ final class CupertinoTvSearchBarThemeData {
   final WidgetStateProperty<Decoration>? keyboardTypeExpandedDecoration;
   final WidgetStateProperty<Color>? buttonContentColor;
   final Color? keyboardTypeExpandedBackgroundColor;
+  final EdgeInsetsGeometry? switchLocaleIconFocusPadding;
   final EdgeInsetsGeometry? letterFocusPadding;
   final EdgeInsetsGeometry? buttonFillPadding;
   final EdgeInsetsGeometry? buttonFocusPadding;

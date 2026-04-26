@@ -10,7 +10,7 @@ final class _LangButton extends StatelessWidget {
 
     return _CupertinoTvSearchBarItem(
       onSelect: onSelect,
-      focusPadding: theme.letterFocusPadding,
+      focusPadding: theme.switchLocaleIconFocusPadding,
       builder: (context, isFocused) {
         final Set<WidgetState> states = isFocused ? {WidgetState.focused} : {};
 
