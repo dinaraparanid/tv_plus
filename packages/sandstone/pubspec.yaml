@@ -1,6 +1,6 @@
 name: tv_plus_sandstone
 description: "Smart TV toolkit"
-version: 0.6.0
+version: 0.7.0
 repository: https://github.com/dinaraparanid/tv_plus
 resolution: workspace
 
