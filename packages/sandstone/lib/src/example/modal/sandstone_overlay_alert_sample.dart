@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:tv_plus_foundation/tv_plus_foundation.dart';
 import 'package:tv_plus_sandstone/src/modal/alert/alert.dart';
 
-final class SandstoneAlertSample extends StatelessWidget {
-  const SandstoneAlertSample({super.key});
+final class SandstoneOverlayAlertSample extends StatelessWidget {
+  const SandstoneOverlayAlertSample({super.key});
 
   static const backgroundColor = Color(0xFF131314);
   static const alertBackgroundColor = Color(0xFFC1C1C1);
@@ -16,7 +16,7 @@ final class SandstoneAlertSample extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       home: Scaffold(
-        backgroundColor: SandstoneAlertSample.backgroundColor,
+        backgroundColor: SandstoneOverlayAlertSample.backgroundColor,
         body: Stack(children: [Align(child: _AlertTriggerButton())]),
       ),
     );
@@ -64,25 +64,27 @@ final class _AlertContent extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: SandstoneAlertSample.alertBackgroundColor,
+          color: SandstoneOverlayAlertSample.alertBackgroundColor,
           borderRadius: BorderRadius.circular(8),
           boxShadow: const [BoxShadow(blurRadius: 16)],
         ),
         child: Row(
-          spacing: 24,
+          mainAxisSize: MainAxisSize.min,
+          spacing: 32,
           children: [
             const Icon(
               Icons.info,
               size: 48,
-              color: SandstoneAlertSample.alertContentColor,
+              color: SandstoneOverlayAlertSample.alertContentColor,
             ),
 
-            const Expanded(
+            const SizedBox(
+              width: 256,
               child: Text(
                 'Sandstone overlay alert',
                 style: TextStyle(
                   fontSize: 18,
-                  color: SandstoneAlertSample.alertContentColor,
+                  color: SandstoneOverlayAlertSample.alertContentColor,
                 ),
               ),
             ),
@@ -130,19 +132,19 @@ final class _AlertButton extends StatelessWidget {
         return KeyEventResult.handled;
       },
       builder: (context, node) => AnimatedScale(
-        duration: SandstoneAlertSample.contentAnimationDuration,
+        duration: SandstoneOverlayAlertSample.contentAnimationDuration,
         scale: node.hasFocus ? 1.1 : 1,
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
           decoration: BoxDecoration(
-            color: SandstoneAlertSample.alertButtonBackgroundColor,
+            color: SandstoneOverlayAlertSample.alertButtonBackgroundColor,
             borderRadius: BorderRadius.circular(4),
           ),
           child: Text(
             text,
             style: const TextStyle(
               fontSize: 20,
-              color: SandstoneAlertSample.alertButtonContentColor,
+              color: SandstoneOverlayAlertSample.alertButtonContentColor,
             ),
           ),
         ),

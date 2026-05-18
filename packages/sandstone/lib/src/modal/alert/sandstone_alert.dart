@@ -15,7 +15,7 @@ final class SandstoneAlert {
   static void show({
     required BuildContext context,
     SandstoneAlertType type = SandstoneAlertType.fullscreen,
-    Duration duration = const Duration(milliseconds: 300),
+    Duration duration = const Duration(milliseconds: 200),
     bool autoDismiss = false,
     Duration dismissAfter = const Duration(seconds: 3),
     FocusScopeNode? focusScopeNode,
@@ -146,8 +146,7 @@ final class _AnimatedOverlayWrapper extends StatefulWidget {
 final class SandstoneAlertState extends State<_AnimatedOverlayWrapper>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
-  late final Animation<Offset> _offsetAnimation;
-  late final Animation<double> _fadeAnimation;
+  late final Animation _animation;
 
   @override
   void initState() {
@@ -155,15 +154,17 @@ final class SandstoneAlertState extends State<_AnimatedOverlayWrapper>
 
     const startOffset = Offset(0, 1);
 
-    _offsetAnimation = Tween<Offset>(
-      begin: startOffset,
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
+    _animation = switch (widget.type) {
+      SandstoneAlertType.fullscreen => Tween<double>(
+        begin: 0,
+        end: 1,
+      ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn)),
 
-    _fadeAnimation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
+      SandstoneAlertType.overlay => Tween<Offset>(
+        begin: startOffset,
+        end: Offset.zero,
+      ).animate(CurvedAnimation(parent: _controller, curve: Curves.linear)),
+    };
 
     _controller.forward();
 
@@ -191,43 +192,47 @@ final class SandstoneAlertState extends State<_AnimatedOverlayWrapper>
 
   @override
   Widget build(BuildContext context) {
+    final child = DpadFocusScope(
+      focusScopeNode: widget.focusScopeNode,
+      parentNode: widget.parentNode,
+      autofocus: widget.autofocus,
+      canRequestFocus: widget.canRequestFocus,
+      skipTraversal: widget.skipTraversal,
+      rebuildOnFocusChange: widget.rebuildOnFocusChange,
+      policy: widget.policy,
+      descendantsAreFocusable: widget.descendantsAreFocusable,
+      descendantsAreTraversable: widget.descendantsAreTraversable,
+      includeSemantics: widget.includeSemantics,
+      onUp: widget.onUp,
+      onDown: widget.onDown,
+      onLeft: widget.onLeft,
+      onRight: widget.onRight,
+      onSelect: widget.onSelect,
+      onLongSelect: widget.onLongSelect,
+      onBack: widget.onBack,
+      onKeyEvent: widget.onKeyEvent,
+      onFocusChanged: widget.onFocusChanged,
+      onFocusDisabledWhenWasFocused: widget.onFocusDisabledWhenWasFocused,
+      longPressDuration: widget.longPressDuration,
+      builder: widget.builder,
+    );
+
     return SafeArea(
       child: Align(
         alignment: switch (widget.type) {
           SandstoneAlertType.fullscreen => Alignment.center,
           SandstoneAlertType.overlay => Alignment.bottomCenter,
         },
-        child: FadeTransition(
-          opacity: _fadeAnimation,
-          child: SlideTransition(
-            position: _offsetAnimation,
-            child: DpadFocusScope(
-              focusScopeNode: widget.focusScopeNode,
-              parentNode: widget.parentNode,
-              autofocus: widget.autofocus,
-              canRequestFocus: widget.canRequestFocus,
-              skipTraversal: widget.skipTraversal,
-              rebuildOnFocusChange: widget.rebuildOnFocusChange,
-              policy: widget.policy,
-              descendantsAreFocusable: widget.descendantsAreFocusable,
-              descendantsAreTraversable: widget.descendantsAreTraversable,
-              includeSemantics: widget.includeSemantics,
-              onUp: widget.onUp,
-              onDown: widget.onDown,
-              onLeft: widget.onLeft,
-              onRight: widget.onRight,
-              onSelect: widget.onSelect,
-              onLongSelect: widget.onLongSelect,
-              onBack: widget.onBack,
-              onKeyEvent: widget.onKeyEvent,
-              onFocusChanged: widget.onFocusChanged,
-              onFocusDisabledWhenWasFocused:
-                  widget.onFocusDisabledWhenWasFocused,
-              longPressDuration: widget.longPressDuration,
-              builder: widget.builder,
-            ),
+        child: switch (widget.type) {
+          SandstoneAlertType.fullscreen => FadeTransition(
+            opacity: _animation as Animation<double>,
+            child: child,
           ),
-        ),
+          SandstoneAlertType.overlay => SlideTransition(
+            position: _animation as Animation<Offset>,
+            child: child,
+          ),
+        },
       ),
     );
   }
