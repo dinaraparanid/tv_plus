@@ -1,11 +1,13 @@
-## 0.6.0
-* feat: tv slider (material & cupertino)
-* feat: improve sandstone vertical tab animation
-* feat: sandstone vertical tab isExpanded for iconBuilder
+## 0.7.0
 * feat: CupertinoTvSearchBar & TvSearchController
 * feat: support for long select event handling
 * feat: 'enter' key handling support for DpadFocusScope
 * fix: recalculation of tabs size on layout size change (e.g. windows size change)
+
+## 0.6.0
+* feat: tv slider (material & cupertino)
+* feat: improve sandstone vertical tab animation
+* feat: sandstone vertical tab isExpanded for iconBuilder
 
 ## 0.5.1
 - feat: sandstone tab layouts
