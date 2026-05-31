@@ -112,80 +112,84 @@ final class _ScrollCarouselPagerSampleState
   @override
   Widget build(BuildContext context) {
     return CupertinoApp(
-      color: ScrollCarouselPagerSample.backgroundColor,
       builder: (context, _) {
-        return Stack(
-          children: [
-            Align(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                spacing: 16,
-                children: [
-                  AnimatedContainer(
-                    key: ScrollCarouselPagerSample.contentKey,
-                    duration: ScrollCarouselPagerSample.animationDuration,
-                    height: 200,
-                    width: 600,
-                    decoration: BoxDecoration(
-                      color: ScrollCarouselPagerSample.items[_selectedIndex],
-                      borderRadius: const BorderRadius.all(Radius.circular(16)),
+        return CupertinoPageScaffold(
+          backgroundColor: ScrollCarouselPagerSample.backgroundColor,
+          child: Stack(
+            children: [
+              Align(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  spacing: 16,
+                  children: [
+                    AnimatedContainer(
+                      key: ScrollCarouselPagerSample.contentKey,
+                      duration: ScrollCarouselPagerSample.animationDuration,
+                      height: 200,
+                      width: 600,
+                      decoration: BoxDecoration(
+                        color: ScrollCarouselPagerSample.items[_selectedIndex],
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(16),
+                        ),
+                      ),
                     ),
-                  ),
 
-                  TvScrollCarouselPager(
-                    key: ScrollCarouselPagerSample.pagerKey,
-                    height: 20,
-                    controller: _controller,
-                    focusScopeNode: _focusScopeNode,
-                    autofocus: true,
-                    separatorBuilder:
-                        (context, index, selectedIndex, visibleIndices) {
-                          return const SizedBox(width: 8);
-                        },
-                    capacity: ScrollCarouselPagerSample.capacity,
-                    viewportAlignment:
-                        (context, selectedIndex, visibleIndices) {
-                          return selectedIndex == visibleIndices.$1
-                              ? 0.0
-                              : null;
-                        },
-                    itemBuilder:
-                        (
-                          context,
-                          index,
-                          selectedIndex,
-                          visibleIndices,
-                          isFocused,
-                        ) {
-                          final size = ScrollCarouselPagerSample.dotSize(
-                            index: index,
-                            selectedIndex: selectedIndex,
-                            visibleIndices: visibleIndices,
-                          );
+                    TvScrollCarouselPager(
+                      key: ScrollCarouselPagerSample.pagerKey,
+                      height: 20,
+                      controller: _controller,
+                      focusScopeNode: _focusScopeNode,
+                      autofocus: true,
+                      separatorBuilder:
+                          (context, index, selectedIndex, visibleIndices) {
+                            return const SizedBox(width: 8);
+                          },
+                      capacity: ScrollCarouselPagerSample.capacity,
+                      viewportAlignment:
+                          (context, selectedIndex, visibleIndices) {
+                            return selectedIndex == visibleIndices.$1
+                                ? 0.0
+                                : null;
+                          },
+                      itemBuilder:
+                          (
+                            context,
+                            index,
+                            selectedIndex,
+                            visibleIndices,
+                            isFocused,
+                          ) {
+                            final size = ScrollCarouselPagerSample.dotSize(
+                              index: index,
+                              selectedIndex: selectedIndex,
+                              visibleIndices: visibleIndices,
+                            );
 
-                          final isSelected = index == selectedIndex;
+                            final isSelected = index == selectedIndex;
 
-                          return AnimatedContainer(
-                            key: ValueKey(index),
-                            duration:
-                                ScrollCarouselPagerSample.animationDuration,
-                            width: size,
-                            height: size,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: isSelected
-                                  ? ScrollCarouselPagerSample
-                                        .selectedIndicatorColor
-                                  : ScrollCarouselPagerSample
-                                        .unselectedIndicatorColor,
-                            ),
-                          );
-                        },
-                  ),
-                ],
+                            return AnimatedContainer(
+                              key: ValueKey(index),
+                              duration:
+                                  ScrollCarouselPagerSample.animationDuration,
+                              width: size,
+                              height: size,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: isSelected
+                                    ? ScrollCarouselPagerSample
+                                          .selectedIndicatorColor
+                                    : ScrollCarouselPagerSample
+                                          .unselectedIndicatorColor,
+                              ),
+                            );
+                          },
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );

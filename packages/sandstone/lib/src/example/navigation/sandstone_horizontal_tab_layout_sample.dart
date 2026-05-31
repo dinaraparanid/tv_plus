@@ -188,14 +188,17 @@ final class _SandstoneHorizontalTabLayoutSampleState
                     icon,
                     key: SandstoneHorizontalTabLayoutSample.contentIconKey,
                     size: 48,
-                    color: Colors.white,
+                    color: SandstoneHorizontalTabLayoutSample.contentColor,
                   ),
 
                   Flexible(
                     child: Text(
                       text,
                       key: SandstoneHorizontalTabLayoutSample.contentTitleKey,
-                      style: const TextStyle(color: Colors.white, fontSize: 20),
+                      style: const TextStyle(
+                        fontSize: 20,
+                        color: SandstoneHorizontalTabLayoutSample.contentColor,
+                      ),
                     ),
                   ),
                 ],

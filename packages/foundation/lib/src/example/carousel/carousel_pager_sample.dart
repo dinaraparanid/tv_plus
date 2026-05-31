@@ -65,51 +65,55 @@ final class _CarouselPagerSampleState extends State<CarouselPagerSample> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      color: CarouselPagerSample.backgroundColor,
       builder: (context, _) {
-        return Stack(
-          children: [
-            Align(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                spacing: 16,
-                children: [
-                  AnimatedContainer(
-                    key: CarouselPagerSample.contentKey,
-                    duration: CarouselPagerSample.animationDuration,
-                    height: 200,
-                    width: 600,
-                    decoration: BoxDecoration(
-                      color: CarouselPagerSample.items[_selectedIndex],
-                      borderRadius: const BorderRadius.all(Radius.circular(16)),
-                    ),
-                  ),
-
-                  TvCarouselPager(
-                    key: CarouselPagerSample.pagerKey,
-                    controller: _controller,
-                    focusNode: _focusNode,
-                    autofocus: true,
-                    separatorBuilder: (_, _, _) => const SizedBox(width: 8),
-                    itemBuilder: (context, index, isSelected, isFocused) {
-                      return AnimatedContainer(
-                        key: ValueKey(index),
-                        duration: CarouselPagerSample.animationDuration,
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: isSelected
-                              ? CarouselPagerSample.selectedIndicatorColor
-                              : CarouselPagerSample.unselectedIndicatorColor,
+        return Scaffold(
+          backgroundColor: CarouselPagerSample.backgroundColor,
+          body: Stack(
+            children: [
+              Align(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  spacing: 16,
+                  children: [
+                    AnimatedContainer(
+                      key: CarouselPagerSample.contentKey,
+                      duration: CarouselPagerSample.animationDuration,
+                      height: 200,
+                      width: 600,
+                      decoration: BoxDecoration(
+                        color: CarouselPagerSample.items[_selectedIndex],
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(16),
                         ),
-                      );
-                    },
-                  ),
-                ],
+                      ),
+                    ),
+
+                    TvCarouselPager(
+                      key: CarouselPagerSample.pagerKey,
+                      controller: _controller,
+                      focusNode: _focusNode,
+                      autofocus: true,
+                      separatorBuilder: (_, _, _) => const SizedBox(width: 8),
+                      itemBuilder: (context, index, isSelected, isFocused) {
+                        return AnimatedContainer(
+                          key: ValueKey(index),
+                          duration: CarouselPagerSample.animationDuration,
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: isSelected
+                                ? CarouselPagerSample.selectedIndicatorColor
+                                : CarouselPagerSample.unselectedIndicatorColor,
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );
