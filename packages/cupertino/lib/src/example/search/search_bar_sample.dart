@@ -60,25 +60,29 @@ final class CupertinoSearchBarSample extends StatefulWidget {
         fontSize: 24,
         color: Color(0xCC000000),
         fontWeight: FontWeight.w700,
+        fontFamily: 'inter',
       ),
       WidgetState.any: TextStyle(
         fontSize: 24,
         color: Color(0xCCC4C7C5),
         fontWeight: FontWeight.w700,
+        fontFamily: 'inter',
       ),
     }),
     buttonTextStyle: WidgetStateProperty.fromMap({
       WidgetState.focused: TextStyle(
-        fontSize: 18,
+        fontSize: 12,
         color: CupertinoColors.white,
         fontWeight: FontWeight.w700,
-        height: 1.55,
+        height: 1.4,
+        fontFamily: 'inter',
       ),
       WidgetState.any: TextStyle(
-        fontSize: 18,
-        color: Color(0xCCC4C7C5),
+        fontSize: 12,
+        color: CupertinoColors.white,
         fontWeight: FontWeight.w700,
-        height: 1.55,
+        height: 1.4,
+        fontFamily: 'inter',
       ),
     }),
     keyboardTypeExpandedTextStyle: WidgetStateProperty.fromMap({
@@ -87,12 +91,14 @@ final class CupertinoSearchBarSample extends StatefulWidget {
         color: CupertinoColors.white,
         fontWeight: FontWeight.w700,
         height: 1.55,
+        fontFamily: 'inter',
       ),
       WidgetState.any: TextStyle(
         fontSize: 18,
         color: Color(0xCCFFFFFF),
         fontWeight: FontWeight.w700,
         height: 1.55,
+        fontFamily: 'inter',
       ),
     }),
     letterDecoration: WidgetStateProperty.fromMap({
@@ -129,12 +135,12 @@ final class CupertinoSearchBarSample extends StatefulWidget {
       horizontal: 8,
     ),
     letterFocusPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-    buttonFillPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-    buttonFocusPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+    buttonFillPadding: EdgeInsets.symmetric(vertical: 2, horizontal: 12),
+    buttonFocusPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
     buttonRadius: BorderRadius.all(Radius.circular(4)),
     keyboardTypeExpandedRadius: BorderRadius.all(Radius.circular(12)),
-    switchLocaleIconSize: 24,
-    spaceBetweenQueryAndInput: 24,
+    switchLocaleIconSize: 20,
+    spaceBetweenQueryAndInput: 16,
   );
 
   @override
@@ -183,11 +189,11 @@ final class _CupertinoSearchBarSampleState
                   controller: _controller,
                   placeholder: 'Search by color name',
                   searchIcon: const Padding(
-                    padding: EdgeInsets.only(right: 20),
+                    padding: EdgeInsets.only(right: 16),
                     child: Icon(
                       CupertinoIcons.search,
-                      size: 48,
-                      color: CupertinoColors.systemGrey,
+                      size: 36,
+                      color: Color(0xCC000000),
                     ),
                   ),
                   theme: CupertinoSearchBarSample.searchBarTheme,
@@ -298,7 +304,13 @@ final class _ItemState extends State<_Item> {
                     child: const SizedBox(width: double.infinity, height: 100),
                   ),
 
-                  Text(widget.name),
+                  Text(
+                    widget.name,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      color: CupertinoColors.white,
+                    ),
+                  ),
                 ],
               ),
 

@@ -35,7 +35,7 @@ final class OneUiNavigationDrawerSample extends StatefulWidget {
     colors: [
       Colors.transparent,
       Colors.transparent,
-      Colors.pink,
+      Colors.deepPurpleAccent,
       Colors.transparent,
       Colors.transparent,
     ],
@@ -224,7 +224,7 @@ final class _OneUiNavigationDrawerSampleState
               builder: (context, node) {
                 return Container(
                   color: Color.lerp(
-                    Colors.indigoAccent,
+                    Colors.lightBlueAccent,
                     Colors.green,
                     animation.value,
                   ),

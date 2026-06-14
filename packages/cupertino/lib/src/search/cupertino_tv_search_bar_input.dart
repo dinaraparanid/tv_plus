@@ -155,9 +155,7 @@ final class _Rect extends StatelessWidget {
           padding: theme.buttonFillPadding ?? EdgeInsets.zero,
           decoration: BoxDecoration(
             borderRadius: theme.buttonRadius,
-            color: isFocused
-                ? theme.letterTextStyle?.resolve(states).color
-                : null,
+            color: theme.letterTextStyle?.resolve(states).color,
           ),
           child: Text(text, style: theme.buttonTextStyle?.resolve(states)),
         );
@@ -176,7 +174,7 @@ final class _Eraser extends StatelessWidget {
 
     return _CupertinoTvSearchBarItem(
       onSelect: onSelect,
-      focusPadding: theme.letterFocusPadding,
+      focusPadding: theme.buttonFocusPadding,
       builder: (context, isFocused) {
         final Set<WidgetState> states = isFocused ? {WidgetState.focused} : {};
 

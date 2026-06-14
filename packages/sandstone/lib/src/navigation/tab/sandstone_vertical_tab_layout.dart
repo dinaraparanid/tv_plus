@@ -189,7 +189,7 @@ final class SandstoneVerticalTabLayoutState
   Widget _buildContent() {
     return DpadFocus(
       focusNode: _controller.mediatorNode,
-      onFocusChanged: (_, hasFocus) {
+      onFocusChanged: (node, hasFocus) {
         if (hasFocus) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             _controller.selectedFocusNodeOrNull?.requestFocus();
@@ -245,6 +245,12 @@ final class SandstoneVerticalTabLayoutState
           onLeft: widget.onLeft,
           onRight: widget.onRight,
           onFocusChanged: (node, hasFocus) {
+            if (hasFocus) {
+              _expandController.forward();
+            } else {
+              _expandController.reverse();
+            }
+
             setState(() => _isExpanded = hasFocus);
             widget.onFocusChanged?.call(node, hasFocus);
           },
