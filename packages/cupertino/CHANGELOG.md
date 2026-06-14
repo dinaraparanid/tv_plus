@@ -3,6 +3,12 @@
 * feat: support for long select event handling
 * feat: 'enter' key handling support for DpadFocusScope
 * fix: recalculation of tabs size on layout size change (e.g. windows size change)
+* fix: sandstone vertical tab layout animation handling
+
+## 0.6.0
+* feat: tv slider (material & cupertino)
+* feat: improve sandstone vertical tab animation
+* feat: sandstone vertical tab isExpanded for iconBuilder
 
 ## 0.6.0
 * feat: tv slider (material & cupertino)
