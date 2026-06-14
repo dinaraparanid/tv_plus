@@ -16,7 +16,8 @@ final class TvListView extends BoxScrollView {
     bool addAutomaticKeepAlives = true,
     bool addRepaintBoundaries = true,
     bool addSemanticIndexes = true,
-    super.scrollCacheExtent,
+    // ignore: deprecated_member_use
+    super.cacheExtent,
     List<Widget> children = const [],
     int? semanticChildCount,
     this.focusScopeNode,
@@ -75,7 +76,8 @@ final class TvListView extends BoxScrollView {
     bool addAutomaticKeepAlives = true,
     bool addRepaintBoundaries = true,
     bool addSemanticIndexes = true,
-    super.scrollCacheExtent,
+    // ignore: deprecated_member_use
+    super.cacheExtent,
     int? semanticChildCount,
     super.dragStartBehavior,
     super.keyboardDismissBehavior,
@@ -121,7 +123,8 @@ final class TvListView extends BoxScrollView {
     bool addAutomaticKeepAlives = true,
     bool addRepaintBoundaries = true,
     bool addSemanticIndexes = true,
-    super.scrollCacheExtent,
+    // ignore: deprecated_member_use
+    super.cacheExtent,
     super.dragStartBehavior,
     super.keyboardDismissBehavior,
     super.restorationId,
